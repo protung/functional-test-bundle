@@ -1,0 +1,27 @@
+{
+  "name": "speicher210/functional-test-bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony bundle for functional testing",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dragos Protung",
+      "email": "dragos@protung.ro"
+    }
+  ],
+  "require": {
+    "liip/functional-test-bundle": "~1.6",
+    "coduo/php-matcher": "~2.0"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "Speicher210\\FunctionalTestBundle\\": "src"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
