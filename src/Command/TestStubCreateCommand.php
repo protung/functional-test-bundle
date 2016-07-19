@@ -113,7 +113,7 @@ class TestStubCreateCommand extends Command
      */
     private function getNamespace($path)
     {
-        $finder = Finder::create()->in($path)->depth(0)->files()->name('*TestCase.php');
+        $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
         if (count($finder) === 0) {
             throw new \RuntimeException('No test case found in ' . $path);
         }
