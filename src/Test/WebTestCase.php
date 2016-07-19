@@ -50,8 +50,10 @@ abstract class WebTestCase extends LiipWebTestCase
             $container->unmockAll();
         }
 
-        $this->getContainer()->get('doctrine.dbal.default_connection')->close();
-        $this->getContainer()->get('doctrine.dbal.analytics_connection')->close();
+        $connections = $container->get('doctrine')->getConnections();
+        foreach ($connections as $connection) {
+            $connection->close();
+        }
     }
 
     /**
