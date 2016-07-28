@@ -151,12 +151,17 @@ abstract class RestControllerWebTestCase extends WebTestCase
     ) {
         $client = static::createClient();
 
+        $serverParams = $request->getServerParams();
+        foreach ($request->getHeaders() as $name => $value) {
+            $serverParams['HTTP_' . $name] = $value;
+        }
+
         $client->request(
             $request->getMethod(),
             (string)$request->getUri(),
             $request->getParsedBody() ?: array(),
             $request->getUploadedFiles(),
-            $request->getServerParams(),
+            $serverParams,
             $request->getBody()->getContents()
         );
 
