@@ -157,18 +157,22 @@ class TestStubCreateCommand extends Command
      */
     private function getFixturesContent($namespace, $name, $customLoader)
     {
-        $content = '<?php' . PHP_EOL . PHP_EOL;
+        $content = array();
+        $content[] = '<?php';
+        $content[] = null;
 
         if ($customLoader) {
-            $content .= 'use ' . $namespace . '\\' . ucfirst($name) . ';' . PHP_EOL;
-            $content .= PHP_EOL;
-            $content .= 'return array(' . PHP_EOL;
-            $content .= '    ' . ucfirst($name) . '::class' . PHP_EOL;
-            $content .= ');' . PHP_EOL;
+            $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
+            $content[] = null;
+            $content[] = 'return array(' . PHP_EOL;
+            $content[] = '    ' . ucfirst($name) . '::class';
+            $content[] = ');';
         } else {
-            $content .= PHP_EOL;
-            $content .= 'return array();' . PHP_EOL;
+            $content[] = null;
+            $content[] = 'return array();';
         }
+
+        $content = implode(PHP_EOL, $content);
 
         return $content;
     }
@@ -183,25 +187,28 @@ class TestStubCreateCommand extends Command
      */
     private function getFixturesLoaderContent($namespace, $name)
     {
-        $content = '<?php' . PHP_EOL;
-        $content .= PHP_EOL;
-        $content .= 'namespace ' . $namespace . ';' . PHP_EOL;
-        $content .= PHP_EOL;
-        $content .= 'use Wingu\ApiBundle\Tests\Fixtures\Loaders\AbstractLoader;' . PHP_EOL;
-        $content .= PHP_EOL;
-        $content .= '/**' . PHP_EOL;
-        $content .= ' * Load the fixtures.' . PHP_EOL;
-        $content .= ' */' . PHP_EOL;
-        $content .= 'class ' . $name . ' extends AbstractLoader' . PHP_EOL;
-        $content .= '{' . PHP_EOL;
-        $content .= '    /**' . PHP_EOL;
-        $content .= '     * {@inheritDoc}' . PHP_EOL;
-        $content .= '     */' . PHP_EOL;
-        $content .= '    public function doLoad()' . PHP_EOL;
-        $content .= '    {' . PHP_EOL;
-        $content .= PHP_EOL;
-        $content .= '    }' . PHP_EOL;
-        $content .= '}' . PHP_EOL;
+        $content = array();
+        $content[] = '<?php';
+        $content[] = null;
+        $content[] = 'namespace ' . $namespace . ';';
+        $content[] = null;
+        $content[] = 'use Speicher210\FunctionalTestBundle\Test\Loader\AbstractLoader;';
+        $content[] = null;
+        $content[] = '/**';
+        $content[] = ' * Load the fixtures.';
+        $content[] = ' */';
+        $content[] = 'class ' . $name . ' extends AbstractLoader';
+        $content[] = '{';
+        $content[] = '    /**';
+        $content[] = '     * {@inheritDoc}';
+        $content[] = '     */';
+        $content[] = '    public function doLoad()';
+        $content[] = '    {';
+        $content[] = null;
+        $content[] = '    }';
+        $content[] = '}';
+
+        $content = implode(PHP_EOL, $content);
 
         return $content;
     }
