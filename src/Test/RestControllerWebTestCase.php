@@ -26,12 +26,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param string $path The API path to test.
      * @param integer $expectedStatusCode The expected HTTP response code.
+     * @param array $server The server parameters.
      *
      * @return \Symfony\Bundle\FrameworkBundle\Client
      */
-    protected function assertRestGetPath($path, $expectedStatusCode = Response::HTTP_OK)
+    protected function assertRestGetPath($path, $expectedStatusCode = Response::HTTP_OK, array $server = array())
     {
-        $request = new ServerRequest('GET', $path);
+        $request = new ServerRequest('GET', $path, array(), null, '1.1', $server);
 
         return $this->assertRestRequest($request, $expectedStatusCode);
     }
