@@ -88,6 +88,31 @@ abstract class RestControllerWebTestCase extends WebTestCase
     }
 
     /**
+     * Shorthand method for assertRestRequest() with a PUT request.
+     *
+     * @param string $path The API path to test.
+     * @param array $content The PUT content.
+     * @param integer $expectedStatusCode The expected HTTP response code.
+     * @param array $files The files to send with the request.
+     * @param array $server The server parameters.
+     *
+     * @return Client
+     */
+    protected function assertRestPutPath(
+        $path,
+        $content = array(),
+        $expectedStatusCode = Response::HTTP_NO_CONTENT,
+        array $files = array(),
+        array $server = array()
+    ) {
+        $request = (new ServerRequest('PUT', $path, array(), null, '1.1', $server))
+            ->withParsedBody($content)
+            ->withUploadedFiles($files);
+
+        return $this->assertRestRequest($request, $expectedStatusCode);
+    }
+
+    /**
      * Shorthand method for assertRestRequest() with a DELETE request.
      *
      * @param string $path The API path to test.
