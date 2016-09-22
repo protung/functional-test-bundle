@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -74,8 +76,6 @@ abstract class WebTestCase extends LiipWebTestCase
 
     /**
      * Prepare the text fixtures and the expected content file.
-     *
-     * @return string
      */
     protected function prepareTestFixtures()
     {

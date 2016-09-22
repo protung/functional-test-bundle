@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Speicher210\FunctionalTestBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,7 +15,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * Command to create necessary files and directories for a REST functional test.
  */
-class TestStubCreateCommand extends Command
+class TestStubCreateCommand extends ContainerAwareCommand
 {
     /**
      * {@inheritdoc}
@@ -105,7 +107,7 @@ class TestStubCreateCommand extends Command
     }
 
     /**
-     * Get the namespace for the code.s
+     * Get the namespace for the codes.
      *
      * @param string $path
      *
@@ -122,7 +124,7 @@ class TestStubCreateCommand extends Command
         foreach ($finder as $splFileInfo) {
             $matches = array();
             if (preg_match('/(^|\s)namespace(.*?)\s*;/i', $splFileInfo->getContents(), $matches)) {
-                $namespace = $matches[2];
+                $namespace = trim($matches[2]);
                 break;
             }
         }
@@ -160,21 +162,23 @@ class TestStubCreateCommand extends Command
         $content = array();
         $content[] = '<?php';
         $content[] = null;
+        $content[] = 'declare(strict_types = 1);';
+        $content[] = null;
 
         if ($customLoader) {
             $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
             $content[] = null;
-            $content[] = 'return array(' . PHP_EOL;
+            $content[] = 'return array(';
             $content[] = '    ' . ucfirst($name) . '::class';
             $content[] = ');';
+            $content[] = null;
         } else {
             $content[] = null;
             $content[] = 'return array();';
+            $content[] = null;
         }
 
-        $content = implode(PHP_EOL, $content);
-
-        return $content;
+        return implode(PHP_EOL, $content);
     }
 
     /**
@@ -187,17 +191,22 @@ class TestStubCreateCommand extends Command
      */
     private function getFixturesLoaderContent($namespace, $name)
     {
+        $loaderParent = $this->getContainer()->getParameter('fixture.loader.extend_class');
+        $loaderParentAlias = explode('\\', $loaderParent);
+
         $content = array();
         $content[] = '<?php';
         $content[] = null;
+        $content[] = 'declare(strict_types = 1);';
+        $content[] = null;
         $content[] = 'namespace ' . $namespace . ';';
         $content[] = null;
-        $content[] = 'use Speicher210\FunctionalTestBundle\Test\Loader\AbstractLoader;';
+        $content[] = 'use ' . $loaderParent . ';';
         $content[] = null;
         $content[] = '/**';
         $content[] = ' * Load the fixtures.';
         $content[] = ' */';
-        $content[] = 'class ' . $name . ' extends AbstractLoader';
+        $content[] = 'class ' . $name . ' extends ' . end($loaderParentAlias);
         $content[] = '{';
         $content[] = '    /**';
         $content[] = '     * {@inheritDoc}';
@@ -207,9 +216,8 @@ class TestStubCreateCommand extends Command
         $content[] = null;
         $content[] = '    }';
         $content[] = '}';
+        $content[] = null;
 
-        $content = implode(PHP_EOL, $content);
-
-        return $content;
+        return implode(PHP_EOL, $content);
     }
 }

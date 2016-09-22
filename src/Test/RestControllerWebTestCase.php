@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use Coduo\PHPMatcher\Factory\SimpleFactory;
@@ -132,8 +134,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param ServerRequestInterface $request The request to simulate.
      * @param integer $expectedStatusCode The expected HTTP response code.
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Client
      */
     protected function assertRestRequest(ServerRequestInterface $request, $expectedStatusCode = Response::HTTP_OK)
     {
@@ -157,7 +157,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
-            $this->assertTrue($response->headers->contains('Content-Type', 'application/json'));
+            static::assertTrue($response->headers->contains('Content-Type', 'application/json'));
         }
     }
 
@@ -206,7 +206,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected function assertRequestResponse(Response $response, $expectedStatusCode, $expectedOutput)
     {
-        $this->assertSame(
+        static::assertSame(
             $expectedStatusCode,
             $response->getStatusCode(),
             sprintf(
@@ -225,10 +225,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             if ($result !== true) {
                 $difference = $matcher->getError();
 
-                $this->assertJsonStringEqualsJsonString($expectedOutput, $actual, $difference);
+                static::assertJsonStringEqualsJsonString($expectedOutput, $actual, $difference);
             }
         } else {
-            $this->assertEmpty($response->getContent());
+            static::assertEmpty($response->getContent());
         }
     }
 
