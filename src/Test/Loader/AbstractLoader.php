@@ -46,6 +46,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     protected function afterLoad()
     {
         $this->manager->flush();
+        $this->manager->clear();
     }
 
     /**

@@ -146,6 +146,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         try {
             $client = $this->assertRequest($request, $expectedStatusCode, $expected);
+            $this->getObjectManager()->clear();
         } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
             if ($expectedFile && isset($_ENV['UPDATE_EXPECTED_OUTPUT']) && $_ENV['UPDATE_EXPECTED_OUTPUT']) {
                 $actual = $e->getComparisonFailure()->getActual();
