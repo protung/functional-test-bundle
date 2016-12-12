@@ -25,7 +25,7 @@ class MockerContainer extends Container
      *
      * @return mixed
      */
-    public function mock($id, $mock)
+    public function mock(string $id, $mock)
     {
         if (!$this->has($id)) {
             throw new \InvalidArgumentException(sprintf('Cannot mock a non-existent service: "%s"', $id));
@@ -43,7 +43,7 @@ class MockerContainer extends Container
      *
      * @param string $id
      */
-    public function unmock($id)
+    public function unmock(string $id)
     {
         unset(self::$mockedServices[$id]);
     }

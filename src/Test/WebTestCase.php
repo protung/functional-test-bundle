@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Liip\FunctionalTestBundle\Test\WebTestCase as LiipWebTestCase;
@@ -32,7 +34,8 @@ abstract class WebTestCase extends LiipWebTestCase
     {
         parent::setUp();
 
-        $emDefault = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+        /** @var EntityManager $emDefault */
+        $emDefault = $this->getContainer()->get('doctrine.orm.entity_manager');
         $this->resetDatabaseSchema($emDefault);
 
         $this->postFixtureSetup();
@@ -52,6 +55,7 @@ abstract class WebTestCase extends LiipWebTestCase
             $container->unmockAll();
         }
 
+        /** @var Connection[] $connections */
         $connections = $container->get('doctrine')->getConnections();
         foreach ($connections as $connection) {
             $connection->close();
@@ -62,9 +66,9 @@ abstract class WebTestCase extends LiipWebTestCase
      * Mock a container service.
      *
      * @param string $idService The service ID.
-     * @param \PHPUnit_Framework_MockObject_MockObject $mock The mock.
+     * @param mixed $mock The mock.
      */
-    protected function mockContainerService($idService, \PHPUnit_Framework_MockObject_MockObject $mock)
+    protected function mockContainerService(string $idService, $mock)
     {
         $container = $this->getContainer();
         if (!$container instanceof MockerContainer) {
