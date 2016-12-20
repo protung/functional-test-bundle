@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use Coduo\PHPMatcher\Factory\SimpleFactory;
+use Coduo\PHPMatcher\Matcher;
 use GuzzleHttp\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -21,7 +22,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @var array
      */
-    private $assertionExpectedFiles = array();
+    private $assertionExpectedFiles = [];
+
+    /**
+     * @var Matcher
+     */
+    private static $matcher;
 
     /**
      * Shorthand method for assertRestRequest() with a GET request.
@@ -30,11 +36,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param integer $expectedStatusCode The expected HTTP response code.
      * @param array $server The server parameters.
      *
-     * @return \Symfony\Bundle\FrameworkBundle\Client
+     * @return Client
      */
-    protected function assertRestGetPath($path, $expectedStatusCode = Response::HTTP_OK, array $server = array())
+    protected function assertRestGetPath(string $path, int $expectedStatusCode = Response::HTTP_OK, array $server = [])
     {
-        $request = new ServerRequest('GET', $path, array(), null, '1.1', $server);
+        $request = new ServerRequest('GET', $path, [], null, '1.1', $server);
 
         return $this->assertRestRequest($request, $expectedStatusCode);
     }
@@ -51,13 +57,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @return Client
      */
     protected function assertRestPostPath(
-        $path,
-        array $content = array(),
-        $expectedStatusCode = Response::HTTP_OK,
-        array $files = array(),
-        array $server = array()
+        string $path,
+        array $content = [],
+        int $expectedStatusCode = Response::HTTP_OK,
+        array $files = [],
+        array $server = []
     ) {
-        $request = (new ServerRequest('POST', $path, array(), null, '1.1', $server))
+        $request = (new ServerRequest('POST', $path, [], null, '1.1', $server))
             ->withParsedBody($content)
             ->withUploadedFiles($files);
 
@@ -76,13 +82,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @return Client
      */
     protected function assertRestPatchPath(
-        $path,
-        $content = array(),
-        $expectedStatusCode = Response::HTTP_NO_CONTENT,
-        array $files = array(),
-        array $server = array()
+        string $path,
+        array $content = [],
+        int $expectedStatusCode = Response::HTTP_NO_CONTENT,
+        array $files = [],
+        array $server = []
     ) {
-        $request = (new ServerRequest('PATCH', $path, array(), null, '1.1', $server))
+        $request = (new ServerRequest('PATCH', $path, [], null, '1.1', $server))
             ->withParsedBody($content)
             ->withUploadedFiles($files);
 
@@ -101,13 +107,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @return Client
      */
     protected function assertRestPutPath(
-        $path,
-        $content = array(),
-        $expectedStatusCode = Response::HTTP_NO_CONTENT,
-        array $files = array(),
-        array $server = array()
+        string $path,
+        array $content = [],
+        int $expectedStatusCode = Response::HTTP_NO_CONTENT,
+        array $files = [],
+        array $server = []
     ) {
-        $request = (new ServerRequest('PUT', $path, array(), null, '1.1', $server))
+        $request = (new ServerRequest('PUT', $path, [], null, '1.1', $server))
             ->withParsedBody($content)
             ->withUploadedFiles($files);
 
@@ -122,7 +128,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return \Symfony\Bundle\FrameworkBundle\Client
      */
-    protected function assertRestDeletePath($path, $expectedStatusCode = Response::HTTP_OK)
+    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_OK)
     {
         $request = new ServerRequest('DELETE', $path);
 
@@ -135,7 +141,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param ServerRequestInterface $request The request to simulate.
      * @param integer $expectedStatusCode The expected HTTP response code.
      */
-    protected function assertRestRequest(ServerRequestInterface $request, $expectedStatusCode = Response::HTTP_OK)
+    protected function assertRestRequest(ServerRequestInterface $request, int $expectedStatusCode = Response::HTTP_OK)
     {
         $expectedFile = null;
         $expected = null;
@@ -144,17 +150,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $expected = $this->prettifyJson(file_get_contents($expectedFile));
         }
 
-        try {
-            $client = $this->assertRequest($request, $expectedStatusCode, $expected);
-            $this->getObjectManager()->clear();
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            if ($expectedFile && isset($_ENV['UPDATE_EXPECTED_OUTPUT']) && $_ENV['UPDATE_EXPECTED_OUTPUT']) {
-                $actual = $e->getComparisonFailure()->getActual();
-                file_put_contents($expectedFile, json_encode($actual));
-            }
-
-            throw $e;
-        }
+        $client = $this->assertRequest($request, $expectedStatusCode, $expected);
+        $this->getObjectManager()->clear();
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
@@ -173,8 +170,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected function assertRequest(
         ServerRequestInterface $request,
-        $expectedStatusCode = Response::HTTP_OK,
-        $expectedOutput = null
+        int $expectedStatusCode = Response::HTTP_OK,
+        ?string $expectedOutput = null
     ) {
         $client = static::createClient();
 
@@ -186,7 +183,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         $client->request(
             $request->getMethod(),
             (string)$request->getUri(),
-            $request->getParsedBody() ?: array(),
+            $request->getParsedBody() ?: [],
             $request->getUploadedFiles(),
             $serverParams,
             $request->getBody()->getContents()
@@ -205,7 +202,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param integer $expectedStatusCode The expected HTTP response code.
      * @param string $expectedOutput The expected output.
      */
-    protected function assertRequestResponse(Response $response, $expectedStatusCode, $expectedOutput)
+    protected function assertRequestResponse(Response $response, int $expectedStatusCode, ?string $expectedOutput)
     {
         static::assertSame(
             $expectedStatusCode,
@@ -219,8 +216,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
         );
 
         if ($expectedOutput !== null) {
-            $factory = new SimpleFactory();
-            $matcher = $factory->createMatcher();
+            $matcher = static::getMatcher();
+
             $actual = $response->getContent();
             $result = $matcher->match($actual, $expectedOutput);
             if ($result !== true) {
@@ -240,17 +237,30 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $method The HTTP verb.
      * @param array $content The POST content.
      */
-    protected function assertRestRequestReturns404($path, $method, array $content = array())
+    protected function assertRestRequestReturns404(string $path, string $method, array $content = [])
     {
         $request = (new ServerRequest($method, $path))->withParsedBody($content);
 
-        $expected = array(
+        $expected = [
             'code' => 404,
             'message' => 'Not Found',
             'errors' => null
-        );
+        ];
 
         $this->assertRequest($request, Response::HTTP_NOT_FOUND, json_encode($expected));
+    }
+
+    /**
+     * @return Matcher
+     */
+    public static function getMatcher(): Matcher
+    {
+        if (self::$matcher === null) {
+            $factory = new SimpleFactory();
+            self::$matcher = $factory->createMatcher();
+        }
+
+        return self::$matcher;
     }
 
     /**
@@ -260,7 +270,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return string
      */
-    protected function getExpectedResponseContentFile($type)
+    protected function getExpectedResponseContentFile(string $type): string
     {
         $reflection = new \ReflectionObject($this);
         $testName = $this->getName(false);
@@ -276,11 +286,27 @@ abstract class RestControllerWebTestCase extends WebTestCase
     }
 
     /**
+     * Get current expected response content file.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getCurrentExpectedResponseContentFile(string $type): string
+    {
+        $reflection = new \ReflectionObject($this);
+        $testName = $this->getName(false);
+        $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
+
+        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+    }
+
+    /**
      * @param string $content The content to prettify.
      *
      * @return string|null
      */
-    protected function prettifyJson($content)
+    protected function prettifyJson(string $content)
     {
         return json_encode(json_decode($content), JSON_PRETTY_PRINT);
     }
@@ -290,7 +316,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return UploadedFile
      */
-    protected function getRequestUploadTextFile()
+    protected function getRequestUploadTextFile(): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
@@ -303,7 +329,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return UploadedFile
      */
-    protected function getRequestUploadImageFile()
+    protected function getRequestUploadImageFile(): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_image.png',
@@ -319,7 +345,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return UploadedFile
      */
-    protected function getRequestUploadAudioFile($withTags, $originalName = 'fake_audio.mp3')
+    protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3'): UploadedFile
     {
         if ($withTags === true) {
             $fileName = 'fake_audio_tags.mp3';

@@ -26,7 +26,7 @@ abstract class RestControllerWebAuthorizedTestCase extends RestControllerWebTest
      *
      * @var array
      */
-    protected static $authTokens = array();
+    protected static $authTokens = [];
 
     /**
      * {@inheritdoc}
@@ -52,18 +52,18 @@ abstract class RestControllerWebAuthorizedTestCase extends RestControllerWebTest
      * @param string $url The URL to call.
      * @param string $method The HTTP verb.
      */
-    protected function assertRestRequestReturns401IfUserIsNotAuthenticated($url, $method)
+    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method)
     {
         static::$authentication = self::AUTHENTICATION_NONE;
 
         $request = new ServerRequest($method, $url);
 
-        $expected = array(
-            'error' => array(
+        $expected = [
+            'error' => [
                 'code' => 401,
                 'message' => 'Unauthorized'
-            )
-        );
+            ]
+        ];
 
         $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, json_encode($expected));
     }

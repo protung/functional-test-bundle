@@ -20,7 +20,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = array())
+    protected static function createKernel(array $options = [])
     {
         $options['debug'] = false;
 
@@ -103,7 +103,7 @@ abstract class WebTestCase extends LiipWebTestCase
      */
     protected function getAlwaysLoadingFixtures()
     {
-        return array();
+        return [];
     }
 
     /**
