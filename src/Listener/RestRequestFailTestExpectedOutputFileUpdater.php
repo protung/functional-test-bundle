@@ -74,35 +74,36 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             return;
         }
 
-        $expected = $e->getComparisonFailure()->getExpected();
-        if (!is_array($expected)) {
-            $expected = json_decode(json_encode($expected), true);
-            if (JSON_ERROR_NONE !== json_last_error()) {
-                // probably not expecting json.
-                return;
-            }
+        // Always encode and decode in order to convert everything into an array.
+        $expected = json_decode(json_encode($e->getComparisonFailure()->getExpected()), true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            // probably not expecting json.
+            return;
         }
-        $actual = $e->getComparisonFailure()->getActual();
-        if (!is_array($actual)) {
-            $actual = json_decode(json_encode($actual), true);
-            if (JSON_ERROR_NONE !== json_last_error()) {
-                // probably not expecting json.
-                return;
-            }
+        // Always encode and decode in order to convert everything into an array.
+        $actual = json_decode(json_encode($e->getComparisonFailure()->getActual()), true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            // probably not expecting json.
+            return;
         }
 
-        array_walk_recursive(
-            $actual,
-            function (&$value, $key) use ($expected) {
-                if (array_key_exists($key, $this->fields)) {
-                    $value = $this->fields[$key];
+        try {
+            array_walk_recursive(
+                $actual,
+                function (&$value, $key) use ($expected) {
+                    if (array_key_exists($key, $this->fields)) {
+                        $value = $this->fields[$key];
+                    }
                 }
-            }
-        );
+            );
 
-        $actual = $this->updateExpectedOutput($actual, $expected);
+            $actual = $this->updateExpectedOutput($actual, $expected);
 
-        file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT));
+            file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT));
+        } catch (\Throwable $e) {
+            print $e->getTraceAsString();
+            exit;
+        }
     }
 
     /**
