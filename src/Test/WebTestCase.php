@@ -101,7 +101,7 @@ abstract class WebTestCase extends LiipWebTestCase
      *
      * @return array
      */
-    protected function getAlwaysLoadingFixtures()
+    protected function getAlwaysLoadingFixtures(): array
     {
         return [];
     }
@@ -129,7 +129,7 @@ abstract class WebTestCase extends LiipWebTestCase
      *
      * @return ObjectManager
      */
-    protected function getObjectManager()
+    protected function getObjectManager(): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManager();
     }
