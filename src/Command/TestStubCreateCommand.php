@@ -35,6 +35,12 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 InputArgument::REQUIRED,
                 'The name of the test.'
             )
+            ->addArgument(
+                'number-of-expected',
+                InputArgument::OPTIONAL,
+                'The number of expected files to generate.',
+                1
+            )
             ->addOption(
                 'custom-loader',
                 'l',
@@ -64,16 +70,18 @@ class TestStubCreateCommand extends ContainerAwareCommand
             return;
         }
 
-        $expectedFilename = $directory . '/Expected/' . $name . '-1.json';
-        if ($fileSystem->exists($expectedFilename)) {
-            $output->writeln(
-                sprintf('Expected file <info>%s</info> already exists.', $expectedFilename)
-            );
-        } else {
-            $fileSystem->dumpFile($expectedFilename, '');
-            $output->writeln(
-                sprintf('Added Expected file: <info>%s</info>', $expectedFilename)
-            );
+        for ($i = 1; $i <= $input->getArgument('number-of-expected'); $i++) {
+            $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
+            if ($fileSystem->exists($expectedFilename)) {
+                $output->writeln(
+                    sprintf('Expected file <info>%s</info> already exists.', $expectedFilename)
+                );
+            } else {
+                $fileSystem->dumpFile($expectedFilename, '{}');
+                $output->writeln(
+                    sprintf('Added Expected file: <info>%s</info>', $expectedFilename)
+                );
+            }
         }
 
         $fixturesFilename = $directory . '/Fixtures/' . $name . '.php';
@@ -159,7 +167,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
      */
     private function getFixturesContent($namespace, $name, $customLoader)
     {
-        $content = array();
+        $content = [];
         $content[] = '<?php';
         $content[] = null;
         $content[] = 'declare(strict_types = 1);';
@@ -168,13 +176,13 @@ class TestStubCreateCommand extends ContainerAwareCommand
         if ($customLoader) {
             $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
             $content[] = null;
-            $content[] = 'return array(';
+            $content[] = 'return [';
             $content[] = '    ' . ucfirst($name) . '::class';
-            $content[] = ');';
+            $content[] = '];';
             $content[] = null;
         } else {
             $content[] = null;
-            $content[] = 'return array();';
+            $content[] = 'return [];';
             $content[] = null;
         }
 
@@ -194,7 +202,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $loaderParent = $this->getContainer()->getParameter('fixture.loader.extend_class');
         $loaderParentAlias = explode('\\', $loaderParent);
 
-        $content = array();
+        $content = [];
         $content[] = '<?php';
         $content[] = null;
         $content[] = 'declare(strict_types = 1);';
@@ -213,7 +221,6 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = '     */';
         $content[] = '    public function doLoad()';
         $content[] = '    {';
-        $content[] = null;
         $content[] = '    }';
         $content[] = '}';
         $content[] = null;

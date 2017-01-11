@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Abstract fixture loader.
@@ -20,6 +21,16 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
      * @var ObjectManager
      */
     private $manager;
+
+    /**
+     * Get the container.
+     *
+     * @return ContainerInterface
+     */
+    protected function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
+    }
 
     /**
      * Code to run before loading the fixtures.
@@ -57,7 +68,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * @return ObjectManager
      */
-    public function getManager()
+    public function getManager(): ObjectManager
     {
         return $this->manager;
     }

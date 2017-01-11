@@ -347,11 +347,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3'): UploadedFile
     {
-        if ($withTags === true) {
-            $fileName = 'fake_audio_tags.mp3';
-        } else {
-            $fileName = 'fake_audio_notags.mp3';
-        }
+        $fileName = $withTags ? 'fake_audio_tags.mp3' : 'fake_audio_notags.mp3';
 
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/' . $fileName,

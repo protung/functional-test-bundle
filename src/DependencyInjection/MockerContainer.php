@@ -53,7 +53,7 @@ class MockerContainer extends Container
      */
     public function unmockAll()
     {
-        self::$mockedServices = array();
+        self::$mockedServices = [];
     }
 
     /**
