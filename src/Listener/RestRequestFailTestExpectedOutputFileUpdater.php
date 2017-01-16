@@ -62,7 +62,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
      */
     public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
     {
-        if (!$e instanceof PHPUnit_Framework_ExpectationFailedException) {
+        if (!$e instanceof PHPUnit_Framework_ExpectationFailedException || $e->getComparisonFailure() === null) {
             return;
         }
 
