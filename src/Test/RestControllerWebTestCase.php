@@ -134,6 +134,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param ServerRequestInterface $request The request to simulate.
      * @param integer $expectedStatusCode The expected HTTP response code.
+     *
+     * @return Client
      */
     protected function assertRestRequest(ServerRequestInterface $request, int $expectedStatusCode = Response::HTTP_OK)
     {
@@ -151,6 +153,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $response = $client->getResponse();
             static::assertTrue($response->headers->contains('Content-Type', 'application/json'));
         }
+
+        return $client;
     }
 
     /**
