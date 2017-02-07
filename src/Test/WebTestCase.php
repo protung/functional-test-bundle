@@ -18,6 +18,13 @@ use Speicher210\FunctionalTestBundle\DependencyInjection\MockerContainer;
 abstract class WebTestCase extends LiipWebTestCase
 {
     /**
+     * Array with the number of assertions against expected files per test.
+     *
+     * @var array
+     */
+    private $assertionExpectedFiles = [];
+
+    /**
      * {@inheritdoc}
      */
     protected static function createKernel(array $options = [])
@@ -132,5 +139,43 @@ abstract class WebTestCase extends LiipWebTestCase
     protected function getObjectManager(): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManager();
+    }
+
+    /**
+     * Get the expected response content file.
+     *
+     * @param string $type The file type (txt, yml, etc).
+     *
+     * @return string
+     */
+    protected function getExpectedResponseContentFile(string $type): string
+    {
+        $reflection = new \ReflectionObject($this);
+        $testName = $this->getName(false);
+        if (!isset($this->assertionExpectedFiles[$testName])) {
+            $this->assertionExpectedFiles[$testName] = 1;
+        } else {
+            $this->assertionExpectedFiles[$testName]++;
+        }
+
+        $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
+
+        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
+    }
+
+    /**
+     * Get current expected response content file.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getCurrentExpectedResponseContentFile(string $type): string
+    {
+        $reflection = new \ReflectionObject($this);
+        $testName = $this->getName(false);
+        $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
+
+        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
     }
 }

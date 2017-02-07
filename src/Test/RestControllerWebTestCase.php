@@ -17,12 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class RestControllerWebTestCase extends WebTestCase
 {
-    /**
-     * Array with the number of assertions against expected files per test.
-     *
-     * @var array
-     */
-    private $assertionExpectedFiles = [];
 
     /**
      * @var Matcher
@@ -261,44 +255,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
         }
 
         return self::$matcher;
-    }
-
-    /**
-     * Get the expected response content file.
-     *
-     * @param string $type The file type (txt, yml, etc).
-     *
-     * @return string
-     */
-    protected function getExpectedResponseContentFile(string $type): string
-    {
-        $reflection = new \ReflectionObject($this);
-        $testName = $this->getName(false);
-        if (!isset($this->assertionExpectedFiles[$testName])) {
-            $this->assertionExpectedFiles[$testName] = 1;
-        } else {
-            $this->assertionExpectedFiles[$testName]++;
-        }
-
-        $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
-
-        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
-    }
-
-    /**
-     * Get current expected response content file.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getCurrentExpectedResponseContentFile(string $type): string
-    {
-        $reflection = new \ReflectionObject($this);
-        $testName = $this->getName(false);
-        $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
-
-        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
     }
 
     /**

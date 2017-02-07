@@ -11,13 +11,13 @@
   ],
   "require": {
     "php": "~7.1",
-    "liip/functional-test-bundle": "~1.6",
-    "doctrine/orm": "~2.5",
-    "doctrine/data-fixtures": "~1.2",
-    "symfony/console": "~2.8|~3.0",
-    "guzzlehttp/psr7": "~1.3",
-    "phpunit/phpunit": "~5.7",
-    "coduo/php-matcher": "~2.1"
+    "liip/functional-test-bundle": "^1.6",
+    "doctrine/orm": "^2.5",
+    "doctrine/data-fixtures": "^1.2",
+    "symfony/console": "^2.8|^3.0",
+    "guzzlehttp/psr7": "^1.3",
+    "phpunit/phpunit": "^5.7",
+    "coduo/php-matcher": "^2.1"
   },
   "require-dev": {},
   "suggest": {
