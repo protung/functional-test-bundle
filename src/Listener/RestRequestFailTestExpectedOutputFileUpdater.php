@@ -121,7 +121,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
                 continue;
             }
 
-            if (is_array($actualField)) {
+            if (is_array($actualField) && is_array($expected[$actualKey])) {
                 $actualField = $this->updateExpectedOutput($actualField, $expected[$actualKey]);
                 continue;
             }
