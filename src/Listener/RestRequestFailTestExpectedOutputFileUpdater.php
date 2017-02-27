@@ -70,28 +70,28 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             return;
         }
         $expectedFile = $test->getCurrentExpectedResponseContentFile('json');
-        if (!file_exists($expectedFile)) {
+        if (!\file_exists($expectedFile)) {
             return;
         }
 
         // Always encode and decode in order to convert everything into an array.
-        $expected = json_decode(json_encode($e->getComparisonFailure()->getExpected()), true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        $expected = \json_decode(\json_encode($e->getComparisonFailure()->getExpected()), true);
+        if (\JSON_ERROR_NONE !== \json_last_error()) {
             // probably not expecting json.
             return;
         }
         // Always encode and decode in order to convert everything into an array.
-        $actual = json_decode(json_encode($e->getComparisonFailure()->getActual()), true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        $actual = \json_decode(\json_encode($e->getComparisonFailure()->getActual()), true);
+        if (\JSON_ERROR_NONE !== \json_last_error()) {
             // probably not expecting json.
             return;
         }
 
         try {
-            array_walk_recursive(
+            \array_walk_recursive(
                 $actual,
                 function (&$value, $key) use ($expected) {
-                    if (array_key_exists($key, $this->fields)) {
+                    if (\array_key_exists($key, $this->fields)) {
                         $value = $this->fields[$key];
                     }
                 }
@@ -99,7 +99,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
             $actual = $this->updateExpectedOutput($actual, $expected);
 
-            file_put_contents($expectedFile, json_encode($actual, JSON_PRETTY_PRINT));
+            \file_put_contents($expectedFile, \json_encode($actual, \JSON_PRETTY_PRINT));
         } catch (\Throwable $e) {
             print $e->getTraceAsString();
             exit;
@@ -121,13 +121,13 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
                 continue;
             }
 
-            if (is_array($actualField) && is_array($expected[$actualKey])) {
+            if (\is_array($actualField) && \is_array($expected[$actualKey])) {
                 $actualField = $this->updateExpectedOutput($actualField, $expected[$actualKey]);
                 continue;
             }
 
             foreach ($this->matcherPatterns as $matcherPattern) {
-                if (strpos((string)$expected[$actualKey], $matcherPattern) === 0) {
+                if (\strpos((string)$expected[$actualKey], $matcherPattern) === 0) {
                     $actualField = $expected[$actualKey];
                     break;
                 }

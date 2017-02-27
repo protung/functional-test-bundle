@@ -92,13 +92,13 @@ abstract class WebTestCase extends LiipWebTestCase
     {
         $reflection = new \ReflectionObject($this);
 
-        $fixturesFile = dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName() . '.php';
+        $fixturesFile = \dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName() . '.php';
 
         $alwaysLoadingFixtures = $this->getAlwaysLoadingFixtures();
 
-        if (file_exists($fixturesFile)) {
-            $this->loadFixtures(array_merge($alwaysLoadingFixtures, require $fixturesFile ));
-        } elseif (count($alwaysLoadingFixtures) > 0) {
+        if (\file_exists($fixturesFile)) {
+            $this->loadFixtures(\array_merge($alwaysLoadingFixtures, require $fixturesFile ));
+        } elseif (\count($alwaysLoadingFixtures) > 0) {
             $this->loadFixtures($alwaysLoadingFixtures);
         }
     }
@@ -160,7 +160,7 @@ abstract class WebTestCase extends LiipWebTestCase
 
         $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
 
-        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
+        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
     }
 
     /**
@@ -176,6 +176,6 @@ abstract class WebTestCase extends LiipWebTestCase
         $testName = $this->getName(false);
         $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
 
-        return dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
     }
 }

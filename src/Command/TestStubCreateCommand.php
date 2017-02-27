@@ -64,7 +64,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
 
         if (!$fileSystem->exists($directory)) {
             $output->writeln(
-                sprintf('Invalid directory <info>%s</info>', $directory)
+                \sprintf('Invalid directory <info>%s</info>', $directory)
             );
 
             return;
@@ -74,12 +74,12 @@ class TestStubCreateCommand extends ContainerAwareCommand
             $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
             if ($fileSystem->exists($expectedFilename)) {
                 $output->writeln(
-                    sprintf('Expected file <info>%s</info> already exists.', $expectedFilename)
+                    \sprintf('Expected file <info>%s</info> already exists.', $expectedFilename)
                 );
             } else {
                 $fileSystem->dumpFile($expectedFilename, '{}');
                 $output->writeln(
-                    sprintf('Added Expected file: <info>%s</info>', $expectedFilename)
+                    \sprintf('Added Expected file: <info>%s</info>', $expectedFilename)
                 );
             }
         }
@@ -87,28 +87,28 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $fixturesFilename = $directory . '/Fixtures/' . $name . '.php';
         if ($fileSystem->exists($fixturesFilename)) {
             $output->writeln(
-                sprintf('Fixtures file <info>%s</info> already exists.', $fixturesFilename)
+                \sprintf('Fixtures file <info>%s</info> already exists.', $fixturesFilename)
             );
         } else {
             $fileSystem->dumpFile($fixturesFilename, $this->getFixturesContent($namespace, $name, $customLoader));
             $output->writeln(
-                sprintf('Added Fixtures file: <info>%s</info>', $fixturesFilename)
+                \sprintf('Added Fixtures file: <info>%s</info>', $fixturesFilename)
             );
         }
 
         if ($customLoader) {
-            $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . ucfirst($name) . '.php';
+            $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
             if ($fileSystem->exists($fixturesLoaderFilename)) {
                 $output->writeln(
-                    sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename)
+                    \sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename)
                 );
             } else {
                 $fileSystem->dumpFile(
                     $fixturesLoaderFilename,
-                    $this->getFixturesLoaderContent($namespace, ucfirst($name))
+                    $this->getFixturesLoaderContent($namespace, \ucfirst($name))
                 );
                 $output->writeln(
-                    sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
+                    \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
                 );
             }
         }
@@ -124,15 +124,15 @@ class TestStubCreateCommand extends ContainerAwareCommand
     private function getNamespace($path)
     {
         $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
-        if (count($finder) === 0) {
+        if (\count($finder) === 0) {
             throw new \RuntimeException('No test case found in ' . $path);
         }
 
         $namespace = '';
         foreach ($finder as $splFileInfo) {
-            $matches = array();
-            if (preg_match('/(^|\s)namespace(.*?)\s*;/i', $splFileInfo->getContents(), $matches)) {
-                $namespace = trim($matches[2]);
+            $matches = [];
+            if (\preg_match('/(^|\s)namespace(.*?)\s*;/i', $splFileInfo->getContents(), $matches)) {
+                $namespace = \trim($matches[2]);
                 break;
             }
         }
@@ -149,11 +149,11 @@ class TestStubCreateCommand extends ContainerAwareCommand
      */
     private function getTestDirectoryPath($path)
     {
-        if (!is_dir($path)) {
-            $path = getcwd() . $path;
+        if (!\is_dir($path)) {
+            $path = \getcwd() . $path;
         }
 
-        return realpath($path);
+        return \realpath($path);
     }
 
     /**
@@ -174,10 +174,10 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = null;
 
         if ($customLoader) {
-            $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
+            $content[] = 'use ' . $namespace . '\\' . \ucfirst($name) . ';';
             $content[] = null;
             $content[] = 'return [';
-            $content[] = '    ' . ucfirst($name) . '::class';
+            $content[] = '    ' . \ucfirst($name) . '::class';
             $content[] = '];';
             $content[] = null;
         } else {
@@ -186,7 +186,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
             $content[] = null;
         }
 
-        return implode(PHP_EOL, $content);
+        return \implode(\PHP_EOL, $content);
     }
 
     /**
@@ -200,7 +200,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
     private function getFixturesLoaderContent($namespace, $name)
     {
         $loaderParent = $this->getContainer()->getParameter('fixture.loader.extend_class');
-        $loaderParentAlias = explode('\\', $loaderParent);
+        $loaderParentAlias = \explode('\\', $loaderParent);
 
         $content = [];
         $content[] = '<?php';
@@ -214,7 +214,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = '/**';
         $content[] = ' * Load the fixtures.';
         $content[] = ' */';
-        $content[] = 'class ' . $name . ' extends ' . end($loaderParentAlias);
+        $content[] = 'class ' . $name . ' extends ' . \end($loaderParentAlias);
         $content[] = '{';
         $content[] = '    /**';
         $content[] = '     * {@inheritDoc}';
@@ -225,6 +225,6 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = '}';
         $content[] = null;
 
-        return implode(PHP_EOL, $content);
+        return \implode(\PHP_EOL, $content);
     }
 }

@@ -14,7 +14,7 @@ class MockerContainer extends Container
     /**
      * @var array $mockedServices
      */
-    static private $mockedServices = array();
+    static private $mockedServices = [];
 
     /**
      * Takes an id of the service as the first argument.
@@ -28,10 +28,10 @@ class MockerContainer extends Container
     public function mock(string $id, $mock)
     {
         if (!$this->has($id)) {
-            throw new \InvalidArgumentException(sprintf('Cannot mock a non-existent service: "%s"', $id));
+            throw new \InvalidArgumentException(\sprintf('Cannot mock a non-existent service: "%s"', $id));
         }
 
-        if (!array_key_exists($id, self::$mockedServices)) {
+        if (!\array_key_exists($id, self::$mockedServices)) {
             self::$mockedServices[$id] = $mock;
         }
 
@@ -61,7 +61,7 @@ class MockerContainer extends Container
      */
     public function get($id, $invalidBehavior = self::EXCEPTION_ON_INVALID_REFERENCE)
     {
-        if (array_key_exists($id, self::$mockedServices)) {
+        if (\array_key_exists($id, self::$mockedServices)) {
             return self::$mockedServices[$id];
         }
 
@@ -73,7 +73,7 @@ class MockerContainer extends Container
      */
     public function has($id)
     {
-        if (array_key_exists($id, self::$mockedServices)) {
+        if (\array_key_exists($id, self::$mockedServices)) {
             return true;
         }
 

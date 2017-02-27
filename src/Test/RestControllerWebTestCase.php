@@ -143,8 +143,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
         $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $expectedFile = $this->getExpectedResponseContentFile('json');
-            if (file_exists($expectedFile)) {
-                $expected = $this->prettifyJson(file_get_contents($expectedFile));
+            if (\file_exists($expectedFile)) {
+                $expected = $this->prettifyJson(\file_get_contents($expectedFile));
             }
         }
 
@@ -207,7 +207,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         static::assertSame(
             $expectedStatusCode,
             $response->getStatusCode(),
-            sprintf(
+            \sprintf(
                 'Failed asserting response code "%s" matches expected "%s". Response body was: %s',
                 $response->getStatusCode(),
                 $expectedStatusCode,
@@ -247,7 +247,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             'errors' => null
         ];
 
-        $this->assertRequest($request, Response::HTTP_NOT_FOUND, json_encode($expected));
+        $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected));
     }
 
     /**
@@ -270,7 +270,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected function prettifyJson(string $content): ?string
     {
-        return json_encode(json_decode($content), JSON_PRETTY_PRINT);
+        return \json_encode(\json_decode($content), \JSON_PRETTY_PRINT);
     }
 
     /**
