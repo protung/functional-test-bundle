@@ -59,10 +59,8 @@ abstract class RestControllerWebAuthorizedTestCase extends RestControllerWebTest
         $request = new ServerRequest($method, $url);
 
         $expected = [
-            'error' => [
-                'code' => 401,
-                'message' => 'Unauthorized'
-            ]
+            'code' => 401,
+            'message' => 'Unauthorized'
         ];
 
         $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, \json_encode($expected));

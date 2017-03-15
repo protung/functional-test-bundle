@@ -243,8 +243,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         $expected = [
             'code' => 404,
-            'message' => 'Not Found',
-            'errors' => null
+            'message' => 'Not Found'
         ];
 
         $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected));
