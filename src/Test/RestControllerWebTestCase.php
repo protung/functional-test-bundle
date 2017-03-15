@@ -231,6 +231,25 @@ abstract class RestControllerWebTestCase extends WebTestCase
     }
 
     /**
+     * Assert that a request to an URL returns 403.
+     *
+     * @param string $path The API path to test.
+     * @param string $method The HTTP verb.
+     * @param array $content The POST content.
+     */
+    protected function assertRestRequestReturns403(string $path, string $method, array $content = [])
+    {
+        $request = (new ServerRequest($method, $path))->withParsedBody($content);
+
+        $expected = [
+            'code' => 403,
+            'message' => 'Forbidden'
+        ];
+
+        $this->assertRequest($request, Response::HTTP_FORBIDDEN, \json_encode($expected));
+    }
+
+    /**
      * Assert that a request to an URL returns 404.
      *
      * @param string $path The API path to test.
