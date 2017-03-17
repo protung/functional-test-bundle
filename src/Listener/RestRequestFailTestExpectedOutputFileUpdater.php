@@ -5,11 +5,12 @@ declare(strict_types = 1);
 namespace Speicher210\FunctionalTestBundle\Listener;
 
 use Exception;
-use PHPUnit_Framework_AssertionFailedError;
-use PHPUnit_Framework_ExpectationFailedException;
-use PHPUnit_Framework_Test;
-use PHPUnit_Framework_TestListener as TestListenerInterface;
-use PHPUnit_Framework_TestSuite;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestListener as TestListenerInterface;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\Warning;
 use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
 
 /**
@@ -24,14 +25,14 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
      *
      * @var array
      */
-    private $fields = [];
+    private $fields;
 
     /**
      * Array of patterns that should be kept when updating.
      *
      * @var array
      */
-    private $matcherPatterns = [];
+    private $matcherPatterns;
 
     /**
      * @param array $fields The fields to update in the expected output.
@@ -52,7 +53,8 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             '@wildcard@',
             '@uuid@'
         ]
-    ) {
+    )
+    {
         $this->fields = $fields;
         $this->matcherPatterns = $matcherPatterns;
     }
@@ -60,9 +62,9 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
+    public function addFailure(Test $test, AssertionFailedError $e, $time)
     {
-        if (!$e instanceof PHPUnit_Framework_ExpectationFailedException || $e->getComparisonFailure() === null) {
+        if (!$e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
             return;
         }
 
@@ -140,7 +142,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addError(Test $test, Exception $e, $time)
     {
         // do nothing
     }
@@ -148,7 +150,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addWarning(Test $test, Warning $e, $time)
     {
         // do nothing
     }
@@ -156,7 +158,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addIncompleteTest(Test $test, Exception $e, $time)
     {
         // do nothing
     }
@@ -164,7 +166,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    public function addRiskyTest(Test $test, Exception $e, $time)
     {
         // do nothing
     }
@@ -172,7 +174,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function addSkippedTest(Test $test, Exception $e, $time)
     {
         // do nothing
     }
@@ -180,7 +182,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    public function startTestSuite(TestSuite $suite)
     {
         // do nothing
     }
@@ -188,7 +190,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function startTest(PHPUnit_Framework_Test $test)
+    public function endTestSuite(TestSuite $suite)
     {
         // do nothing
     }
@@ -196,7 +198,15 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function endTest(PHPUnit_Framework_Test $test, $time)
+    public function startTest(Test $test)
+    {
+        // do nothing
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function endTest(Test $test, $time)
     {
         // do nothing
     }
