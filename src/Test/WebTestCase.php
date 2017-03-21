@@ -97,7 +97,7 @@ abstract class WebTestCase extends LiipWebTestCase
         $alwaysLoadingFixtures = $this->getAlwaysLoadingFixtures();
 
         if (\file_exists($fixturesFile)) {
-            $this->loadFixtures(\array_merge($alwaysLoadingFixtures, require $fixturesFile ));
+            $this->loadFixtures(\array_merge($alwaysLoadingFixtures, require $fixturesFile));
         } elseif (\count($alwaysLoadingFixtures) > 0) {
             $this->loadFixtures($alwaysLoadingFixtures);
         }
