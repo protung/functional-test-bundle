@@ -63,6 +63,10 @@ abstract class WebTestCase extends LiipWebTestCase
             $connection->close();
         }
 
+        if ($container instanceof MockerContainer) {
+            $container->unmockAll();
+        }
+
         parent::tearDown();
 
         $reflection = new \ReflectionObject($this);

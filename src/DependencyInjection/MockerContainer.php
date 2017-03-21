@@ -56,16 +56,6 @@ class MockerContainer extends Container
         self::$mockedServices = [];
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function reset()
-    {
-        parent::reset();
-        $this->unmockAll();
-    }
-
     /**
      * {@inheritdoc}
      */
