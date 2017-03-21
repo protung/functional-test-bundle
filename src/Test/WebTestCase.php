@@ -55,18 +55,15 @@ abstract class WebTestCase extends LiipWebTestCase
      */
     protected function tearDown()
     {
-        parent::tearDown();
-
         $container = $this->getContainer();
-        if ($container instanceof MockerContainer) {
-            $container->unmockAll();
-        }
 
         /** @var Connection[] $connections */
         $connections = $container->get('doctrine')->getConnections();
         foreach ($connections as $connection) {
             $connection->close();
         }
+
+        parent::tearDown();
     }
 
     /**
