@@ -20,6 +20,9 @@
     "coduo/php-matcher": "^2.1"
   },
   "require-dev": {},
+  "conflict": {
+    "liip/functional-test-bundle": "^1.7.1"
+  },
   "suggest": {
     "lstrojny/phpunit-clever-and-smart": "To run failed tests at the beginning"
   },
