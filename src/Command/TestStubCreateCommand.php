@@ -199,7 +199,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
      */
     private function getFixturesLoaderContent($namespace, $name)
     {
-        $loaderParent = $this->getContainer()->getParameter('fixture.loader.extend_class');
+        $loaderParent = $this->getContainer()->getParameter('sp210.functional_test.fixture.loader.extend_class');
         $loaderParentAlias = \explode('\\', $loaderParent);
 
         $content = [];
