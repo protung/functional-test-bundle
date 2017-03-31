@@ -69,6 +69,13 @@ abstract class WebTestCase extends LiipWebTestCase
 
         parent::tearDown();
 
+        $this->cleanupPHPUnit();
+    }
+
+    /**
+     * Unset test case properties to speed up GC.
+     */
+    protected function cleanupPHPUnit() {
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
             if (!$property->isStatic() && 0 !== \strpos($property->getDeclaringClass()->getName(), 'PHPUnit\\')) {
