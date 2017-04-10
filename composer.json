@@ -15,7 +15,7 @@
     "doctrine/orm": "^2.5",
     "doctrine/data-fixtures": "^1.2",
     "symfony/console": "^3.0",
-    "phpunit/phpunit": "^6.0",
+    "phpunit/phpunit": "^6.1",
     "coduo/php-matcher": "^2.1"
   },
   "require-dev": {},
