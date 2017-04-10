@@ -75,7 +75,8 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * Unset test case properties to speed up GC.
      */
-    protected function cleanupPHPUnit() {
+    protected function cleanupPHPUnit()
+    {
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
             if (!$property->isStatic() && 0 !== \strpos($property->getDeclaringClass()->getName(), 'PHPUnit\\')) {
@@ -193,5 +194,28 @@ abstract class WebTestCase extends LiipWebTestCase
         $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
 
         return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+    }
+
+    /**
+     * @param string $expected Binary content of expected image.
+     * @param string $actual Binary content of actual image.
+     * @param float $threshold Similarity threshold.
+     * @param string $message Fail message.
+     */
+    protected function assertImagesSimilarity(
+        string $expected,
+        string $actual,
+        float $threshold = 0,
+        string $message = 'Failed asserting that images are similar.'
+    )
+    {
+        $expectedImagick = new \Imagick();
+        $expectedImagick->readImageBlob($expected);
+        $actualImagick = new \Imagick();
+        $actualImagick->readImageBlob($actual);
+
+        $result = $expectedImagick->compareImages($actualImagick, \Imagick::METRIC_MEANSQUAREERROR);
+
+        static::assertLessThanOrEqual($threshold, $result[1], $message);
     }
 }

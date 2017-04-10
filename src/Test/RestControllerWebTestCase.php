@@ -95,8 +95,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
         array $server = []
-    )
-    {
+    ) {
         $request = Request::create(
             $path,
             Request::METHOD_POST,
@@ -126,8 +125,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    )
-    {
+    ) {
         $request = Request::create(
             $path,
             Request::METHOD_PATCH,
@@ -157,8 +155,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    )
-    {
+    ) {
         $request = Request::create(
             $path,
             Request::METHOD_PUT,
@@ -208,7 +205,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             }
         }
 
-        $client = $this->assertRequest($request, $expectedStatusCode, $expected);
+        $client = $this->assertRequest($request, $expectedStatusCode, $expected, 'application/json');
         $this->getObjectManager()->clear();
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
@@ -224,16 +221,17 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param Request $request The request to simulate.
      * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param string $expectedOutput The expected output.
+     * @param string $expectedOutputContent The expected output content.
+     * @param string|null $expectedOutputContentType
      *
-     * @return \Symfony\Bundle\FrameworkBundle\Client
+     * @return Client
      */
     protected function assertRequest(
         Request $request,
         int $expectedStatusCode = Response::HTTP_OK,
-        ?string $expectedOutput = null
-    )
-    {
+        string $expectedOutputContent = null,
+        string $expectedOutputContentType = null
+    ) {
         $client = static::createClient();
 
         $client->request(
@@ -246,7 +244,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
         );
 
         $response = $client->getResponse();
-        $this->assertRequestResponse($response, $expectedStatusCode, $expectedOutput);
+        $this->assertRequestResponse(
+            $response,
+            $expectedStatusCode,
+            $expectedOutputContent,
+            $expectedOutputContentType
+        );
 
         return $client;
     }
@@ -256,10 +259,15 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param Response $response The response.
      * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param string $expectedOutput The expected output.
+     * @param string $expectedOutputContent The expected output.
+     * @param null|string $expectedOutputContentType
      */
-    protected function assertRequestResponse(Response $response, int $expectedStatusCode, ?string $expectedOutput)
-    {
+    protected function assertRequestResponse(
+        Response $response,
+        int $expectedStatusCode,
+        ?string $expectedOutputContent,
+        ?string $expectedOutputContentType
+    ) {
         static::assertSame(
             $expectedStatusCode,
             $response->getStatusCode(),
@@ -271,18 +279,43 @@ abstract class RestControllerWebTestCase extends WebTestCase
             )
         );
 
-        if ($expectedOutput !== null) {
-            $matcher = static::getMatcher();
-
-            $actual = $response->getContent();
-            $result = $matcher->match($actual, $expectedOutput);
-            if ($result !== true) {
-                $difference = $matcher->getError();
-
-                static::assertJsonStringEqualsJsonString($expectedOutput, $actual, $difference);
+        if ($expectedOutputContent !== null) {
+            $actualContentType = $response->headers->get('Content-Type');
+            static::assertSame(
+                $expectedOutputContentType,
+                $actualContentType,
+                \sprintf('Failed asserting response content type matches "%s"', $expectedOutputContentType)
+            );
+            switch ($actualContentType) {
+                case 'image/png';
+                case 'image/jpeg';
+                case 'image/jpg';
+                    $this->assertImagesSimilarity($expectedOutputContent, $response->getContent());
+                    break;
+                case 'application/json':
+                default:
+                    $this->assertJsonContentOutput($response, $expectedOutputContent);
+                    break;
             }
         } else {
             static::assertEmpty($response->getContent());
+        }
+    }
+
+    /**
+     * @param Response $response
+     * @param string $expectedOutputContent
+     */
+    private function assertJsonContentOutput(Response $response, string $expectedOutputContent)
+    {
+        $matcher = static::getMatcher();
+
+        $actual = $response->getContent();
+        $result = $matcher->match($actual, $expectedOutputContent);
+        if ($result !== true) {
+            $difference = $matcher->getError();
+
+            static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
         }
     }
 
@@ -306,7 +339,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             'message' => 'Forbidden'
         ];
 
-        $this->assertRequest($request, Response::HTTP_FORBIDDEN, \json_encode($expected));
+        $this->assertRequest($request, Response::HTTP_FORBIDDEN, \json_encode($expected), 'application/json');
     }
 
     /**
@@ -329,7 +362,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             'message' => 'Unauthorized'
         ];
 
-        $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, \json_encode($expected));
+        $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, \json_encode($expected), 'application/json');
     }
 
     /**
@@ -352,7 +385,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             'message' => 'Not Found'
         ];
 
-        $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected));
+        $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected), 'application/json');
     }
 
     /**
