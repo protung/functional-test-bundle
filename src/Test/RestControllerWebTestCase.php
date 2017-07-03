@@ -416,11 +416,24 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return UploadedFile
      */
+    protected function getRequestUploadPdfFile(): UploadedFile
+    {
+        return new UploadedFile(
+            __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
+            'fake_pdf.pdf'
+        );
+    }
+
+    /**
+     * Get a fake text upload file.
+     *
+     * @return UploadedFile
+     */
     protected function getRequestUploadTextFile(): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
-            'fake_text.png'
+            'fake_text.txt'
         );
     }
 
