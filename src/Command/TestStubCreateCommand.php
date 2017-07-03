@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 
 /**
  * Command to create necessary files and directories for a REST functional test.
@@ -121,8 +122,9 @@ class TestStubCreateCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    private function getNamespace($path)
+    private function getNamespace($path): string
     {
+        /** @var FilenameFilterIterator|\Countable $finder */
         $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
         if (\count($finder) === 0) {
             throw new \RuntimeException('No test case found in ' . $path);
@@ -147,7 +149,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    private function getTestDirectoryPath($path)
+    private function getTestDirectoryPath($path): string
     {
         if (!\is_dir($path)) {
             $path = \getcwd() . $path;
@@ -165,7 +167,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    private function getFixturesContent($namespace, $name, $customLoader)
+    private function getFixturesContent($namespace, $name, $customLoader): string
     {
         $content = [];
         $content[] = '<?php';
@@ -197,7 +199,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
      *
      * @return string
      */
-    private function getFixturesLoaderContent($namespace, $name)
+    private function getFixturesLoaderContent($namespace, $name): string
     {
         $loaderParent = $this->getContainer()->getParameter('sp210.functional_test.fixture.loader.extend_class');
         $loaderParentAlias = \explode('\\', $loaderParent);

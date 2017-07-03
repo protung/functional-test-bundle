@@ -75,7 +75,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * Unset test case properties to speed up GC.
      */
-    protected function cleanupPHPUnit()
+    protected function cleanupPHPUnit(): void
     {
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
@@ -92,7 +92,7 @@ abstract class WebTestCase extends LiipWebTestCase
      * @param string $idService The service ID.
      * @param mixed $mock The mock.
      */
-    protected function mockContainerService(string $idService, $mock)
+    protected function mockContainerService(string $idService, $mock): void
     {
         $container = $this->getContainer();
         if (!$container instanceof MockerContainer) {
@@ -105,7 +105,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * Prepare the text fixtures and the expected content file.
      */
-    protected function prepareTestFixtures()
+    protected function prepareTestFixtures(): void
     {
         $reflection = new \ReflectionObject($this);
 
@@ -137,7 +137,7 @@ abstract class WebTestCase extends LiipWebTestCase
      *
      * @throws \Doctrine\ORM\Tools\ToolsException
      */
-    protected function resetDatabaseSchema(EntityManagerInterface $em)
+    protected function resetDatabaseSchema(EntityManagerInterface $em): void
     {
         $metaData = $em->getMetadataFactory()->getAllMetadata();
 
@@ -207,7 +207,7 @@ abstract class WebTestCase extends LiipWebTestCase
         string $actual,
         float $threshold = 0,
         string $message = 'Failed asserting that images are similar.'
-    )
+    ): void
     {
         $expectedImagick = new \Imagick();
         $expectedImagick->readImageBlob($expected);

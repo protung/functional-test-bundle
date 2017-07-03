@@ -35,7 +35,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run before loading the fixtures.
      */
-    protected function beforeLoad()
+    protected function beforeLoad(): void
     {
     }
 
@@ -54,7 +54,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run after loading the fixtures.
      */
-    protected function afterLoad()
+    protected function afterLoad(): void
     {
         $this->manager->flush();
         $this->manager->clear();
@@ -63,7 +63,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Load data fixtures.
      */
-    abstract protected function doLoad();
+    abstract protected function doLoad(): void;
 
     /**
      * @return ObjectManager
@@ -78,7 +78,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
      *
      * @param mixed $resource The resource for which to remove the ACL.
      */
-    protected function removeResourceAcl($resource)
+    protected function removeResourceAcl($resource): void
     {
         $this->manager->flush();
 

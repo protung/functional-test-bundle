@@ -267,7 +267,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode,
         ?string $expectedOutputContent,
         ?string $expectedOutputContentType
-    ) {
+    ): void {
         static::assertSame(
             $expectedStatusCode,
             $response->getStatusCode(),
@@ -306,7 +306,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param Response $response
      * @param string $expectedOutputContent
      */
-    private function assertJsonContentOutput(Response $response, string $expectedOutputContent)
+    private function assertJsonContentOutput(Response $response, string $expectedOutputContent): void
     {
         $matcher = static::getMatcher();
 
@@ -326,7 +326,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $method The HTTP verb.
      * @param array $content The POST content.
      */
-    protected function assertRestRequestReturns403(string $path, string $method, array $content = [])
+    protected function assertRestRequestReturns403(string $path, string $method, array $content = []): void
     {
         $request = Request::create(
             $path,
@@ -348,7 +348,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $url The URL to call.
      * @param string $method The HTTP verb.
      */
-    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method)
+    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method): void
     {
         static::$authentication = self::AUTHENTICATION_NONE;
 
@@ -372,7 +372,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $method The HTTP verb.
      * @param array $content The POST content.
      */
-    protected function assertRestRequestReturns404(string $path, string $method, array $content = [])
+    protected function assertRestRequestReturns404(string $path, string $method, array $content = []): void
     {
         $request = Request::create(
             $path,
@@ -414,39 +414,42 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Get a fake text upload file.
      *
+     * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadPdfFile(): UploadedFile
+    protected function getRequestUploadPdfFile($originalName = 'fake_pdf.pdf'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
-            'fake_pdf.pdf'
+            $originalName
         );
     }
 
     /**
      * Get a fake text upload file.
      *
+     * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadTextFile(): UploadedFile
+    protected function getRequestUploadTextFile($originalName = 'fake_text.txt'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
-            'fake_text.txt'
+            $originalName
         );
     }
 
     /**
      * Get a fake image upload file.
      *
+     * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadImageFile(): UploadedFile
+    protected function getRequestUploadImageFile($originalName = 'fake_image.png'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_image.png',
-            'fake_image.png'
+            $originalName
         );
     }
 

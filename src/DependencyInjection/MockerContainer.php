@@ -43,7 +43,7 @@ class MockerContainer extends Container
      *
      * @param string $id
      */
-    public function unmock(string $id)
+    public function unmock(string $id): void
     {
         unset(self::$mockedServices[$id]);
     }
@@ -51,7 +51,7 @@ class MockerContainer extends Container
     /**
      * Unmock all mocked services.
      */
-    public function unmockAll()
+    public function unmockAll(): void
     {
         self::$mockedServices = [];
     }
@@ -71,7 +71,7 @@ class MockerContainer extends Container
     /**
      * {@inheritdoc}
      */
-    public function has($id)
+    public function has($id): bool
     {
         if (\array_key_exists($id, self::$mockedServices)) {
             return true;
