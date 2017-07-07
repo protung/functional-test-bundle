@@ -221,7 +221,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = '    /**';
         $content[] = '     * {@inheritDoc}';
         $content[] = '     */';
-        $content[] = '    public function doLoad()';
+        $content[] = '    public function doLoad(): void';
         $content[] = '    {';
         $content[] = '    }';
         $content[] = '}';

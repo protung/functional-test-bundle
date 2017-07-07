@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class RestControllerWebTestCase extends WebTestCase
 {
-    const AUTHENTICATION_NONE = null;
+    public const AUTHENTICATION_NONE = null;
 
     /**
      * @var Matcher
