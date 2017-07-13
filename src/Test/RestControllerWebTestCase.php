@@ -315,6 +315,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
         if ($result !== true) {
             $difference = $matcher->getError();
 
+            // Quick check if actual is valid JSON and if it is prettify it.
+            if (\json_decode($actual) !== null) {
+                $actual = $this->prettifyJson($actual);
+            }
+
             static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
         }
     }
