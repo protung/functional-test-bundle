@@ -45,9 +45,8 @@ abstract class WebTestCase extends LiipWebTestCase
         $emDefault = $this->getContainer()->get('doctrine.orm.entity_manager');
         $this->resetDatabaseSchema($emDefault);
 
-        $this->postFixtureSetup();
-
         $this->prepareTestFixtures();
+        $this->postFixtureSetup();
     }
 
     /**
