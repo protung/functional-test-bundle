@@ -26,7 +26,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * The authentication to use.
      *
-     * @var string
+     * @var string|null
      */
     protected static $authentication;
 
@@ -174,7 +174,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $path The API path to test.
      * @param integer $expectedStatusCode The expected HTTP response code.
      *
-     * @return \Symfony\Bundle\FrameworkBundle\Client
+     * @return Client
      */
     protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_OK)
     {
@@ -422,7 +422,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadPdfFile($originalName = 'fake_pdf.pdf'): UploadedFile
+    protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
@@ -436,7 +436,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadTextFile($originalName = 'fake_text.txt'): UploadedFile
+    protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
@@ -450,7 +450,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadImageFile($originalName = 'fake_image.png'): UploadedFile
+    protected function getRequestUploadImageFile(string $originalName = 'fake_image.png'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_image.png',
@@ -472,6 +472,21 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/' . $fileName,
+            $originalName
+        );
+    }
+
+    /**
+     * Get a fake video upload file.
+     *
+     * @param string $originalName The name for the original file should have.
+     *
+     * @return UploadedFile
+     */
+    protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg'): UploadedFile
+    {
+        return new UploadedFile(
+            __DIR__ . '/Fixtures/Resources/fake_video.mpeg',
             $originalName
         );
     }
