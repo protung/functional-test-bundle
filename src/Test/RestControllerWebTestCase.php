@@ -18,6 +18,19 @@ abstract class RestControllerWebTestCase extends WebTestCase
 {
     public const AUTHENTICATION_NONE = null;
 
+    protected const IMAGE_TYPE_BMP = 'bmp';
+    protected const IMAGE_TYPE_GIF = 'gif';
+    protected const IMAGE_TYPE_JPG = 'jpg';
+    protected const IMAGE_TYPE_PNG = 'png';
+    protected const IMAGE_TYPE_SVG = 'svg';
+    private const IMAGE_TYPES = [
+        self::IMAGE_TYPE_BMP,
+        self::IMAGE_TYPE_GIF,
+        self::IMAGE_TYPE_JPG,
+        self::IMAGE_TYPE_PNG,
+        self::IMAGE_TYPE_SVG
+    ];
+
     /**
      * @var Matcher
      */
@@ -447,13 +460,23 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Get a fake image upload file.
      *
+     * @param string $imageType The image type to set. Must be one of the IMAGE_TYPE_* constants.
      * @param string $originalName The name for the original file should have.
      * @return UploadedFile
      */
-    protected function getRequestUploadImageFile(string $originalName = 'fake_image.png'): UploadedFile
-    {
+    protected function getRequestUploadImageFile(
+        string $imageType = self::IMAGE_TYPE_PNG,
+        string $originalName = null
+    ): UploadedFile {
+        if (!\in_array($imageType, self::IMAGE_TYPES, true)) {
+            throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
+        }
+
+        $originalName = $originalName ?: 'fake_image';
+        $originalName .= '.' . $imageType;
+
         return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/fake_image.png',
+            __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType,
             $originalName
         );
     }
