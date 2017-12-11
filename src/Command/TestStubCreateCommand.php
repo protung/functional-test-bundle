@@ -21,7 +21,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('sp210:test:stub:create')

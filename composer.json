@@ -14,7 +14,7 @@
     "liip/functional-test-bundle": "^1.6",
     "doctrine/orm": "^2.5",
     "doctrine/data-fixtures": "^1.2",
-    "symfony/console": "^3.0",
+    "symfony/console": "^3.0|^4.0",
     "phpunit/phpunit": "^6.1",
     "coduo/php-matcher": "^2.1"
   },
