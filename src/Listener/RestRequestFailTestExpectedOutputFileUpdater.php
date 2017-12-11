@@ -4,13 +4,11 @@ declare(strict_types = 1);
 
 namespace Speicher210\FunctionalTestBundle\Listener;
 
-use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener as TestListenerInterface;
-use PHPUnit\Framework\TestSuite;
-use PHPUnit\Framework\Warning;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
 use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
 
 /**
@@ -18,6 +16,8 @@ use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
  */
 final class RestRequestFailTestExpectedOutputFileUpdater implements TestListenerInterface
 {
+    use TestListenerDefaultImplementation;
+
     /**
      * Fields that will always be updated with a fixed value.
      *
@@ -53,8 +53,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             '@wildcard@',
             '@uuid@'
         ]
-    )
-    {
+    ) {
         $this->fields = $fields;
         $this->matcherPatterns = $matcherPatterns;
     }
@@ -62,7 +61,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addFailure(Test $test, AssertionFailedError $e, $time)
+    public function addFailure(Test $test, AssertionFailedError $e, $time): void
     {
         if (!$e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
             return;
@@ -137,77 +136,5 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         }
 
         return $actual;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addError(Test $test, Exception $e, $time)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addWarning(Test $test, Warning $e, $time)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addIncompleteTest(Test $test, Exception $e, $time)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addRiskyTest(Test $test, Exception $e, $time)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addSkippedTest(Test $test, Exception $e, $time)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function startTestSuite(TestSuite $suite)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function endTestSuite(TestSuite $suite)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function startTest(Test $test)
-    {
-        // do nothing
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function endTest(Test $test, $time)
-    {
-        // do nothing
     }
 }
