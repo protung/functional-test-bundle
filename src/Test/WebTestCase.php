@@ -10,13 +10,15 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Liip\FunctionalTestBundle\Test\WebTestCase as LiipWebTestCase;
-use Speicher210\FunctionalTestBundle\DependencyInjection\MockerContainer;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Abstract class for test cases.
  */
 abstract class WebTestCase extends LiipWebTestCase
 {
+    private static $mockedServices = [];
+
     /**
      * Array with the number of assertions against expected files per test.
      *
@@ -37,6 +39,28 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * {@inheritdoc}
      */
+    protected static function createClient(array $options = [], array $server = [])
+    {
+        $client = parent::createClient($options, $server);
+
+        $container = $client->getContainer();
+        if (!$container instanceof ContainerInterface) {
+            throw new \RuntimeException('Unknown container.');
+        }
+        foreach (self::$mockedServices as $id => $mock) {
+            if (!$container->has($id)) {
+                throw new \InvalidArgumentException(\sprintf('Cannot mock a non-existent service: "%s"', $id));
+            }
+
+            $container->set($id, $mock);
+        }
+
+        return $client;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
@@ -47,6 +71,8 @@ abstract class WebTestCase extends LiipWebTestCase
 
         $this->prepareTestFixtures();
         $this->postFixtureSetup();
+
+        self::$mockedServices = [];
     }
 
     /**
@@ -60,10 +86,6 @@ abstract class WebTestCase extends LiipWebTestCase
         $connections = $container->get('doctrine')->getConnections();
         foreach ($connections as $connection) {
             $connection->close();
-        }
-
-        if ($container instanceof MockerContainer) {
-            $container->unmockAll();
         }
 
         parent::tearDown();
@@ -93,12 +115,7 @@ abstract class WebTestCase extends LiipWebTestCase
      */
     protected function mockContainerService(string $idService, $mock): void
     {
-        $container = $this->getContainer();
-        if (!$container instanceof MockerContainer) {
-            throw new \RuntimeException('Container must be an instance of ' . MockerContainer::class);
-        }
-
-        $container->mock($idService, $mock);
+        self::$mockedServices[$idService] = $mock;
     }
 
     /**
