@@ -6,6 +6,8 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Coduo\PHPMatcher\Matcher;
+use org\bovigo\vfs\content\LargeFileContent;
+use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -427,6 +429,23 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function prettifyJson(string $content): ?string
     {
         return \json_encode(\json_decode($content), \JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Get a fake file containing only empty space of a certain size.
+     *
+     * @param int $bytes
+     * @param string $originalName The name for the original file should have.
+     * @return UploadedFile
+     */
+    protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt'): UploadedFile
+    {
+        $root = vfsStream::setup();
+        $largeFile = vfsStream::newFile('large.txt')
+            ->withContent(new LargeFileContent($bytes))
+            ->at($root);
+
+        return new UploadedFile($largeFile->url(), $originalName);
     }
 
     /**
