@@ -302,9 +302,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
                 \sprintf('Failed asserting response content type matches "%s"', $expectedOutputContentType)
             );
             switch ($actualContentType) {
-                case 'image/png';
-                case 'image/jpeg';
-                case 'image/jpg';
+                case 'image/png':
+                case 'image/jpeg':
+                case 'image/jpg':
                     $this->assertImagesSimilarity($expectedOutputContent, $response->getContent());
                     break;
                 case 'application/json':

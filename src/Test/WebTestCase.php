@@ -223,8 +223,7 @@ abstract class WebTestCase extends LiipWebTestCase
         string $actual,
         float $threshold = 0,
         string $message = 'Failed asserting that images are similar.'
-    ): void
-    {
+    ): void {
         $expectedImagick = new \Imagick();
         $expectedImagick->readImageBlob($expected);
         $actualImagick = new \Imagick();

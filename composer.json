@@ -19,7 +19,9 @@
     "coduo/php-matcher": "^2.1",
     "mikey179/vfsStream": "^1.3"
   },
-  "require-dev": {},
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.2"
+  },
   "conflict": {
     "liip/functional-test-bundle": "1.7.1"
   },
@@ -31,6 +33,10 @@
     "psr-4": {
       "Speicher210\\FunctionalTestBundle\\": "src"
     }
+  },
+  "scripts": {
+    "cs-check": "phpcs -p",
+    "cs-fix": "phpcbf -p"
   },
   "extra": {
     "branch-alias": {
