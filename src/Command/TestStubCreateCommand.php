@@ -216,7 +216,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = '/**';
         $content[] = ' * Load the fixtures.';
         $content[] = ' */';
-        $content[] = 'class ' . $name . ' extends ' . \end($loaderParentAlias);
+        $content[] = 'final class ' . $name . ' extends ' . \end($loaderParentAlias);
         $content[] = '{';
         $content[] = '    /**';
         $content[] = '     * {@inheritDoc}';
