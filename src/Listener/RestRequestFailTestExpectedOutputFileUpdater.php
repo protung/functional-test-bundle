@@ -76,11 +76,17 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         }
 
         // Always encode and decode in order to convert everything into an array.
-        $expected = \json_decode(\json_encode($e->getComparisonFailure()->getExpected()), true);
-        if (\JSON_ERROR_NONE !== \json_last_error()) {
-            // probably not expecting json.
-            return;
+        $expected = $e->getComparisonFailure()->getExpected();
+        if ($expected !== null) {
+            $expected = \json_decode(\json_encode($expected), true);
+            if (\JSON_ERROR_NONE !== \json_last_error()) {
+                // probably not expecting json.
+                return;
+            }
+        } else {
+            $expected = [];
         }
+
         // Always encode and decode in order to convert everything into an array.
         $actual = \json_decode(\json_encode($e->getComparisonFailure()->getActual()), true);
         if (\JSON_ERROR_NONE !== \json_last_error()) {
