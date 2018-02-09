@@ -61,7 +61,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * {@inheritdoc}
      */
-    public function addFailure(Test $test, AssertionFailedError $e, $time): void
+    public function addFailure(Test $test, AssertionFailedError $e, float $time): void
     {
         if (!$e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
             return;
@@ -91,7 +91,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         try {
             \array_walk_recursive(
                 $actual,
-                function (&$value, $key) use ($expected) {
+                function (&$value, $key) {
                     if (\array_key_exists($key, $this->fields)) {
                         $value = $this->fields[$key];
                     }
