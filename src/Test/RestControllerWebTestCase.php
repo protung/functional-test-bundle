@@ -191,7 +191,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return Client
      */
-    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_OK)
+    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT)
     {
         $request = Request::create(
             $path,
