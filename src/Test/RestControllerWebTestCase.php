@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
@@ -481,11 +481,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @param string $imageType The image type to set. Must be one of the IMAGE_TYPE_* constants.
      * @param string $originalName The name for the original file should have.
+     * @param array|null $imageSize Example: ['width' => 10, 'height' => 20].
      * @return UploadedFile
      */
     protected function getRequestUploadImageFile(
         string $imageType = self::IMAGE_TYPE_PNG,
-        string $originalName = null
+        string $originalName = null,
+        array $imageSize = null
     ): UploadedFile {
         if (!\in_array($imageType, self::IMAGE_TYPES, true)) {
             throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
@@ -494,10 +496,24 @@ abstract class RestControllerWebTestCase extends WebTestCase
         $originalName = $originalName ?: 'fake_image';
         $originalName .= '.' . $imageType;
 
-        return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType,
-            $originalName
-        );
+        if ($imageSize === null) {
+            $filePath = __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType;
+        } else {
+            if (!\extension_loaded('imagick')) {
+                throw new \RuntimeException('Imagick extension is required to resize the image.');
+            }
+            if (!isset($imageSize['width'], $imageSize['height'])) {
+                throw new \InvalidArgumentException('The "width" and "height" must be specified for the size of the image.');
+            }
+
+            $image = new \Imagick();
+            $image->newImage($imageSize['width'], $imageSize['height'], new \ImagickPixel('#ffffff'));
+            $image->setImageFormat($imageType);
+            $filePath = \tempnam(\sys_get_temp_dir(), $this->getName(false)) . '.' . $imageType;
+            \file_put_contents($filePath, $image->getImageBlob());
+        }
+
+        return new UploadedFile($filePath, $originalName);
     }
 
     /**

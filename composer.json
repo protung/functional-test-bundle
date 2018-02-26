@@ -26,8 +26,7 @@
     "liip/functional-test-bundle": "1.7.1"
   },
   "suggest": {
-    "ext-imagick": "To assert images",
-    "lstrojny/phpunit-clever-and-smart": "To run failed tests at the beginning"
+    "ext-imagick": "To assert images and create fixture images"
   },
   "autoload": {
     "psr-4": {
