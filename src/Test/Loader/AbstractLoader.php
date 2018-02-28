@@ -42,7 +42,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;
 

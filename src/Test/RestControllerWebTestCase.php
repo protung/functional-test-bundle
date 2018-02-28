@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
@@ -72,8 +72,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return Client
      */
-    protected function assertRestGetPath(string $path, int $expectedStatusCode = Response::HTTP_OK, array $server = [])
-    {
+    protected function assertRestGetPath(
+        string $path,
+        int $expectedStatusCode = Response::HTTP_OK,
+        array $server = []
+    ): Client {
         $request = Request::create(
             $path,
             Request::METHOD_GET,
@@ -103,7 +106,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
         array $server = []
-    ) {
+    ): Client {
         $request = Request::create(
             $path,
             Request::METHOD_POST,
@@ -133,7 +136,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) {
+    ): Client {
         $request = Request::create(
             $path,
             Request::METHOD_PATCH,
@@ -163,7 +166,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) {
+    ): Client {
         $request = Request::create(
             $path,
             Request::METHOD_PUT,
@@ -184,7 +187,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return Client
      */
-    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT)
+    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT): Client
     {
         $request = Request::create(
             $path,
@@ -202,7 +205,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
      *
      * @return Client
      */
-    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK)
+    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK): Client
     {
         $expectedFile = null;
         $expected = null;
@@ -239,7 +242,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         string $expectedOutputContent = null,
         string $expectedOutputContentType = null
-    ) {
+    ): Client {
         $client = static::createClient();
 
         $client->request(

@@ -12,7 +12,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Liip\FunctionalTestBundle\Test\WebTestCase as LiipWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Abstract class for test cases.
@@ -36,7 +38,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = [])
+    protected static function createKernel(array $options = []): KernelInterface
     {
         $options['debug'] = false;
 
@@ -46,7 +48,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createClient(array $options = [], array $server = [])
+    protected static function createClient(array $options = [], array $server = []): Client
     {
         $client = parent::createClient($options, $server);
 
