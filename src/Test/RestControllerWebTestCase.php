@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
-use Coduo\PHPMatcher\Factory\SimpleFactory;
-use Coduo\PHPMatcher\Matcher;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -32,11 +30,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
         self::IMAGE_TYPE_PNG,
         self::IMAGE_TYPE_SVG
     ];
-
-    /**
-     * @var Matcher
-     */
-    private static $matcher;
 
     /**
      * The authentication to use.
@@ -406,19 +399,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
         ];
 
         $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected), 'application/json');
-    }
-
-    /**
-     * @return Matcher
-     */
-    public static function getMatcher(): Matcher
-    {
-        if (self::$matcher === null) {
-            $factory = new SimpleFactory();
-            self::$matcher = $factory->createMatcher();
-        }
-
-        return self::$matcher;
     }
 
     /**

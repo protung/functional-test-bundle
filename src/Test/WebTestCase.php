@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
+use Coduo\PHPMatcher\Factory\SimpleFactory;
+use Coduo\PHPMatcher\Matcher;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
@@ -18,6 +20,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebTestCase extends LiipWebTestCase
 {
     private static $mockedServices = [];
+
+    /**
+     * @var Matcher
+     */
+    private static $matcher;
 
     /**
      * Array with the number of assertions against expected files per test.
@@ -172,6 +179,19 @@ abstract class WebTestCase extends LiipWebTestCase
     protected function getObjectManager(): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManager();
+    }
+
+    /**
+     * @return Matcher
+     */
+    protected static function getMatcher(): Matcher
+    {
+        if (self::$matcher === null) {
+            $factory = new SimpleFactory();
+            self::$matcher = $factory->createMatcher();
+        }
+
+        return self::$matcher;
     }
 
     /**

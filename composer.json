@@ -16,7 +16,7 @@
     "doctrine/data-fixtures": "^1.2",
     "symfony/console": "^3.0|^4.0",
     "phpunit/phpunit": "^7.0",
-    "coduo/php-matcher": "^2.1",
+    "coduo/php-matcher": "^3.0",
     "mikey179/vfsStream": "^1.3"
   },
   "require-dev": {
