@@ -76,9 +76,10 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         }
 
         // Always encode and decode in order to convert everything into an array.
-        $expected = $e->getComparisonFailure()->getExpected();
+        $expected = $originalExpected = $e->getComparisonFailure()->getExpected();
         if ($expected !== null) {
             $expected = \json_decode(\json_encode($expected), true);
+            $expected = $this->parseExpectedData($expected, [], $originalExpected);
             if (\JSON_ERROR_NONE !== \json_last_error()) {
                 // probably not expecting json.
                 return;
@@ -137,9 +138,22 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
                 continue;
             }
 
-            if (\is_array($actualField) && \is_array($expected[$actualKey])) {
-                $actualField = $this->updateExpectedOutput($actualField, $expected[$actualKey]);
-                continue;
+            if (\is_array($actualField)) {
+                if (\count($actualField) === 0) {
+                    $actualField = $expected[$actualKey];
+                    continue;
+                }
+
+                if (\is_array($expected[$actualKey])) {
+                    $actualField = $this->updateExpectedOutput($actualField, $expected[$actualKey]);
+                    continue;
+                }
+
+                if (\is_object($expected[$actualKey])) {
+                    // This is possible only for empty objects so we can safely pass an empty array as $expected.
+                    $actualField = $this->updateExpectedOutput($actualField, []);
+                    continue;
+                }
             }
 
             foreach ($this->matcherPatterns as $matcherPattern) {
@@ -151,5 +165,56 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         }
 
         return $actual;
+    }
+
+    /**
+     * Perform additional parsing for array with expected data based on the original expected.
+     *
+     * @param array $expectedData
+     * @param array $parentKeys
+     * @param mixed $originalExpected
+     * @return array
+     */
+    private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected): array
+    {
+        if (\is_object($originalExpected)) {
+            foreach ($expectedData as $key => &$value) {
+                $keys = $parentKeys;
+                if (\is_array($value)) {
+                    $keys[] = $key;
+                    if (empty($value)) {
+                        $value = $this->getOriginalEmptyJsonValue($originalExpected, $keys);
+                    } else {
+                        $value = $this->parseExpectedData($value, $keys, $originalExpected);
+                    }
+                }
+            }
+        }
+
+        return $expectedData;
+    }
+
+    /**
+     * Try to determine if original expected contained empty object or empty array.
+     *
+     * @param mixed $originalExpected
+     * @param array $keys
+     * @return mixed Either empty array or empty object
+     */
+    private function getOriginalEmptyJsonValue($originalExpected, array $keys)
+    {
+        if (!\is_object($originalExpected)) {
+            return [];
+        }
+
+        $key = \array_shift($keys);
+        if (isset($originalExpected->{$key})) {
+            if (\count($keys)) {
+                return $this->getOriginalEmptyJsonValue($originalExpected->{$key}, $keys);
+            }
+            return $originalExpected->{$key};
+        }
+
+        return [];
     }
 }
