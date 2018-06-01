@@ -106,7 +106,16 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
             $actual = $this->updateExpectedOutput($actual, $expected);
 
-            \file_put_contents($expectedFile, \json_encode($actual, \JSON_PRETTY_PRINT));
+            // Indent the output with 2 spaces instead of 4.
+            $data = \preg_replace_callback(
+                '/^ +/m',
+                function ($m) {
+                    return \str_repeat(' ', \strlen($m[0]) / 2);
+                },
+                \json_encode($actual, \JSON_PRETTY_PRINT)
+            );
+
+            \file_put_contents($expectedFile, $data);
         } catch (\Throwable $e) {
             print $e->getTraceAsString();
             exit;
