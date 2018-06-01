@@ -172,18 +172,15 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content = [];
         $content[] = '<?php';
         $content[] = null;
-        $content[] = 'declare(strict_types = 1);';
+        $content[] = 'declare(strict_types=1);';
         $content[] = null;
 
         if ($customLoader) {
             $content[] = 'use ' . $namespace . '\\' . \ucfirst($name) . ';';
             $content[] = null;
-            $content[] = 'return [';
-            $content[] = '    ' . \ucfirst($name) . '::class';
-            $content[] = '];';
+            $content[] = 'return [' . \ucfirst($name) . '::class];';
             $content[] = null;
         } else {
-            $content[] = null;
             $content[] = 'return [];';
             $content[] = null;
         }
@@ -207,21 +204,18 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content = [];
         $content[] = '<?php';
         $content[] = null;
-        $content[] = 'declare(strict_types = 1);';
+        $content[] = 'declare(strict_types=1);';
         $content[] = null;
         $content[] = 'namespace ' . $namespace . ';';
         $content[] = null;
         $content[] = 'use ' . $loaderParent . ';';
         $content[] = null;
-        $content[] = '/**';
-        $content[] = ' * Load the fixtures.';
-        $content[] = ' */';
         $content[] = 'final class ' . $name . ' extends ' . \end($loaderParentAlias);
         $content[] = '{';
         $content[] = '    /**';
         $content[] = '     * {@inheritDoc}';
         $content[] = '     */';
-        $content[] = '    public function doLoad(): void';
+        $content[] = '    public function doLoad() : void';
         $content[] = '    {';
         $content[] = '    }';
         $content[] = '}';
