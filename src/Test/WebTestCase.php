@@ -134,7 +134,7 @@ abstract class WebTestCase extends LiipWebTestCase
     {
         $reflection = new \ReflectionObject($this);
 
-        $fixturesFile = \dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName() . '.php';
+        $fixturesFile = \dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName(false) . '.php';
 
         $alwaysLoadingFixtures = $this->getAlwaysLoadingFixtures();
 
