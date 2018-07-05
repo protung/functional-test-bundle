@@ -157,7 +157,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             }
 
             foreach ($this->matcherPatterns as $matcherPattern) {
-                if (\strpos((string)$expected[$actualKey], $matcherPattern) === 0) {
+                if (\is_string($expected[$actualKey]) && \strpos($expected[$actualKey], $matcherPattern) === 0) {
                     $actualField = $expected[$actualKey];
                     break;
                 }
