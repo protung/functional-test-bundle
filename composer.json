@@ -20,6 +20,7 @@
     "mikey179/vfsStream": "^1.3"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-master",
     "squizlabs/php_codesniffer": "^3.2"
   },
   "conflict": {
@@ -33,9 +34,19 @@
       "Speicher210\\FunctionalTestBundle\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Speicher210\\FunctionalTestBundle\\Tests\\": "tests"
+    }
+  },
   "scripts": {
-    "cs-check": "phpcs -p",
-    "cs-fix": "phpcbf -p"
+    "cs-check": "vendor/bin/phpcs -p",
+    "cs-fix": "vendor/bin/phpcbf -p",
+    "phpunit": "vendor/bin/phpunit",
+    "test": [
+      "@cs-check",
+      "@phpunit"
+    ]
   },
   "extra": {
     "branch-alias": {

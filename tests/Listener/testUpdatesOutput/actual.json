@@ -1,0 +1,11 @@
+{
+  "something": true,
+  "somethingElse": 2,
+  "another": "ok",
+  "not_scalar": [
+    "first",
+    "third",
+    "second"
+  ],
+  "new": "element"
+}

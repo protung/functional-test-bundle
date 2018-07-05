@@ -1,0 +1,9 @@
+{
+  "something": false,
+  "somethingElse": 1,
+  "another": "yes",
+  "not_scalar": [
+    "first",
+    "second"
+  ]
+}
