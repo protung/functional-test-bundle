@@ -1,0 +1,10 @@
+{
+  "object": {
+    "id": "123"
+  },
+  "string": "text",
+  "array": [
+    "element"
+  ],
+  "integer": 1
+}
