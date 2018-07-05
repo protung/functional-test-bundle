@@ -38,6 +38,21 @@ final class RestRequestFailTestExpectedOutputFileUpdaterTest extends TestCase
         $this->assertAddFailureUpdatesExpectedOutput();
     }
 
+    public function testUpdatesFieldsWithMatchedPatterns(): void
+    {
+        $this->assertAddFailureUpdatesExpectedOutput();
+    }
+
+    public function testUpdatesFieldsWithPatternToNull(): void
+    {
+        $this->assertAddFailureUpdatesExpectedOutput();
+    }
+
+    public function testUpdatesFieldsWithPatternToValueFromActualWhenNotMatchingPattern(): void
+    {
+        $this->assertAddFailureUpdatesExpectedOutput();
+    }
+
     private function assertAddFailureUpdatesExpectedOutput(): void
     {
         $listener = new RestRequestFailTestExpectedOutputFileUpdater();

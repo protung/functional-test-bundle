@@ -1,0 +1,9 @@
+{
+  "some_uuid": "47d44d35-5a73-464d-829c-067e2cdf16ea",
+  "some_string": "my text",
+  "some_date": "2018-07-05T00:00:00+00:00",
+  "some_array": [
+    "element",
+    "other"
+  ]
+}

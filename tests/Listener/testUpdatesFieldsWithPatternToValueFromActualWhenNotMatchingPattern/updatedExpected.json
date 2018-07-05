@@ -1,0 +1,6 @@
+{
+  "some_uuid": "not uuid",
+  "some_string": 123,
+  "some_date": "not a date",
+  "some_array": "string"
+}

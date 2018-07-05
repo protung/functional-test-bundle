@@ -1,0 +1,6 @@
+{
+  "some_uuid": "@uuid@",
+  "some_string": "@string@",
+  "some_date": "@string@.isDateTime()",
+  "some_array": "@array@"
+}

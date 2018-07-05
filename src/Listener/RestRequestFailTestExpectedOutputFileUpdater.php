@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Speicher210\FunctionalTestBundle\Listener;
 
+use Coduo\PHPMatcher\PHPMatcher;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\Test;
@@ -158,6 +159,10 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
             foreach ($this->matcherPatterns as $matcherPattern) {
                 if (\is_string($expected[$actualKey]) && \strpos($expected[$actualKey], $matcherPattern) === 0) {
+                    if (!PHPMatcher::match($actualField, $expected[$actualKey])) {
+                        break;
+                    }
+
                     $actualField = $expected[$actualKey];
                     break;
                 }
