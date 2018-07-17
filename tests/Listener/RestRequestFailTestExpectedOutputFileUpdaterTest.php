@@ -68,6 +68,16 @@ final class RestRequestFailTestExpectedOutputFileUpdaterTest extends TestCase
         $this->assertAddFailureUpdatesExpectedOutput();
     }
 
+    public function testUpdatesObjectWithArrayToEmptyObject(): void
+    {
+        $this->assertAddFailureUpdatesExpectedOutput();
+    }
+
+    public function testUpdatesObjectWithArrayToObjectWithEmptyArray(): void
+    {
+        $this->assertAddFailureUpdatesExpectedOutput();
+    }
+
     private function assertAddFailureUpdatesExpectedOutput(): void
     {
         $listener = new RestRequestFailTestExpectedOutputFileUpdater();

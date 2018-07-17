@@ -141,7 +141,8 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
             if (\is_array($actualField)) {
                 if (\count($actualField) === 0) {
-                    $actualField = $expected[$actualKey];
+                    // Value for actual should be an empty object if expected had any properties, otherwise empty array.
+                    $actualField = \is_array(\json_decode(\json_encode($expected[$actualKey]))) ? [] : new \stdClass();
                     continue;
                 }
 
