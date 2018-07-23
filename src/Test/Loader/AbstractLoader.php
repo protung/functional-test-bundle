@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test\Loader;
 
@@ -17,17 +17,13 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
-    /**
-     * @var ObjectManager
-     */
+    /** @var ObjectManager */
     private $manager;
 
     /**
      * Get the container.
-     *
-     * @return ContainerInterface
      */
-    protected function getContainer(): ?ContainerInterface
+    protected function getContainer() : ?ContainerInterface
     {
         return $this->container;
     }
@@ -35,14 +31,11 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run before loading the fixtures.
      */
-    protected function beforeLoad(): void
+    protected function beforeLoad() : void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager): void
+    public function load(ObjectManager $manager) : void
     {
         $this->manager = $manager;
 
@@ -54,7 +47,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run after loading the fixtures.
      */
-    protected function afterLoad(): void
+    protected function afterLoad() : void
     {
         $this->manager->flush();
         $this->manager->clear();
@@ -63,12 +56,9 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Load data fixtures.
      */
-    abstract protected function doLoad(): void;
+    abstract protected function doLoad() : void;
 
-    /**
-     * @return ObjectManager
-     */
-    public function getManager(): ObjectManager
+    public function getManager() : ObjectManager
     {
         return $this->manager;
     }
@@ -78,7 +68,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
      *
      * @param mixed $resource The resource for which to remove the ACL.
      */
-    protected function removeResourceAcl($resource): void
+    protected function removeResourceAcl($resource) : void
     {
         $this->manager->flush();
 
@@ -86,7 +76,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
             ->container
             ->get('security.acl.object_identity_retrieval_strategy')
             ->getObjectIdentity($resource);
-        $aclProvider = $this->container->get('security.acl.provider');
+        $aclProvider    = $this->container->get('security.acl.provider');
         $aclProvider->deleteAcl($objectIdentity);
 
         $this->manager->flush();

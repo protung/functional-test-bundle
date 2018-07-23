@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Command;
 
@@ -18,10 +18,7 @@ use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
  */
 class TestStubCreateCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure(): void
+    protected function configure() : void
     {
         $this
             ->setName('sp210:test:stub:create')
@@ -57,13 +54,13 @@ class TestStubCreateCommand extends ContainerAwareCommand
     {
         $directory = $this->getTestDirectoryPath($input->getArgument('path'));
         $namespace = $this->getNamespace($directory);
-        $name = $input->getArgument('name');
+        $name      = $input->getArgument('name');
 
         $customLoader = $input->getOption('custom-loader');
 
         $fileSystem = new Filesystem();
 
-        if (!$fileSystem->exists($directory)) {
+        if (! $fileSystem->exists($directory)) {
             $output->writeln(
                 \sprintf('Invalid directory <info>%s</info>', $directory)
             );
@@ -97,32 +94,30 @@ class TestStubCreateCommand extends ContainerAwareCommand
             );
         }
 
-        if ($customLoader) {
-            $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
-            if ($fileSystem->exists($fixturesLoaderFilename)) {
-                $output->writeln(
-                    \sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename)
-                );
-            } else {
-                $fileSystem->dumpFile(
-                    $fixturesLoaderFilename,
-                    $this->getFixturesLoaderContent($namespace, \ucfirst($name))
-                );
-                $output->writeln(
-                    \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
-                );
-            }
+        if (! $customLoader) {
+            return;
+        }
+
+        $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
+        if ($fileSystem->exists($fixturesLoaderFilename)) {
+            $output->writeln(
+                \sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename)
+            );
+        } else {
+            $fileSystem->dumpFile(
+                $fixturesLoaderFilename,
+                $this->getFixturesLoaderContent($namespace, \ucfirst($name))
+            );
+            $output->writeln(
+                \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
+            );
         }
     }
 
     /**
      * Get the namespace for the codes.
-     *
-     * @param string $path
-     *
-     * @return string
      */
-    private function getNamespace($path): string
+    private function getNamespace(string $path) : string
     {
         /** @var FilenameFilterIterator|\Countable $finder */
         $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
@@ -142,34 +137,18 @@ class TestStubCreateCommand extends ContainerAwareCommand
         return $namespace . '\Fixtures\Loaders';
     }
 
-    /**
-     * Get the directory of tests.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    private function getTestDirectoryPath($path): string
+    private function getTestDirectoryPath(string $path) : string
     {
-        if (!\is_dir($path)) {
+        if (! \is_dir($path)) {
             $path = \getcwd() . $path;
         }
 
         return \realpath($path);
     }
 
-    /**
-     * Get the fixtures file content.
-     *
-     * @param string $namespace
-     * @param string $name
-     * @param $customLoader
-     *
-     * @return string
-     */
-    private function getFixturesContent($namespace, $name, $customLoader): string
+    private function getFixturesContent(string $namespace, string $name, bool $customLoader) : string
     {
-        $content = [];
+        $content   = [];
         $content[] = '<?php';
         $content[] = null;
         $content[] = 'declare(strict_types=1);';
@@ -188,20 +167,12 @@ class TestStubCreateCommand extends ContainerAwareCommand
         return \implode(\PHP_EOL, $content);
     }
 
-    /**
-     * Get the fixtures loader file content.
-     *
-     * @param string $namespace
-     * @param string $name
-     *
-     * @return string
-     */
-    private function getFixturesLoaderContent($namespace, $name): string
+    private function getFixturesLoaderContent(string $namespace, string $name) : string
     {
-        $loaderParent = $this->getContainer()->getParameter('sp210.functional_test.fixture.loader.extend_class');
+        $loaderParent      = $this->getContainer()->getParameter('sp210.functional_test.fixture.loader.extend_class');
         $loaderParentAlias = \explode('\\', $loaderParent);
 
-        $content = [];
+        $content   = [];
         $content[] = '<?php';
         $content[] = null;
         $content[] = 'declare(strict_types=1);';
@@ -212,9 +183,6 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = null;
         $content[] = 'final class ' . $name . ' extends ' . \end($loaderParentAlias);
         $content[] = '{';
-        $content[] = '    /**';
-        $content[] = '     * {@inheritDoc}';
-        $content[] = '     */';
         $content[] = '    public function doLoad() : void';
         $content[] = '    {';
         $content[] = '    }';

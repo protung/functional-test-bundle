@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Listener;
 
@@ -24,20 +24,20 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
      *
      * Ex: ['createdAt' => '@string@.isDateTime()']
      *
-     * @var array
+     * @var array<string,string>
      */
     private $fields;
 
     /**
      * Array of patterns that should be kept when updating.
      *
-     * @var array
+     * @var string[]
      */
     private $matcherPatterns;
 
     /**
-     * @param array $fields The fields to update in the expected output.
-     * @param array $matcherPatterns
+     * @param string[] $fields          The fields to update in the expected output.
+     * @param string[] $matcherPatterns
      */
     public function __construct(
         array $fields = [],
@@ -52,27 +52,27 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             '@null@',
             '@*@',
             '@wildcard@',
-            '@uuid@'
+            '@uuid@',
         ]
     ) {
-        $this->fields = $fields;
+        $this->fields          = $fields;
         $this->matcherPatterns = $matcherPatterns;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addFailure(Test $test, AssertionFailedError $e, float $time): void
+    public function addFailure(Test $test, AssertionFailedError $e, float $time) : void
     {
-        if (!$e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
+        if (! $e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
             return;
         }
 
-        if (!$test instanceof RestControllerWebTestCase) {
+        if (! $test instanceof RestControllerWebTestCase) {
             return;
         }
         $expectedFile = $test->getCurrentExpectedResponseContentFile('json');
-        if (!\file_exists($expectedFile)) {
+        if (! \file_exists($expectedFile)) {
             return;
         }
 
@@ -81,7 +81,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         if ($expected !== null) {
             $expected = \json_decode(\json_encode($expected), true);
             $expected = $this->parseExpectedData($expected, [], $originalExpected);
-            if (\JSON_ERROR_NONE !== \json_last_error()) {
+            if (\json_last_error() !== \JSON_ERROR_NONE) {
                 // probably not expecting json.
                 return;
             }
@@ -91,7 +91,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
         // Always encode and decode in order to convert everything into an array.
         $actual = \json_decode(\json_encode($e->getComparisonFailure()->getActual()), true);
-        if (\JSON_ERROR_NONE !== \json_last_error()) {
+        if (\json_last_error() !== \JSON_ERROR_NONE) {
             // probably not expecting json.
             return;
         }
@@ -99,10 +99,12 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         try {
             \array_walk_recursive(
                 $actual,
-                function (&$value, $key) {
-                    if (\array_key_exists($key, $this->fields)) {
-                        $value = $this->fields[$key];
+                function (&$value, $key) : void {
+                    if (! \array_key_exists($key, $this->fields)) {
+                        return;
                     }
+
+                    $value = $this->fields[$key];
                 }
             );
 
@@ -127,15 +129,15 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * Update the expected output.
      *
-     * @param array $actual
-     * @param array $expected
+     * @param mixed[] $actual
+     * @param mixed[] $expected
      *
-     * @return array
+     * @return mixed[]
      */
-    private function updateExpectedOutput(array $actual, array $expected): array
+    private function updateExpectedOutput(array $actual, array $expected) : array
     {
         foreach ($actual as $actualKey => &$actualField) {
-            if (!isset($expected[$actualKey])) {
+            if (! isset($expected[$actualKey])) {
                 continue;
             }
 
@@ -160,7 +162,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
             foreach ($this->matcherPatterns as $matcherPattern) {
                 if (\is_string($expected[$actualKey]) && \strpos($expected[$actualKey], $matcherPattern) === 0) {
-                    if (!PHPMatcher::match($actualField, $expected[$actualKey])) {
+                    if (! PHPMatcher::match($actualField, $expected[$actualKey])) {
                         break;
                     }
 
@@ -176,23 +178,25 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * Perform additional parsing for array with expected data based on the original expected.
      *
-     * @param array $expectedData
-     * @param array $parentKeys
-     * @param mixed $originalExpected
-     * @return array
+     * @param mixed[]  $expectedData
+     * @param string[] $parentKeys
+     * @param mixed    $originalExpected
+     * @return mixed[]
      */
-    private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected): array
+    private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected) : array
     {
         if (\is_object($originalExpected)) {
             foreach ($expectedData as $key => &$value) {
                 $keys = $parentKeys;
-                if (\is_array($value)) {
-                    $keys[] = $key;
-                    if (empty($value)) {
-                        $value = $this->getOriginalEmptyJsonValue($originalExpected, $keys);
-                    } else {
-                        $value = $this->parseExpectedData($value, $keys, $originalExpected);
-                    }
+                if (! \is_array($value)) {
+                    continue;
+                }
+
+                $keys[] = $key;
+                if (empty($value)) {
+                    $value = $this->getOriginalEmptyJsonValue($originalExpected, $keys);
+                } else {
+                    $value = $this->parseExpectedData($value, $keys, $originalExpected);
                 }
             }
         }
@@ -203,13 +207,13 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
     /**
      * Try to determine if original expected contained empty object or empty array.
      *
-     * @param mixed $originalExpected
-     * @param array $keys
+     * @param mixed    $originalExpected
+     * @param string[] $keys
      * @return mixed Either empty array or empty object
      */
     private function getOriginalEmptyJsonValue($originalExpected, array $keys)
     {
-        if (!\is_object($originalExpected)) {
+        if (! \is_object($originalExpected)) {
             return [];
         }
 

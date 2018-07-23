@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
@@ -23,12 +23,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected const IMAGE_TYPE_JPG = 'jpg';
     protected const IMAGE_TYPE_PNG = 'png';
     protected const IMAGE_TYPE_SVG = 'svg';
-    private const IMAGE_TYPES = [
+    private const IMAGE_TYPES      = [
         self::IMAGE_TYPE_BMP,
         self::IMAGE_TYPE_GIF,
         self::IMAGE_TYPE_JPG,
         self::IMAGE_TYPE_PNG,
-        self::IMAGE_TYPE_SVG
+        self::IMAGE_TYPE_SVG,
     ];
 
     /**
@@ -41,7 +41,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Tokens from authorization.
      *
-     * @var array
+     * @var mixed[]
      */
     protected static $authTokens = [];
 
@@ -66,17 +66,15 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a GET request.
      *
-     * @param string $path The API path to test.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param array $server The server parameters.
-     *
-     * @return Client
+     * @param string  $path               The API path to test.
+     * @param int     $expectedStatusCode The expected HTTP response code.
+     * @param mixed[] $server             The server parameters.
      */
     protected function assertRestGetPath(
         string $path,
         int $expectedStatusCode = Response::HTTP_OK,
         array $server = []
-    ): Client {
+    ) : Client {
         $request = Request::create(
             $path,
             Request::METHOD_GET,
@@ -92,13 +90,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a POST request.
      *
-     * @param string $path The API path to test.
-     * @param array $content The POST content.
-     * @param int $expectedStatusCode The expected HTTP response code.
-     * @param array $files The files to send with the request.
-     * @param array $server The server parameters.
-     *
-     * @return Client
+     * @param string  $path               The API path to test.
+     * @param mixed[] $content            The POST content.
+     * @param int     $expectedStatusCode The expected HTTP response code.
+     * @param mixed[] $files              The files to send with the request.
+     * @param mixed[] $server             The server parameters.
      */
     protected function assertRestPostPath(
         string $path,
@@ -106,7 +102,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
         array $server = []
-    ): Client {
+    ) : Client {
         $request = Request::create(
             $path,
             Request::METHOD_POST,
@@ -122,13 +118,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a PATCH request.
      *
-     * @param string $path The API path to test.
-     * @param array $content The PATCH content.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param array $files The files to send with the request.
-     * @param array $server The server parameters.
-     *
-     * @return Client
+     * @param string  $path               The API path to test.
+     * @param mixed[] $content            The PATCH content.
+     * @param int     $expectedStatusCode The expected HTTP response code.
+     * @param mixed[] $files              The files to send with the request.
+     * @param mixed[] $server             The server parameters.
      */
     protected function assertRestPatchPath(
         string $path,
@@ -136,7 +130,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ): Client {
+    ) : Client {
         $request = Request::create(
             $path,
             Request::METHOD_PATCH,
@@ -152,13 +146,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a PUT request.
      *
-     * @param string $path The API path to test.
-     * @param array $content The PUT content.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param array $files The files to send with the request.
-     * @param array $server The server parameters.
-     *
-     * @return Client
+     * @param string  $path               The API path to test.
+     * @param mixed[] $content            The PUT content.
+     * @param int     $expectedStatusCode The expected HTTP response code.
+     * @param mixed[] $files              The files to send with the request.
+     * @param mixed[] $server             The server parameters.
      */
     protected function assertRestPutPath(
         string $path,
@@ -166,7 +158,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ): Client {
+    ) : Client {
         $request = Request::create(
             $path,
             Request::METHOD_PUT,
@@ -182,12 +174,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a DELETE request.
      *
-     * @param string $path The API path to test.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     *
-     * @return Client
+     * @param string $path               The API path to test.
+     * @param int    $expectedStatusCode The expected HTTP response code.
      */
-    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT): Client
+    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT) : Client
     {
         $request = Request::create(
             $path,
@@ -200,15 +190,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert if a request returns the expected REST result.
      *
-     * @param Request $request The request to simulate.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     *
-     * @return Client
+     * @param Request $request            The request to simulate.
+     * @param int     $expectedStatusCode The expected HTTP response code.
      */
-    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK): Client
+    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK) : Client
     {
         $expectedFile = null;
-        $expected = null;
+        $expected     = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $expectedFile = $this->getExpectedResponseContentFile('json');
             if (\file_exists($expectedFile)) {
@@ -230,19 +218,16 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert if a request returns the expected result.
      *
-     * @param Request $request The request to simulate.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param string $expectedOutputContent The expected output content.
-     * @param string|null $expectedOutputContentType
-     *
-     * @return Client
+     * @param Request $request               The request to simulate.
+     * @param int     $expectedStatusCode    The expected HTTP response code.
+     * @param string  $expectedOutputContent The expected output content.
      */
     protected function assertRequest(
         Request $request,
         int $expectedStatusCode = Response::HTTP_OK,
-        string $expectedOutputContent = null,
-        string $expectedOutputContentType = null
-    ): Client {
+        ?string $expectedOutputContent = null,
+        ?string $expectedOutputContentType = null
+    ) : Client {
         $client = static::createClient();
 
         $client->request(
@@ -268,17 +253,16 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert a request response.
      *
-     * @param Response $response The response.
-     * @param integer $expectedStatusCode The expected HTTP response code.
-     * @param string $expectedOutputContent The expected output.
-     * @param null|string $expectedOutputContentType
+     * @param Response $response              The response.
+     * @param int      $expectedStatusCode    The expected HTTP response code.
+     * @param string   $expectedOutputContent The expected output.
      */
     protected function assertRequestResponse(
         Response $response,
         int $expectedStatusCode,
         ?string $expectedOutputContent,
         ?string $expectedOutputContentType
-    ): void {
+    ) : void {
         static::assertSame(
             $expectedStatusCode,
             $response->getStatusCode(),
@@ -313,36 +297,34 @@ abstract class RestControllerWebTestCase extends WebTestCase
         }
     }
 
-    /**
-     * @param Response $response
-     * @param string $expectedOutputContent
-     */
-    private function assertJsonContentOutput(Response $response, string $expectedOutputContent): void
+    private function assertJsonContentOutput(Response $response, string $expectedOutputContent) : void
     {
         $matcher = static::getMatcher();
 
         $actual = $response->getContent();
         $result = $matcher->match($actual, $expectedOutputContent);
-        if ($result !== true) {
-            $difference = $matcher->getError();
-
-            // Quick check if actual is valid JSON and if it is prettify it.
-            if (\json_decode($actual) !== null) {
-                $actual = $this->prettifyJson($actual);
-            }
-
-            static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
+        if ($result === true) {
+            return;
         }
+
+        $difference = $matcher->getError();
+
+        // Quick check if actual is valid JSON and if it is prettify it.
+        if (\json_decode($actual) !== null) {
+            $actual = $this->prettifyJson($actual);
+        }
+
+        static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
     }
 
     /**
      * Assert that a request to an URL returns 403.
      *
-     * @param string $path The API path to test.
-     * @param string $method The HTTP verb.
-     * @param array $content The POST content.
+     * @param string  $path    The API path to test.
+     * @param string  $method  The HTTP verb.
+     * @param mixed[] $content The POST content.
      */
-    protected function assertRestRequestReturns403(string $path, string $method, array $content = []): void
+    protected function assertRestRequestReturns403(string $path, string $method, array $content = []) : void
     {
         $request = Request::create(
             $path,
@@ -352,7 +334,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         $expected = [
             'code' => 403,
-            'message' => 'Forbidden'
+            'message' => 'Forbidden',
         ];
 
         $this->assertRequest($request, Response::HTTP_FORBIDDEN, \json_encode($expected), 'application/json');
@@ -361,10 +343,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 401 if the user is not authenticated.
      *
-     * @param string $url The URL to call.
+     * @param string $url    The URL to call.
      * @param string $method The HTTP verb.
      */
-    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method): void
+    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method) : void
     {
         static::$authentication = self::AUTHENTICATION_NONE;
 
@@ -375,7 +357,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         $expected = [
             'code' => 401,
-            'message' => 'Unauthorized'
+            'message' => 'Unauthorized',
         ];
 
         $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, \json_encode($expected), 'application/json');
@@ -384,11 +366,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 404.
      *
-     * @param string $path The API path to test.
-     * @param string $method The HTTP verb.
-     * @param array $content The POST content.
+     * @param string  $path    The API path to test.
+     * @param string  $method  The HTTP verb.
+     * @param mixed[] $content The POST content.
      */
-    protected function assertRestRequestReturns404(string $path, string $method, array $content = []): void
+    protected function assertRestRequestReturns404(string $path, string $method, array $content = []) : void
     {
         $request = Request::create(
             $path,
@@ -398,32 +380,23 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         $expected = [
             'code' => 404,
-            'message' => 'Not Found'
+            'message' => 'Not Found',
         ];
 
         $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected), 'application/json');
     }
 
-    /**
-     * @param string $content The content to prettify.
-     *
-     * @return string|null
-     */
-    protected function prettifyJson(string $content): ?string
+    protected function prettifyJson(string $content) : ?string
     {
         return \json_encode(\json_decode($content), \JSON_PRETTY_PRINT);
     }
 
     /**
      * Get a fake file containing only empty space of a certain size.
-     *
-     * @param int $bytes
-     * @param string $originalName The name for the original file should have.
-     * @return UploadedFile
      */
-    protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt'): UploadedFile
+    protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt') : UploadedFile
     {
-        $root = vfsStream::setup();
+        $root      = vfsStream::setup();
         $largeFile = vfsStream::newFile('large.txt')
             ->withContent(new LargeFileContent($bytes))
             ->at($root);
@@ -433,11 +406,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     /**
      * Get a fake text upload file.
-     *
-     * @param string $originalName The name for the original file should have.
-     * @return UploadedFile
      */
-    protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf'): UploadedFile
+    protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf') : UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
@@ -447,11 +417,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     /**
      * Get a fake text upload file.
-     *
-     * @param string $originalName The name for the original file should have.
-     * @return UploadedFile
      */
-    protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt'): UploadedFile
+    protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt') : UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
@@ -462,31 +429,32 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Get a fake image upload file.
      *
-     * @param string $imageType The image type to set. Must be one of the IMAGE_TYPE_* constants.
-     * @param string $originalName The name for the original file should have.
-     * @param array|null $imageSize Example: ['width' => 10, 'height' => 20].
-     * @return UploadedFile
+     * @param string     $imageType    The image type to set. Must be one of the IMAGE_TYPE_* constants.
+     * @param string     $originalName The name for the original file should have.
+     * @param int[]|null $imageSize    Example: ['width' => 10, 'height' => 20].
      */
     protected function getRequestUploadImageFile(
         string $imageType = self::IMAGE_TYPE_PNG,
-        string $originalName = null,
-        array $imageSize = null
-    ): UploadedFile {
-        if (!\in_array($imageType, self::IMAGE_TYPES, true)) {
+        ?string $originalName = null,
+        ?array $imageSize = null
+    ) : UploadedFile {
+        if (! \in_array($imageType, self::IMAGE_TYPES, true)) {
             throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
         }
 
-        $originalName = $originalName ?: 'fake_image';
+        $originalName  = $originalName ?: 'fake_image';
         $originalName .= '.' . $imageType;
 
         if ($imageSize === null) {
             $filePath = __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType;
         } else {
-            if (!\extension_loaded('imagick')) {
+            if (! \extension_loaded('imagick')) {
                 throw new \RuntimeException('Imagick extension is required to resize the image.');
             }
-            if (!isset($imageSize['width'], $imageSize['height'])) {
-                throw new \InvalidArgumentException('The "width" and "height" must be specified for the size of the image.');
+            if (! isset($imageSize['width'], $imageSize['height'])) {
+                throw new \InvalidArgumentException(
+                    'The "width" and "height" must be specified for the size of the image.'
+                );
             }
 
             $image = new \Imagick();
@@ -502,12 +470,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Get a fake image upload file.
      *
-     * @param boolean $withTags Flag if the media file should have tags defined or not.
+     * @param bool   $withTags     Flag if the media file should have tags defined or not.
      * @param string $originalName The name for the original file should have.
-     *
-     * @return UploadedFile
      */
-    protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3'): UploadedFile
+    protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3') : UploadedFile
     {
         $fileName = $withTags ? 'fake_audio_tags.mp3' : 'fake_audio_notags.mp3';
 
@@ -521,10 +487,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * Get a fake video upload file.
      *
      * @param string $originalName The name for the original file should have.
-     *
-     * @return UploadedFile
      */
-    protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg'): UploadedFile
+    protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg') : UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_video.mpeg',
