@@ -5,15 +5,16 @@
     <arg name="colors" />
 
     <!-- inherit rules from: -->
-    <rule ref="PSR2" />
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
-    <rule ref="Generic.Files.LineLength">
-        <properties>
-            <property name="absoluteLineLimit" value="0" />
-        </properties>
-        <severity>0</severity>
+    <rule ref="Doctrine">
+        <exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
+    <rule ref="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming">
+        <exclude-pattern>src/Test/Loader/AbstractLoader.php</exclude-pattern>
     </rule>
 
     <!-- Paths to check -->
     <file>src</file>
+    <file>tests</file>
 </ruleset>

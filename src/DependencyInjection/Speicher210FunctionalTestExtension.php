@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\DependencyInjection;
 
@@ -14,7 +14,7 @@ final class Speicher210FunctionalTestExtension extends ConfigurableExtension
     /**
      * {@inheritdoc}
      */
-    public function loadInternal(array $config, ContainerBuilder $container): void
+    public function loadInternal(array $config, ContainerBuilder $container) : void
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
