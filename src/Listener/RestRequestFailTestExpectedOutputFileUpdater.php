@@ -59,9 +59,6 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
         $this->matcherPatterns = $matcherPatterns;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addFailure(Test $test, AssertionFailedError $e, float $time) : void
     {
         if (! $e instanceof ExpectationFailedException || $e->getComparisonFailure() === null) {
@@ -193,7 +190,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
                 }
 
                 $keys[] = $key;
-                if (empty($value)) {
+                if ($value === []) {
                     $value = $this->getOriginalEmptyJsonValue($originalExpected, $keys);
                 } else {
                     $value = $this->parseExpectedData($value, $keys, $originalExpected);
@@ -219,7 +216,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
 
         $key = \array_shift($keys);
         if (isset($originalExpected->{$key})) {
-            if (\count($keys)) {
+            if (\count($keys) > 0) {
                 return $this->getOriginalEmptyJsonValue($originalExpected->{$key}, $keys);
             }
             return $originalExpected->{$key};

@@ -1,0 +1,12 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+parameters:
+    polluteScopeWithLoopInitialAssignments: true
+    ignoreErrors:
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)#'
+        - '#Call to method Imagick::newimage\(\) with incorrect case: newImage#'
+        - '#Call to method Imagick::setimageformat\(\) with incorrect case: setImageFormat#'
+        - '#Call to method Imagick::getimageblob\(\) with incorrect case: getImageBlob#'
+        - '#Call to method Imagick::readimageblob\(\) with incorrect case: readImageBlob#'
+        - '#Call to method Imagick::compareimages\(\) with incorrect case: compareImages#'

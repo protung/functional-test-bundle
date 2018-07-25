@@ -45,19 +45,13 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected static $authTokens = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         static::$authentication = self::AUTHENTICATION_NONE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    protected function tearDown() : void
     {
         parent::tearDown();
         static::$authentication = self::AUTHENTICATION_NONE;
@@ -250,13 +244,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
         return $client;
     }
 
-    /**
-     * Assert a request response.
-     *
-     * @param Response $response              The response.
-     * @param int      $expectedStatusCode    The expected HTTP response code.
-     * @param string   $expectedOutputContent The expected output.
-     */
     protected function assertRequestResponse(
         Response $response,
         int $expectedStatusCode,

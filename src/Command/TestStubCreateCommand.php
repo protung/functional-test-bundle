@@ -47,16 +47,13 @@ class TestStubCreateCommand extends ContainerAwareCommand
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : void
     {
         $directory = $this->getTestDirectoryPath($input->getArgument('path'));
         $namespace = $this->getNamespace($directory);
         $name      = $input->getArgument('name');
 
-        $customLoader = $input->getOption('custom-loader');
+        $customLoader = (bool) $input->getOption('custom-loader');
 
         $fileSystem = new Filesystem();
 

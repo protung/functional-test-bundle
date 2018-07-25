@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Speicher210\FunctionalTestBundle\Tests;
+namespace Speicher210\FunctionalTestBundle\Tests\Listener;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\ExpectationFailedException;
