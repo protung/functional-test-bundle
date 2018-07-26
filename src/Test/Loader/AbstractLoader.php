@@ -9,6 +9,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
 
 /**
  * Abstract fixture loader.
@@ -72,11 +74,12 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     {
         $this->manager->flush();
 
-        $objectIdentity = $this
-            ->container
-            ->get('security.acl.object_identity_retrieval_strategy')
-            ->getObjectIdentity($resource);
-        $aclProvider    = $this->container->get('security.acl.provider');
+        /** @var ObjectIdentityRetrievalStrategyInterface $objectIdentityRetrievalStrategy */
+        $objectIdentityRetrievalStrategy = $this->container->get('security.acl.object_identity_retrieval_strategy');
+
+        $objectIdentity = $objectIdentityRetrievalStrategy->getObjectIdentity($resource);
+        /** @var MutableAclProviderInterface $aclProvider */
+        $aclProvider = $this->container->get('security.acl.provider');
         $aclProvider->deleteAcl($objectIdentity);
 
         $this->manager->flush();

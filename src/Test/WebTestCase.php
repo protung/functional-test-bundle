@@ -30,7 +30,7 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * Array with the number of assertions against expected files per test.
      *
-     * @var string[]
+     * @var array<string,int>
      */
     private $assertionExpectedFiles = [];
 
@@ -66,10 +66,7 @@ abstract class WebTestCase extends LiipWebTestCase
         return $client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -83,15 +80,12 @@ abstract class WebTestCase extends LiipWebTestCase
         self::$mockedServices = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    protected function tearDown() : void
     {
-        $container = $this->getContainer();
-
+        /** @var \Doctrine\Common\Persistence\ConnectionRegistry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
         /** @var Connection[] $connections */
-        $connections = $container->get('doctrine')->getConnections();
+        $connections = $doctrine->getConnections();
         foreach ($connections as $connection) {
             $connection->close();
         }
@@ -169,7 +163,7 @@ abstract class WebTestCase extends LiipWebTestCase
 
         $schemaTool = new SchemaTool($em);
         $schemaTool->dropDatabase();
-        if (empty($metaData)) {
+        if ($metaData === []) {
             return;
         }
 
@@ -178,7 +172,10 @@ abstract class WebTestCase extends LiipWebTestCase
 
     protected function getObjectManager() : ObjectManager
     {
-        return $this->getContainer()->get('doctrine')->getManager();
+        /** @var \Doctrine\Common\Persistence\ManagerRegistry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        return $doctrine->getManager();
     }
 
     protected static function getMatcher() : Matcher

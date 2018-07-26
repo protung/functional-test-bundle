@@ -10,6 +10,11 @@ php:
   - 7.1
   - 7.2
 
+before_script:
+  # Install Imagick
+  - pear config-set preferred_state beta
+  - printf "\n" | pecl install imagick
+
 matrix:
   fast_finish: true
   include:
@@ -21,5 +26,4 @@ install:
   - travis_retry composer update ${COMPOSER_FLAGS} --prefer-source --no-interaction
 
 script:
-  - composer cs-check
   - composer test
