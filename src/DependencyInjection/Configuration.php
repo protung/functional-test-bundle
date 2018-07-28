@@ -18,7 +18,6 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('fixture_loader_extend_class')
-                    ->cannotBeEmpty()
                     ->defaultValue(AbstractLoader::class)
                 ->end()
             ->end();

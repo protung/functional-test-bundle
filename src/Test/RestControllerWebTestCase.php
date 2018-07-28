@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Abstract class for restful controllers.
@@ -32,18 +34,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     ];
 
     /**
-     * The authentication to use.
+     * The authenticated user for the test.
      *
-     * @var string|null
+     * @var UserInterface|null
      */
     protected static $authentication;
-
-    /**
-     * Tokens from authorization.
-     *
-     * @var mixed[]
-     */
-    protected static $authTokens = [];
 
     public function setUp() : void
     {
@@ -55,6 +50,53 @@ abstract class RestControllerWebTestCase extends WebTestCase
     {
         parent::tearDown();
         static::$authentication = self::AUTHENTICATION_NONE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function createClient(array $server = []) : Client
+    {
+        $client = parent::createClient($server);
+
+        if (self::$authentication === null) {
+            return $client;
+        }
+
+        static::authenticateClient($client);
+
+        return $client;
+    }
+
+    protected static function authenticateClient(Client $client) : void
+    {
+        if (! \interface_exists('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface')) {
+            throw new \RuntimeException(
+                \sprintf(
+                    'Package "%s" was not found. Please install it or overwrite method "%s"',
+                    'lexik/jwt-authentication-bundle',
+                    __METHOD__
+                )
+            );
+        }
+
+        /** @var \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface $jwtManager */
+        $jwtManager = static::$container->get('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface');
+        $client->setServerParameter(
+            'HTTP_Authorization',
+            \sprintf('Bearer %s', $jwtManager->create(static::$authentication))
+        );
+    }
+
+    protected function loginAsAdmin() : void
+    {
+        $user = new User('admin', null, ['ROLE_ADMIN']);
+        $this->loginAs($user);
+    }
+
+    protected function loginAs(UserInterface $user) : void
+    {
+        self::$authentication = $user;
     }
 
     /**
