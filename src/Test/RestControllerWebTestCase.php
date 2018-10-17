@@ -168,14 +168,22 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a DELETE request.
      *
-     * @param string $path               The API path to test.
-     * @param int    $expectedStatusCode The expected HTTP response code.
+     * @param string  $path               The API path to test.
+     * @param int     $expectedStatusCode The expected HTTP response code.
+     * @param mixed[] $server             The server parameters.
      */
-    protected function assertRestDeletePath(string $path, int $expectedStatusCode = Response::HTTP_NO_CONTENT) : Client
-    {
+    protected function assertRestDeletePath(
+        string $path,
+        int $expectedStatusCode = Response::HTTP_NO_CONTENT,
+        array $server = []
+    ) : Client {
         $request = Request::create(
             $path,
-            Request::METHOD_DELETE
+            Request::METHOD_DELETE,
+            [],
+            [],
+            [],
+            $server
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -310,13 +318,21 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string  $path    The API path to test.
      * @param string  $method  The HTTP verb.
      * @param mixed[] $content The POST content.
+     * @param mixed[] $server  The server parameters.
      */
-    protected function assertRestRequestReturns403(string $path, string $method, array $content = []) : void
-    {
+    protected function assertRestRequestReturns403(
+        string $path,
+        string $method,
+        array $content = [],
+        array $server = []
+    ) : void {
         $request = Request::create(
             $path,
             $method,
-            $content
+            $content,
+            [],
+            [],
+            $server
         );
 
         $expected = [
@@ -330,16 +346,24 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 401 if the user is not authenticated.
      *
-     * @param string $url    The URL to call.
-     * @param string $method The HTTP verb.
+     * @param string  $url    The URL to call.
+     * @param string  $method The HTTP verb.
+     * @param mixed[] $server The server parameters.
      */
-    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(string $url, string $method) : void
-    {
+    protected function assertRestRequestReturns401IfUserIsNotAuthenticated(
+        string $url,
+        string $method,
+        array $server = []
+    ) : void {
         static::$authentication = self::AUTHENTICATION_NONE;
 
         $request = Request::create(
             $url,
-            $method
+            $method,
+            [],
+            [],
+            [],
+            $server
         );
 
         $expected = [
@@ -356,13 +380,21 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param string  $path    The API path to test.
      * @param string  $method  The HTTP verb.
      * @param mixed[] $content The POST content.
+     * @param mixed[] $server  The server parameters.
      */
-    protected function assertRestRequestReturns404(string $path, string $method, array $content = []) : void
-    {
+    protected function assertRestRequestReturns404(
+        string $path,
+        string $method,
+        array $content = [],
+        array $server = []
+    ) : void {
         $request = Request::create(
             $path,
             $method,
-            $content
+            $content,
+            [],
+            [],
+            $server
         );
 
         $expected = [
