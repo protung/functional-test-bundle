@@ -37,7 +37,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 'number-of-expected',
                 InputArgument::OPTIONAL,
                 'The number of expected files to generate.',
-                1
+                '1'
             )
             ->addOption(
                 'custom-loader',
@@ -47,7 +47,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : void
+    protected function execute(InputInterface $input, OutputInterface $output) : ?int
     {
         $directory = $this->getTestDirectoryPath($input->getArgument('path'));
         $namespace = $this->getNamespace($directory);
@@ -62,7 +62,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 \sprintf('Invalid directory <info>%s</info>', $directory)
             );
 
-            return;
+            return 1;
         }
 
         for ($i = 1; $i <= $input->getArgument('number-of-expected'); $i++) {
@@ -92,7 +92,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         }
 
         if (! $customLoader) {
-            return;
+            return 0;
         }
 
         $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
@@ -109,6 +109,8 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
             );
         }
+
+        return 0;
     }
 
     /**

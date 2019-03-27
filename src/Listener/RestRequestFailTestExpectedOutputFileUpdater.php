@@ -110,7 +110,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             // Indent the output with 2 spaces instead of 4.
             $data = \preg_replace_callback(
                 '/^ +/m',
-                function ($m) {
+                static function ($m) {
                     return \str_repeat(' ', \strlen($m[0]) / 2);
                 },
                 \json_encode($actual, \JSON_PRETTY_PRINT)
@@ -178,6 +178,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
      * @param mixed[]  $expectedData
      * @param string[] $parentKeys
      * @param mixed    $originalExpected
+     *
      * @return mixed[]
      */
     private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected) : array
@@ -206,6 +207,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
      *
      * @param mixed    $originalExpected
      * @param string[] $keys
+     *
      * @return mixed Either empty array or empty object
      */
     private function getOriginalEmptyJsonValue($originalExpected, array $keys)
@@ -219,6 +221,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements TestListener
             if (\count($keys) > 0) {
                 return $this->getOriginalEmptyJsonValue($originalExpected->{$key}, $keys);
             }
+
             return $originalExpected->{$key};
         }
 

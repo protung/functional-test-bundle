@@ -184,7 +184,7 @@ abstract class WebTestCase extends KernelTestCase
     protected function assertImagesSimilarity(
         string $expected,
         string $actual,
-        float $threshold = 0,
+        float $threshold = 0.0,
         string $message = 'Failed asserting that images are similar.'
     ) : void {
         $expectedImagick = new \Imagick();
