@@ -10,7 +10,7 @@ php:
   - 7.2
   - 7.3
 
-before_script:
+before_install:
   # Install Imagick
   - pear config-set preferred_state beta
   - pecl channel-update pecl.php.net
