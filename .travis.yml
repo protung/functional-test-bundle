@@ -10,10 +10,11 @@ php:
   - 7.2
   - 7.3
 
-before_script:
+before_install:
   # Install Imagick
   - pear config-set preferred_state beta
-  - printf "\n" | pecl install imagick
+  - pecl channel-update pecl.php.net
+  - yes | pecl install imagick
 
 matrix:
   fast_finish: true
