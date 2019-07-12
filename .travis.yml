@@ -13,7 +13,8 @@ php:
 before_script:
   # Install Imagick
   - pear config-set preferred_state beta
-  - printf "\n" | pecl install imagick
+  - pecl channel-update pecl.php.net
+  - yes | pecl install imagick
 
 matrix:
   fast_finish: true
