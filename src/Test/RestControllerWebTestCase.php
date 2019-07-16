@@ -81,7 +81,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         }
 
         /** @var \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface $jwtManager */
-        $jwtManager = static::$container->get('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface');
+        $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
         $client->setServerParameter(
             'HTTP_Authorization',
             \sprintf('Bearer %s', $jwtManager->create(static::$authentication))
