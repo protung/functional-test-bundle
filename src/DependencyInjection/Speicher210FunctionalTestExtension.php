@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\DependencyInjection;
 
+use Speicher210\FunctionalTestBundle\Command\TestStubCreateCommand;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -19,9 +20,8 @@ final class Speicher210FunctionalTestExtension extends ConfigurableExtension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter(
-            'sp210.functional_test.fixture.loader.extend_class',
-            $config['fixture_loader_extend_class']
-        );
+        $container
+            ->getDefinition(TestStubCreateCommand::class)
+            ->setArgument('$fixtureLoaderExtendClass', $config['fixture_loader_extend_class']);
     }
 }
