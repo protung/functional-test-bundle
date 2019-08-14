@@ -103,18 +103,22 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * Shorthand method for assertRestRequest() with a GET request.
      *
      * @param string  $path               The API path to test.
+     * @param mixed[] $queryParams        The query parameters.
      * @param int     $expectedStatusCode The expected HTTP response code.
      * @param mixed[] $server             The server parameters.
      */
     protected function assertRestGetPath(
         string $path,
+        array $queryParams = [],
         int $expectedStatusCode = Response::HTTP_OK,
         array $server = []
     ) : Client {
+        \parse_str(\parse_url($path, \PHP_URL_QUERY) ?? '', $queryParamsFromPath);
+
         $request = Request::create(
             $path,
             Request::METHOD_GET,
-            [],
+            \array_replace_recursive($queryParamsFromPath, $queryParams),
             [],
             [],
             $server
