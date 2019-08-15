@@ -12,13 +12,18 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder() : TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('speicher210_functional_test');
+        $treeBuilder = new TreeBuilder('speicher210_functional_test');
+
+        if (\method_exists($treeBuilder, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // BC layer for symfony/config 4.1 and older
+            $rootNode = $treeBuilder->root('speicher210_functional_test', 'array');
+        }
 
         $rootNode
             ->children()
                 ->scalarNode('fixture_loader_extend_class')
-                    ->cannotBeEmpty()
                     ->defaultValue(AbstractLoader::class)
                 ->end()
             ->end();

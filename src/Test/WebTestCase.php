@@ -6,24 +6,15 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use Coduo\PHPMatcher\Factory\SimpleFactory;
 use Coduo\PHPMatcher\Matcher;
+use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
-use Liip\FunctionalTestBundle\Test\WebTestCase as LiipWebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * Abstract class for test cases.
- */
-abstract class WebTestCase extends LiipWebTestCase
+abstract class WebTestCase extends KernelTestCase
 {
-    /** @var object[] */
-    private static $mockedServices = [];
-
     /** @var Matcher */
     private static $matcher;
 
@@ -37,30 +28,15 @@ abstract class WebTestCase extends LiipWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = []) : KernelInterface
+    protected static function createClient(array $server = []) : Client
     {
-        $options['debug'] = false;
-
-        return parent::createKernel($options);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static function createClient(array $options = [], array $server = []) : Client
-    {
-        $client = parent::createClient($options, $server);
+        /** @var \Symfony\Bundle\FrameworkBundle\Client $client */
+        $client = static::$container->get('test.client');
+        $client->setServerParameters($server);
 
         $container = $client->getContainer();
         if (! $container instanceof ContainerInterface) {
             throw new \RuntimeException('Unknown container.');
-        }
-        foreach (self::$mockedServices as $id => $mock) {
-            if (! $container->has($id)) {
-                throw new \InvalidArgumentException(\sprintf('Cannot mock a non-existent service: "%s"', $id));
-            }
-
-            $container->set($id, $mock);
         }
 
         return $client;
@@ -70,20 +46,13 @@ abstract class WebTestCase extends LiipWebTestCase
     {
         parent::setUp();
 
-        /** @var EntityManager $emDefault */
-        $emDefault = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $this->resetDatabaseSchema($emDefault);
-
-        $this->prepareTestFixtures();
-        $this->postFixtureSetup();
-
-        self::$mockedServices = [];
+        $this->loadTestFixtures();
     }
 
     protected function tearDown() : void
     {
         /** @var \Doctrine\Common\Persistence\ConnectionRegistry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
+        $doctrine = static::$container->get('doctrine');
         /** @var Connection[] $connections */
         $connections = $doctrine->getConnections();
         foreach ($connections as $connection) {
@@ -112,32 +81,24 @@ abstract class WebTestCase extends LiipWebTestCase
     }
 
     /**
-     * Mock a container service.
-     *
-     * @param string $idService The service ID.
-     * @param mixed  $mock      The mock.
-     */
-    protected function mockContainerService(string $idService, $mock) : void
-    {
-        self::$mockedServices[$idService] = $mock;
-    }
-
-    /**
      * Prepare the text fixtures and the expected content file.
      */
-    protected function prepareTestFixtures() : void
+    protected function loadTestFixtures() : void
     {
         $reflection = new \ReflectionObject($this);
 
+        $fixtures = $this->getAlwaysLoadingFixtures();
+
         $fixturesFile = \dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName(false) . '.php';
-
-        $alwaysLoadingFixtures = $this->getAlwaysLoadingFixtures();
-
         if (\file_exists($fixturesFile)) {
-            $this->loadFixtures(\array_merge($alwaysLoadingFixtures, require $fixturesFile));
-        } elseif (\count($alwaysLoadingFixtures) > 0) {
-            $this->loadFixtures($alwaysLoadingFixtures);
+            $fixtures = \array_merge($fixtures, require $fixturesFile);
         }
+
+        if (\count($fixtures) <= 0) {
+            return;
+        }
+
+        $this->loadFixtures($fixtures);
     }
 
     /**
@@ -151,29 +112,26 @@ abstract class WebTestCase extends LiipWebTestCase
     }
 
     /**
-     * Reset the database schema.
-     *
-     * @param EntityManagerInterface $em The entity manager.
-     *
-     * @throws \Doctrine\ORM\Tools\ToolsException
+     * @param string[] $classNames
      */
-    protected function resetDatabaseSchema(EntityManagerInterface $em) : void
+    private function loadFixtures(array $classNames = []) : void
     {
-        $metaData = $em->getMetadataFactory()->getAllMetadata();
-
-        $schemaTool = new SchemaTool($em);
-        $schemaTool->dropDatabase();
-        if ($metaData === []) {
-            return;
+        $fixtureLoader = new SymfonyFixturesLoader(static::$container);
+        foreach ($classNames as $className) {
+            $fixture = new $className();
+            $fixtureLoader->addFixture($fixture);
         }
 
-        $schemaTool->createSchema($metaData);
+        /** @var \Doctrine\ORM\EntityManagerInterface $em */
+        $em       = static::$container->get('doctrine.orm.entity_manager');
+        $executor = new ORMExecutor($em);
+        $executor->execute($fixtureLoader->getFixtures(), true);
     }
 
     protected function getObjectManager() : ObjectManager
     {
         /** @var \Doctrine\Common\Persistence\ManagerRegistry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
+        $doctrine = static::$container->get('doctrine');
 
         return $doctrine->getManager();
     }
@@ -197,10 +155,10 @@ abstract class WebTestCase extends LiipWebTestCase
     {
         $reflection = new \ReflectionObject($this);
         $testName   = $this->getName(false);
-        if (! isset($this->assertionExpectedFiles[$testName])) {
-            $this->assertionExpectedFiles[$testName] = 1;
-        } else {
+        if (isset($this->assertionExpectedFiles[$testName])) {
             $this->assertionExpectedFiles[$testName]++;
+        } else {
+            $this->assertionExpectedFiles[$testName] = 1;
         }
 
         $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
@@ -226,7 +184,7 @@ abstract class WebTestCase extends LiipWebTestCase
     protected function assertImagesSimilarity(
         string $expected,
         string $actual,
-        float $threshold = 0,
+        float $threshold = 0.0,
         string $message = 'Failed asserting that images are similar.'
     ) : void {
         $expectedImagick = new \Imagick();

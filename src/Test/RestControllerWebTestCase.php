@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Abstract class for restful controllers.
@@ -32,18 +34,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     ];
 
     /**
-     * The authentication to use.
+     * The authenticated user for the test.
      *
-     * @var string|null
+     * @var UserInterface|null
      */
     protected static $authentication;
-
-    /**
-     * Tokens from authorization.
-     *
-     * @var mixed[]
-     */
-    protected static $authTokens = [];
 
     public function setUp() : void
     {
@@ -58,21 +53,72 @@ abstract class RestControllerWebTestCase extends WebTestCase
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected static function createClient(array $server = []) : Client
+    {
+        $client = parent::createClient($server);
+
+        if (self::$authentication === null) {
+            return $client;
+        }
+
+        static::authenticateClient($client);
+
+        return $client;
+    }
+
+    protected static function authenticateClient(Client $client) : void
+    {
+        if (! \interface_exists('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface')) {
+            throw new \RuntimeException(
+                \sprintf(
+                    'Package "%s" was not found. Please install it or overwrite method "%s"',
+                    'lexik/jwt-authentication-bundle',
+                    __METHOD__
+                )
+            );
+        }
+
+        /** @var \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface $jwtManager */
+        $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
+        $client->setServerParameter(
+            'HTTP_Authorization',
+            \sprintf('Bearer %s', $jwtManager->create(static::$authentication))
+        );
+    }
+
+    protected function loginAsAdmin() : void
+    {
+        $user = new User('admin', null, ['ROLE_ADMIN']);
+        $this->loginAs($user);
+    }
+
+    protected function loginAs(UserInterface $user) : void
+    {
+        self::$authentication = $user;
+    }
+
+    /**
      * Shorthand method for assertRestRequest() with a GET request.
      *
      * @param string  $path               The API path to test.
+     * @param mixed[] $queryParams        The query parameters.
      * @param int     $expectedStatusCode The expected HTTP response code.
      * @param mixed[] $server             The server parameters.
      */
     protected function assertRestGetPath(
         string $path,
+        array $queryParams = [],
         int $expectedStatusCode = Response::HTTP_OK,
         array $server = []
     ) : Client {
+        \parse_str(\parse_url($path, \PHP_URL_QUERY) ?? '', $queryParamsFromPath);
+
         $request = Request::create(
             $path,
             Request::METHOD_GET,
-            [],
+            \array_replace_recursive($queryParamsFromPath, $queryParams),
             [],
             [],
             $server

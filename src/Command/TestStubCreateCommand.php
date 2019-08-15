@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,8 +16,18 @@ use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 /**
  * Command to create necessary files and directories for a REST functional test.
  */
-class TestStubCreateCommand extends ContainerAwareCommand
+class TestStubCreateCommand extends Command
 {
+    /** @var string */
+    private $fixtureLoaderExtendClass;
+
+    public function __construct(string $fixtureLoaderExtendClass)
+    {
+        $this->fixtureLoaderExtendClass = $fixtureLoaderExtendClass;
+
+        parent::__construct();
+    }
+
     protected function configure() : void
     {
         $this
@@ -37,7 +47,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 'number-of-expected',
                 InputArgument::OPTIONAL,
                 'The number of expected files to generate.',
-                1
+                '1'
             )
             ->addOption(
                 'custom-loader',
@@ -47,7 +57,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : void
+    protected function execute(InputInterface $input, OutputInterface $output) : ?int
     {
         $directory = $this->getTestDirectoryPath($input->getArgument('path'));
         $namespace = $this->getNamespace($directory);
@@ -62,7 +72,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 \sprintf('Invalid directory <info>%s</info>', $directory)
             );
 
-            return;
+            return 1;
         }
 
         for ($i = 1; $i <= $input->getArgument('number-of-expected'); $i++) {
@@ -92,7 +102,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         }
 
         if (! $customLoader) {
-            return;
+            return 0;
         }
 
         $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
@@ -109,6 +119,8 @@ class TestStubCreateCommand extends ContainerAwareCommand
                 \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
             );
         }
+
+        return 0;
     }
 
     /**
@@ -166,8 +178,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
 
     private function getFixturesLoaderContent(string $namespace, string $name) : string
     {
-        $loaderParent      = $this->getContainer()->getParameter('sp210.functional_test.fixture.loader.extend_class');
-        $loaderParentAlias = \explode('\\', $loaderParent);
+        $loaderParentAlias = \explode('\\', $this->fixtureLoaderExtendClass);
 
         $content   = [];
         $content[] = '<?php';
@@ -176,7 +187,7 @@ class TestStubCreateCommand extends ContainerAwareCommand
         $content[] = null;
         $content[] = 'namespace ' . $namespace . ';';
         $content[] = null;
-        $content[] = 'use ' . $loaderParent . ';';
+        $content[] = 'use ' . $this->fixtureLoaderExtendClass . ';';
         $content[] = null;
         $content[] = 'final class ' . $name . ' extends ' . \end($loaderParentAlias);
         $content[] = '{';

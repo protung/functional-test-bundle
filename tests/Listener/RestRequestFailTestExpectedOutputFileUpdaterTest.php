@@ -96,8 +96,7 @@ final class RestRequestFailTestExpectedOutputFileUpdaterTest extends TestCase
         $comparisonFailureMock->expects(self::once())->method('getExpected')->willReturn($expectedMock);
         $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($actualMock);
 
-        $exception = $this->createMock(ExpectationFailedException::class);
-        $exception->expects(self::any())->method('getComparisonFailure')->willReturn($comparisonFailureMock);
+        $exception = new ExpectationFailedException('Expectation failed', $comparisonFailureMock);
 
         $listener->addFailure($test, $exception, 0.0);
 

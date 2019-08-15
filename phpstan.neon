@@ -10,3 +10,7 @@ parameters:
         - '#Call to method Imagick::getimageblob\(\) with incorrect case: getImageBlob#'
         - '#Call to method Imagick::readimageblob\(\) with incorrect case: readImageBlob#'
         - '#Call to method Imagick::compareimages\(\) with incorrect case: compareImages#'
+        - '#Variable property access on object\.#'
+        - '#Call to function method_exists\(\) with Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder#'
+        - '#Class Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder does not have a constructor and must be instantiated without any parameters#'
+    reportUnmatchedIgnoredErrors: false
