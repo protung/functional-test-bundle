@@ -3,7 +3,7 @@
 ## Introduction
 
 This Bundle provides base classes and functionality for writing and running functional tests 
-with focus on testing REST endpoint.  
+with focus on testing REST endpoint.
 It provides help in setting up test database and loading fixtures and mocking services in DI (even private services).
 
 ## Installation
@@ -133,7 +133,7 @@ In order to rebuild and reset the database you need to create a bootstrap file f
 In your own bootstrap file you can include the file `Test/bootstrap.php` which will reset the test database.
 The database will not be rebuild for every test, but only once when the tests start.
 This means that data must be removed before running next test. This can be achieved by running tests in a transaction.
-For this add the extension  to your phpunit config:
+For this add the extension to your phpunit config:
 
 ```xml
 <extensions>
