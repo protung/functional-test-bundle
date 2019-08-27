@@ -2,103 +2,94 @@
 
 declare(strict_types=1);
 
-namespace Speicher210\FunctionalTestBundle\Tests\Listener;
+namespace Speicher210\FunctionalTestBundle\Tests\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
 
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\Comparator\ComparisonFailure;
-use Speicher210\FunctionalTestBundle\Listener\RestRequestFailTestExpectedOutputFileUpdater;
-use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
+use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
 
-final class RestRequestFailTestExpectedOutputFileUpdaterTest extends TestCase
+final class JsonFileUpdaterTest extends TestCase
 {
     public function testUpdatesEmptyFile() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesOutput() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesIndentToTwoSpaces() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testDoNotChangeTypeForEmptyObjectsAndArrays() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesObjectToNull() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesFieldsWithMatchedPatterns() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesFieldsWithPatternToNull() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesFieldsWithoutPatternToNull() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesFieldsWithPatternToValueFromActualWhenNotMatchingPattern() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesNullToOtherValues() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesArrayToObject() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesObjectWithArrayToEmptyObject() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
     public function testUpdatesObjectWithArrayToObjectWithEmptyArray() : void
     {
-        $this->assertAddFailureUpdatesExpectedOutput();
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
-    private function assertAddFailureUpdatesExpectedOutput() : void
+    private function assertUpdateExpectedFileUpdatesExpectedOutput() : void
     {
-        $listener = new RestRequestFailTestExpectedOutputFileUpdater();
-
-        $test = $this->createMock(RestControllerWebTestCase::class);
-
         $root         = vfsStream::setup();
         $expectedFile = vfsStream::newFile('expected')->at($root);
 
-        $test->expects(self::once())->method('getCurrentExpectedResponseContentFile')->willReturn($expectedFile->url());
-
-        $expectedMock = \json_decode($this->getTestFile('originalExpected'));
-        $actualMock   = \json_decode($this->getTestFile('actual'));
+        $expectedMock = \json_decode($this->getTestFile('originalExpected'), false);
+        $actualMock   = \json_decode($this->getTestFile('actual'), false);
 
         $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
         $comparisonFailureMock->expects(self::once())->method('getExpected')->willReturn($expectedMock);
         $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($actualMock);
 
-        $exception = new ExpectationFailedException('Expectation failed', $comparisonFailureMock);
-
-        $listener->addFailure($test, $exception, 0.0);
+        $jsonFileUpdater = new JsonFileUpdater();
+        $jsonFileUpdater->updateExpectedFile($expectedFile->url(), $comparisonFailureMock);
 
         self::assertSame($this->getTestFile('updatedExpected'), $expectedFile->getContent());
     }
