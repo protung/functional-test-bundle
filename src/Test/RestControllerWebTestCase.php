@@ -7,6 +7,7 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -41,6 +42,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @var UserInterface|null
      */
     protected static $authentication;
+
+    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
+    {
+        static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
+    }
 
     public function setUp() : void
     {
@@ -306,16 +312,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         ?string $expectedOutputContent,
         ?string $expectedOutputContentType
     ) : void {
-        static::assertSame(
-            $expectedStatusCode,
-            $response->getStatusCode(),
-            \sprintf(
-                'Failed asserting response code "%s" matches expected "%s". Response body was: %s',
-                $response->getStatusCode(),
-                $expectedStatusCode,
-                $response->getContent()
-            )
-        );
+        static::assertResponseStatusCode($response, $expectedStatusCode);
 
         if ($expectedOutputContent !== null) {
             $actualContentType = $response->headers->get('Content-Type');
