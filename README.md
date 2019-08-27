@@ -3,7 +3,7 @@
 ## Introduction
 
 This Bundle provides base classes and functionality for writing and running functional tests 
-with focus on testing REST endpoint.  
+with focus on testing REST endpoint.
 It provides help in setting up test database and loading fixtures and mocking services in DI (even private services).
 
 ## Installation
@@ -97,6 +97,23 @@ Example of expected output can be:
 The `-1.json`suffix will be incremented for every REST assertion made under one test.
 In the expected any functionality from `coduo/php-matcher` can be used.
 
+It is possible to automatically update content of expected files during test execution to the actual content by adding 
+this extension to your phpunit config:
+
+```xml
+<extensions>
+    <extension class="Speicher210\FunctionalTestBundle\Extension\RestRequestFailTestExpectedOutputFileUpdater" />
+</extensions>
+```
+
+It is also possible to add listener instead of extension:
+
+```xml
+<listeners>
+    <listener class="Speicher210\FunctionalTestBundle\Listener\RestRequestFailTestExpectedOutputFileUpdater" />
+</listeners>
+```
+
 Fixtures are loaded using Doctrine fixtures. 
 By default the framework will look by default under `Fixtures` directory (from where the test class is located)
 for a PHP file with the same name as the test. This file must return an array of class names that extend 
@@ -116,7 +133,13 @@ In order to rebuild and reset the database you need to create a bootstrap file f
 In your own bootstrap file you can include the file `Test/bootstrap.php` which will reset the test database.
 The database will not be rebuild for every test, but only once when the tests start.
 This means that data must be removed before running next test. This can be achieved by running tests in a transaction.
-For this add the `<listener class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitListener" />` listener to your phpunit config.
+For this add the extension to your phpunit config:
+
+```xml
+<extensions>
+    <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+</extensions>
+```
 
 ## Accessing and mocking services
 

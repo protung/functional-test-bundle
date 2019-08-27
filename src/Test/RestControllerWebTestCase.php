@@ -6,6 +6,8 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +27,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected const IMAGE_TYPE_JPG = 'jpg';
     protected const IMAGE_TYPE_PNG = 'png';
     protected const IMAGE_TYPE_SVG = 'svg';
-    private const IMAGE_TYPES      = [
+    private const   IMAGE_TYPES    = [
         self::IMAGE_TYPE_BMP,
         self::IMAGE_TYPE_GIF,
         self::IMAGE_TYPE_JPG,
@@ -355,7 +357,18 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $actual = $this->prettifyJson($actual);
         }
 
-        static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
+        try {
+            static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
+        } catch (ExpectationFailedException $e) {
+            $comparisonFailure = $e->getComparisonFailure();
+            if ($comparisonFailure !== null && ExpectedOutputFileUpdaterConfigurator::isOutputUpdaterEnabled()) {
+                ExpectedOutputFileUpdaterConfigurator::getOutputUpdater()->updateExpectedFile(
+                    $this->getCurrentExpectedResponseContentFile('json'),
+                    $comparisonFailure
+                );
+            }
+            throw $e;
+        }
     }
 
     /**
