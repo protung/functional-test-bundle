@@ -48,7 +48,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
     }
 
-    public function setUp() : void
+    protected function setUp() : void
     {
         parent::setUp();
         static::$authentication = self::AUTHENTICATION_NONE;

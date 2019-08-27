@@ -42,7 +42,7 @@ abstract class WebTestCase extends KernelTestCase
         return $client;
     }
 
-    public function setUp() : void
+    protected function setUp() : void
     {
         parent::setUp();
 
