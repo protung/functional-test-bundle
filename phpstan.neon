@@ -15,4 +15,6 @@ parameters:
         - '#Call to an undefined static method PHPUnit\\Framework\\Constraint\\Constraint::__construct\(\)#'
         - '#Call to function method_exists\(\) with #'
         - '#Class Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder does not have a constructor and must be instantiated without any parameters#'
+        - '#Call to an undefined static method PHPUnit\\Framework\\Constraint\\Constraint::exporter\(\)#'
+        - '#Method Speicher210\\FunctionalTestBundle\\Constraint\\ResponseHeaderSame::evaluate\(\) has parameter \$[a-zA-Z]+ with no typehint specified#'
     reportUnmatchedIgnoredErrors: false
