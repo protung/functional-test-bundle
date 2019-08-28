@@ -7,6 +7,7 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -46,6 +47,15 @@ abstract class RestControllerWebTestCase extends WebTestCase
     public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
     {
         static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
+    }
+
+    public static function assertResponseHeaderSame(
+        Response $response,
+        string $headerName,
+        string $expectedValue,
+        string $message = ''
+    ) : void {
+        self::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
     }
 
     protected function setUp() : void
@@ -315,13 +325,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
         static::assertResponseStatusCode($response, $expectedStatusCode);
 
         if ($expectedOutputContent !== null) {
-            $actualContentType = $response->headers->get('Content-Type');
-            static::assertSame(
-                $expectedOutputContentType,
-                $actualContentType,
-                \sprintf('Failed asserting response content type matches "%s"', $expectedOutputContentType)
-            );
-            switch ($actualContentType) {
+            static::assertResponseHeaderSame($response, 'Content-Type', $expectedOutputContentType);
+
+            switch ($response->headers->get('Content-Type')) {
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/jpg':
