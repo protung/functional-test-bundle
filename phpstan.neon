@@ -13,6 +13,7 @@ parameters:
         - '#Variable property access on object\.#'
         - '#Speicher210\\FunctionalTestBundle\\Constraint\\[a-zA-Z0-9\\]+::__construct\(\) calls parent constructor but parent does not have one#'
         - '#Call to an undefined static method PHPUnit\\Framework\\Constraint\\Constraint::__construct\(\)#'
+        - '#Call to an undefined static method Speicher210\\FunctionalTestBundle\\Constraint\\ResponseContentConstraint::__construct\(\)#'
         - '#Call to function method_exists\(\) with #'
         - '#Class Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder does not have a constructor and must be instantiated without any parameters#'
         - '#Call to an undefined static method PHPUnit\\Framework\\Constraint\\Constraint::exporter\(\)#'

@@ -9,8 +9,10 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class WebTestCase extends KernelTestCase
 {
@@ -174,5 +176,14 @@ abstract class WebTestCase extends KernelTestCase
         string $message = ''
     ) : void {
         static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
+    }
+
+    public static function assertResponseContentMatchesFile(
+        Response $response,
+        string $expectedFile,
+        string $message = ''
+    ) : void {
+        static::assertFileExists($expectedFile);
+        static::assertThat($response->getContent(), new ResponseContentMatchesFile($expectedFile), $message);
     }
 }

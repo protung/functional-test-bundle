@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
-use Coduo\PHPMatcher\Factory\SimpleFactory;
-use Coduo\PHPMatcher\Matcher;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Util\Json;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Symfony\Component\HttpFoundation\Response;
 
-final class JsonResponseContentMatches extends Constraint
+final class JsonResponseContentMatches extends ResponseContentConstraint
 {
-    /** @var Matcher */
-    private static $matcher;
-
     /** @var string */
     private $expectedContent;
 
@@ -65,16 +60,6 @@ final class JsonResponseContentMatches extends Constraint
      *
      * {@inheritdoc}
      */
-    protected function additionalFailureDescription($other) : string
-    {
-        return static::getMatcher()->getError();
-    }
-
-    /**
-     * @param Response $other
-     *
-     * {@inheritdoc}
-     */
     protected function fail($other, $description, ?ComparisonFailure $comparisonFailure = null) : void
     {
         $actual = $other->getContent();
@@ -102,15 +87,5 @@ final class JsonResponseContentMatches extends Constraint
         }
 
         parent::fail($other, $description, $comparisonFailure);
-    }
-
-    private static function getMatcher() : Matcher
-    {
-        if (self::$matcher === null) {
-            $factory       = new SimpleFactory();
-            self::$matcher = $factory->createMatcher();
-        }
-
-        return self::$matcher;
     }
 }
