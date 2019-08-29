@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
-use Coduo\PHPMatcher\Factory\SimpleFactory;
-use Coduo\PHPMatcher\Matcher;
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -15,9 +13,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class WebTestCase extends KernelTestCase
 {
-    /** @var Matcher */
-    private static $matcher;
-
     /**
      * Array with the number of assertions against expected files per test.
      *
@@ -134,16 +129,6 @@ abstract class WebTestCase extends KernelTestCase
         $doctrine = static::$container->get('doctrine');
 
         return $doctrine->getManager();
-    }
-
-    protected static function getMatcher() : Matcher
-    {
-        if (self::$matcher === null) {
-            $factory       = new SimpleFactory();
-            self::$matcher = $factory->createMatcher();
-        }
-
-        return self::$matcher;
     }
 
     /**

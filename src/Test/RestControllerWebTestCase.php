@@ -7,6 +7,7 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
@@ -56,6 +57,14 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $message = ''
     ) : void {
         self::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
+    }
+
+    public static function assertJsonResponseContent(
+        Response $response,
+        string $expectedContent,
+        string $message = ''
+    ) : void {
+        static::assertThat($response, new JsonResponseContentMatches($expectedContent), $message);
     }
 
     protected function setUp() : void
@@ -345,23 +354,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     private function assertJsonContentOutput(Response $response, string $expectedOutputContent) : void
     {
-        $matcher = static::getMatcher();
-
-        $actual = $response->getContent();
-        $result = $matcher->match($actual, $expectedOutputContent);
-        if ($result === true) {
-            return;
-        }
-
-        $difference = $matcher->getError();
-
-        // Quick check if actual is valid JSON and if it is prettify it.
-        if (\json_decode($actual) !== null) {
-            $actual = $this->prettifyJson($actual);
-        }
-
         try {
-            static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
+            static::assertJsonResponseContent($response, $expectedOutputContent);
         } catch (ExpectationFailedException $e) {
             $comparisonFailure = $e->getComparisonFailure();
             if ($comparisonFailure !== null && ExpectedOutputFileUpdaterConfigurator::isOutputUpdaterEnabled()) {
