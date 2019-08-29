@@ -34,7 +34,9 @@ final class ResponseHeaderSameTest extends TestCase
         $constraint = new ResponseHeaderSame('header-name', 'some_value1');
 
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that the response has header "header-name" with value "some_value1".');
+        $this->expectExceptionMessage(
+            'Failed asserting that the response has header "header-name" with value "some_value1".'
+        );
 
         $constraint->evaluate($response);
     }

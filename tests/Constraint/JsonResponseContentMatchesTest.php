@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class JsonResponseContentMatchesTest extends TestCase
 {
+    /**
+     * @return mixed[]
+     */
     public static function dataProviderTestEvaluateTheSameJsonContent() : array
     {
         return [
