@@ -56,7 +56,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $expectedValue,
         string $message = ''
     ) : void {
-        self::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
+        static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
     }
 
     public static function assertJsonResponseContent(
@@ -284,7 +284,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
-            static::assertTrue($response->headers->contains('Content-Type', 'application/json'));
+            static::assertResponseHeaderSame($response, 'Content-Type', 'application/json');
         }
 
         return $client;
@@ -340,7 +340,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/jpg':
-                    $this->assertImagesSimilarity($expectedOutputContent, $response->getContent());
+                    static::assertImageSimilarity($expectedOutputContent, $response->getContent());
                     break;
                 case 'application/json':
                 default:

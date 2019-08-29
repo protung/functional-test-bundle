@@ -8,6 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -166,19 +167,12 @@ abstract class WebTestCase extends KernelTestCase
      * @param float  $threshold Similarity threshold.
      * @param string $message   Fail message.
      */
-    protected function assertImagesSimilarity(
+    public static function assertImageSimilarity(
         string $expected,
         string $actual,
         float $threshold = 0.0,
-        string $message = 'Failed asserting that images are similar.'
+        string $message = ''
     ) : void {
-        $expectedImagick = new \Imagick();
-        $expectedImagick->readImageBlob($expected);
-        $actualImagick = new \Imagick();
-        $actualImagick->readImageBlob($actual);
-
-        $result = $expectedImagick->compareImages($actualImagick, \Imagick::METRIC_MEANSQUAREERROR);
-
-        static::assertLessThanOrEqual($threshold, $result[1], $message);
+        static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
     }
 }
