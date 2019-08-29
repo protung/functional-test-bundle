@@ -75,7 +75,7 @@ final class JsonResponseContentMatches extends Constraint
      *
      * {@inheritdoc}
      */
-    protected function fail($other, $description, ComparisonFailure $comparisonFailure = null) : void
+    protected function fail($other, $description, ?ComparisonFailure $comparisonFailure = null) : void
     {
         $actual = $other->getContent();
         if ($comparisonFailure === null) {
