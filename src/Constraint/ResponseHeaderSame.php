@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseHeaderSame extends Constraint
 {
-    use ConstraintExporter;
-    use ConstraintEvaluate;
-
     /** @var string */
     private $headerName;
 
@@ -21,22 +18,16 @@ final class ResponseHeaderSame extends Constraint
 
     public function __construct(string $headerName, string $expectedValue)
     {
-        if (\method_exists(Constraint::class, '__construct')) {
-            parent::__construct();
-        }
-
         $this->headerName    = $headerName;
         $this->expectedValue = $expectedValue;
     }
 
     /**
-     * @param mixed $other
+     * @param Response|mixed $other
      *
-     * @return mixed|void
-     *
-     * {@inheritDoc}
+     * @return bool|void|mixed
      */
-    protected function doEvaluate($other, string $description = '', bool $returnResult = false)
+    public function evaluate($other, string $description = '', bool $returnResult = false)
     {
         $success = false;
 
