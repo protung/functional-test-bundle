@@ -32,10 +32,13 @@
     "symfony/framework-bundle": "^3.4 || ^4.0",
     "mikey179/vfsstream": "^1.6",
     "doctrine/coding-standard": "^6.0",
-    "phpstan/phpstan": "^0.11",
+    "phpstan/phpstan": "^0.11.15",
     "phpstan/phpstan-phpunit": "^0.11",
     "phpstan/phpstan-strict-rules": "^0.11",
     "lexik/jwt-authentication-bundle": "^2.5"
+  },
+  "conflict": {
+    "symfony/framework-bundle": "<3.4.23"
   },
   "suggest": {
     "ext-imagick": "To assert images and create fixture images",
