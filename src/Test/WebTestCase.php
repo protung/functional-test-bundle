@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
-use Coduo\PHPMatcher\Factory\SimpleFactory;
-use Coduo\PHPMatcher\Matcher;
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class WebTestCase extends KernelTestCase
 {
-    /** @var Matcher */
-    private static $matcher;
-
     /**
      * Array with the number of assertions against expected files per test.
      *
@@ -42,7 +40,7 @@ abstract class WebTestCase extends KernelTestCase
         return $client;
     }
 
-    public function setUp() : void
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -136,16 +134,6 @@ abstract class WebTestCase extends KernelTestCase
         return $doctrine->getManager();
     }
 
-    protected static function getMatcher() : Matcher
-    {
-        if (self::$matcher === null) {
-            $factory       = new SimpleFactory();
-            self::$matcher = $factory->createMatcher();
-        }
-
-        return self::$matcher;
-    }
-
     /**
      * Get the expected response content file.
      *
@@ -181,19 +169,21 @@ abstract class WebTestCase extends KernelTestCase
      * @param float  $threshold Similarity threshold.
      * @param string $message   Fail message.
      */
-    protected function assertImagesSimilarity(
+    public static function assertImageSimilarity(
         string $expected,
         string $actual,
         float $threshold = 0.0,
-        string $message = 'Failed asserting that images are similar.'
+        string $message = ''
     ) : void {
-        $expectedImagick = new \Imagick();
-        $expectedImagick->readImageBlob($expected);
-        $actualImagick = new \Imagick();
-        $actualImagick->readImageBlob($actual);
+        static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
+    }
 
-        $result = $expectedImagick->compareImages($actualImagick, \Imagick::METRIC_MEANSQUAREERROR);
-
-        static::assertLessThanOrEqual($threshold, $result[1], $message);
+    public static function assertResponseContentMatchesFile(
+        Response $response,
+        string $expectedFile,
+        string $message = ''
+    ) : void {
+        static::assertFileExists($expectedFile);
+        static::assertThat($response->getContent(), new ResponseContentMatchesFile($expectedFile), $message);
     }
 }

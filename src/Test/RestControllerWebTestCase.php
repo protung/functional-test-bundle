@@ -7,6 +7,9 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -42,7 +45,29 @@ abstract class RestControllerWebTestCase extends WebTestCase
      */
     protected static $authentication;
 
-    public function setUp() : void
+    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
+    {
+        static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
+    }
+
+    public static function assertResponseHeaderSame(
+        Response $response,
+        string $headerName,
+        string $expectedValue,
+        string $message = ''
+    ) : void {
+        static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
+    }
+
+    public static function assertJsonResponseContent(
+        Response $response,
+        string $expectedContent,
+        string $message = ''
+    ) : void {
+        static::assertThat($response, new JsonResponseContentMatches($expectedContent), $message);
+    }
+
+    protected function setUp() : void
     {
         parent::setUp();
         static::$authentication = self::AUTHENTICATION_NONE;
@@ -259,7 +284,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
-            static::assertTrue($response->headers->contains('Content-Type', 'application/json'));
+            static::assertResponseHeaderSame($response, 'Content-Type', 'application/json');
         }
 
         return $client;
@@ -306,29 +331,16 @@ abstract class RestControllerWebTestCase extends WebTestCase
         ?string $expectedOutputContent,
         ?string $expectedOutputContentType
     ) : void {
-        static::assertSame(
-            $expectedStatusCode,
-            $response->getStatusCode(),
-            \sprintf(
-                'Failed asserting response code "%s" matches expected "%s". Response body was: %s',
-                $response->getStatusCode(),
-                $expectedStatusCode,
-                $response->getContent()
-            )
-        );
+        static::assertResponseStatusCode($response, $expectedStatusCode);
 
         if ($expectedOutputContent !== null) {
-            $actualContentType = $response->headers->get('Content-Type');
-            static::assertSame(
-                $expectedOutputContentType,
-                $actualContentType,
-                \sprintf('Failed asserting response content type matches "%s"', $expectedOutputContentType)
-            );
-            switch ($actualContentType) {
+            static::assertResponseHeaderSame($response, 'Content-Type', $expectedOutputContentType);
+
+            switch ($response->headers->get('Content-Type')) {
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/jpg':
-                    $this->assertImagesSimilarity($expectedOutputContent, $response->getContent());
+                    static::assertImageSimilarity($expectedOutputContent, $response->getContent());
                     break;
                 case 'application/json':
                 default:
@@ -342,23 +354,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     private function assertJsonContentOutput(Response $response, string $expectedOutputContent) : void
     {
-        $matcher = static::getMatcher();
-
-        $actual = $response->getContent();
-        $result = $matcher->match($actual, $expectedOutputContent);
-        if ($result === true) {
-            return;
-        }
-
-        $difference = $matcher->getError();
-
-        // Quick check if actual is valid JSON and if it is prettify it.
-        if (\json_decode($actual) !== null) {
-            $actual = $this->prettifyJson($actual);
-        }
-
         try {
-            static::assertJsonStringEqualsJsonString($expectedOutputContent, $actual, $difference);
+            static::assertJsonResponseContent($response, $expectedOutputContent);
         } catch (ExpectationFailedException $e) {
             $comparisonFailure = $e->getComparisonFailure();
             if ($comparisonFailure !== null && ExpectedOutputFileUpdaterConfigurator::isOutputUpdaterEnabled()) {
