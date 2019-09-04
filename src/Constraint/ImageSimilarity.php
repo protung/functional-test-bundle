@@ -16,10 +16,6 @@ final class ImageSimilarity extends Constraint
 
     public function __construct(string $expectedImageContent, float $similarityThreshold)
     {
-        if (\method_exists(Constraint::class, '__construct')) {
-            parent::__construct();
-        }
-
         $this->expectedImageContent = $expectedImageContent;
         $this->similarityThreshold  = $similarityThreshold;
     }

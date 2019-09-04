@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
-use PHPUnit\Framework\Constraint\Constraint;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseContentMatchesFile extends ResponseContentConstraint
@@ -14,10 +13,6 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
 
     public function __construct(string $expectedFile)
     {
-        if (\method_exists(Constraint::class, '__construct')) {
-            parent::__construct();
-        }
-
         $this->expectedFile = $expectedFile;
     }
 

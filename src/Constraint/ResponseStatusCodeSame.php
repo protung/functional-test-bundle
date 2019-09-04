@@ -14,10 +14,6 @@ final class ResponseStatusCodeSame extends Constraint
 
     public function __construct(int $statusCode)
     {
-        if (\method_exists(Constraint::class, '__construct')) {
-            parent::__construct();
-        }
-
         $this->statusCode = $statusCode;
     }
 

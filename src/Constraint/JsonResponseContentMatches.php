@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
-use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Util\Json;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +15,6 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
 
     public function __construct(string $expectedContent)
     {
-        if (\method_exists(Constraint::class, '__construct')) {
-            parent::__construct();
-        }
-
         $this->expectedContent = $expectedContent;
     }
 
