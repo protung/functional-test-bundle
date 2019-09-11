@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
+use Coduo\PHPMatcher\PHPUnit\PHPMatcherAssertions;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
 {
+    use PHPMatcherAssertions;
+
     /**
      * Property to hold the container for Symfony < 4.1 compatibility.
      *
