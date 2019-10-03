@@ -158,7 +158,7 @@ abstract class WebTestCase extends KernelTestCase
     {
         $reflection       = new \ReflectionObject($this);
         $testName         = $this->getName(false);
-        $expectedFileName = $this->getName(false) . '-' . $this->assertionExpectedFiles[$testName] ?? 1;
+        $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
 
         return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
     }
