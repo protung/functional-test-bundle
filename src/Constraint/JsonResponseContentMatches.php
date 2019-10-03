@@ -72,8 +72,8 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
             }
 
             $comparisonFailure = new ComparisonFailure(
-                \json_decode($this->expectedContent, true),
-                \json_decode($actual, true),
+                \json_decode($this->expectedContent, false),
+                \json_decode($actual, false),
                 Json::prettify($this->expectedContent),
                 Json::prettify($actual),
                 false,
