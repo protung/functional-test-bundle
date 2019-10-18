@@ -97,6 +97,50 @@ Example of expected output can be:
 The `-1.json`suffix will be incremented for every REST assertion made under one test.
 In the expected any functionality from `coduo/php-matcher` can be used.
 
+Fixtures are loaded using Doctrine fixtures. 
+By default the framework will look by default under `Fixtures` directory (from where the test class is located)
+for a PHP file with the same name as the test. This file must return an array of class names that extend 
+`Speicher210\FunctionalTestBundle\Test\Loader\AbstractLoader` class.
+Example of fixture file can be:
+
+```php
+<?php
+use App\Tests\Loaders\LoadOneUser;
+
+return [
+    LoadOneUser::class
+];
+```
+
+Example of class returned from the above fixture can be:
+
+```php
+<?php
+
+final class LoadOneUser extends AbstractLoader
+{
+    protected function doLoad() : void
+    {
+        $user = new User();
+        $user->setFirstName('John');
+        $user->setLastName('Doe');
+        
+        $this->persist($user);
+    }
+}
+```
+This loader creates one user which can be used from within the test with the same name as the fixture.  
+
+The structure of the directory for the examples provided above will be:
+![Directory Structure](https://i.ibb.co/TTxxGfV/sample-dir-structure.png)
+
+It is possible to use the handy command provided by the library to automatically generate necessary files and directories for your functional tests. 
+
+Example command used for the above example inside Symfony 4 project will be: 
+```bash
+bin/console sp210:test:stub:create App/Tests/MyUserEndpointTest testReturns200AndUserData -l
+```
+
 It is possible to automatically update content of expected files during test execution to the actual content by adding 
 this extension to your phpunit config:
 
@@ -112,21 +156,6 @@ It is also possible to add listener instead of extension:
 <listeners>
     <listener class="Speicher210\FunctionalTestBundle\Listener\RestRequestFailTestExpectedOutputFileUpdater" />
 </listeners>
-```
-
-Fixtures are loaded using Doctrine fixtures. 
-By default the framework will look by default under `Fixtures` directory (from where the test class is located)
-for a PHP file with the same name as the test. This file must return an array of class names that extend 
-`Speicher210\FunctionalTestBundle\Test\Loader\AbstractLoader` class.
-Example of fixture file can be:
-
-```php
-<?php
-// Expected/testReturns200AndUserData.php
-
-return [
-    \App\Tests\Fixtures\LoadOneUser::class
-];
 ```
 
 In order to rebuild and reset the database you need to create a bootstrap file for PHPUnit.
