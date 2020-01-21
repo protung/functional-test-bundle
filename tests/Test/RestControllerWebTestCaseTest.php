@@ -6,7 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Tests\Test;
 
 use PHPUnit\Framework\TestCase;
 use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -74,21 +74,23 @@ final class RestControllerWebTestCaseTest extends TestCase
             /**
              * @param mixed[] $queryParams
              */
-            public function testAssertRestGetPath(string $path, array $queryParams = []) : Client
+            public function testAssertRestGetPath(string $path, array $queryParams = []) : KernelBrowser
             {
                 return parent::assertRestGetPath($path, $queryParams);
             }
 
-            protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK) : Client
-            {
-                $client = $this->createMock(Client::class);
+            protected function assertRestRequest(
+                Request $request,
+                int $expectedStatusCode = Response::HTTP_OK
+            ) : KernelBrowser {
+                $client = $this->createMock(KernelBrowser::class);
                 $client->method('getRequest')->willReturn($request);
 
                 return $client;
             }
         };
 
-        /** @var Client $client */
+        /** @var KernelBrowser $client */
         $client = $testClass->testAssertRestGetPath($path, $queryParams);
         self::assertSame($expectedPathInfo, $client->getRequest()->getPathInfo());
         $requestQueryString = $client->getRequest()->getQueryString();

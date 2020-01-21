@@ -10,8 +10,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class WebTestCase extends KernelTestCase
@@ -26,16 +25,11 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createClient(array $server = []) : Client
+    protected static function createClient(array $server = []) : KernelBrowser
     {
-        /** @var \Symfony\Bundle\FrameworkBundle\Client $client */
+        /** @var KernelBrowser $client */
         $client = static::$container->get('test.client');
         $client->setServerParameters($server);
-
-        $container = $client->getContainer();
-        if (! $container instanceof ContainerInterface) {
-            throw new \RuntimeException('Unknown container.');
-        }
 
         return $client;
     }
@@ -70,6 +64,10 @@ abstract class WebTestCase extends KernelTestCase
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
             if ($property->isStatic() || \strpos($property->getDeclaringClass()->getName(), 'PHPUnit\\') === 0) {
+                continue;
+            }
+
+            if (\PHP_VERSION_ID >= 70400 && ! $property->getType()->allowsNull()) {
                 continue;
             }
 

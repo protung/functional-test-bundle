@@ -57,7 +57,7 @@ class TestStubCreateCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : ?int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $directory = $this->getTestDirectoryPath($input->getArgument('path'));
         $namespace = $this->getNamespace($directory);

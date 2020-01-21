@@ -52,7 +52,7 @@ final class JsonResponseContentMatchesTest extends TestCase
 }" matches JSON string "{
     "test": 1
 }".
-"1" does not match "1".'
+Value {"test":"1"} does not match pattern {"test":1}'
         );
 
         $constraint->evaluate($response);
