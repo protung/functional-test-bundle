@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater;
 
-use Coduo\PHPMatcher\PHPMatcher;
+use Coduo\PHPMatcher\Matcher;
 use SebastianBergmann\Comparator\ComparisonFailure;
 
 final class JsonFileUpdater
@@ -39,14 +39,21 @@ final class JsonFileUpdater
      */
     private $matcherPatterns;
 
+    /** @var Matcher */
+    private $matcher;
+
     /**
      * @param string[] $fields          The fields to update in the expected output.
      * @param string[] $matcherPatterns
      */
-    public function __construct(array $fields = [], array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS)
-    {
+    public function __construct(
+        Matcher $matcher,
+        array $fields = [],
+        array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS
+    ) {
         $this->fields          = $fields;
         $this->matcherPatterns = $matcherPatterns;
+        $this->matcher         = $matcher;
     }
 
     public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure) : void
@@ -141,7 +148,7 @@ final class JsonFileUpdater
 
             foreach ($this->matcherPatterns as $matcherPattern) {
                 if (\is_string($expected[$actualKey]) && \strpos($expected[$actualKey], $matcherPattern) === 0) {
-                    if (! PHPMatcher::match($actualField, $expected[$actualKey])) {
+                    if (! $this->matcher->match($actualField, $expected[$actualKey])) {
                         break;
                     }
 

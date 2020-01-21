@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
-use Coduo\PHPMatcher\Factory\SimpleFactory;
+use Coduo\PHPMatcher\Factory\MatcherFactory;
 use Coduo\PHPMatcher\Matcher;
 use PHPUnit\Framework\Constraint\Constraint;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +17,7 @@ abstract class ResponseContentConstraint extends Constraint
     protected static function getMatcher() : Matcher
     {
         if (self::$matcher === null) {
-            $factory       = new SimpleFactory();
+            $factory       = new MatcherFactory();
             self::$matcher = $factory->createMatcher();
         }
 

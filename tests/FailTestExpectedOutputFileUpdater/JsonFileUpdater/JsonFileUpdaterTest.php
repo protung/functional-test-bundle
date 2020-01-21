@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Tests\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
 
+use Coduo\PHPMatcher\Factory\MatcherFactory;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\Comparator\ComparisonFailure;
@@ -88,7 +89,7 @@ final class JsonFileUpdaterTest extends TestCase
         $comparisonFailureMock->expects(self::once())->method('getExpected')->willReturn($expectedMock);
         $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($actualMock);
 
-        $jsonFileUpdater = new JsonFileUpdater();
+        $jsonFileUpdater = new JsonFileUpdater((new MatcherFactory())->createMatcher());
         $jsonFileUpdater->updateExpectedFile($expectedFile->url(), $comparisonFailureMock);
 
         self::assertSame($this->getTestFile('updatedExpected'), $expectedFile->getContent());

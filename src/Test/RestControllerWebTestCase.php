@@ -11,7 +11,7 @@ use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,7 +82,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createClient(array $server = []) : Client
+    protected static function createClient(array $server = []) : KernelBrowser
     {
         $client = parent::createClient($server);
 
@@ -95,7 +95,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         return $client;
     }
 
-    protected static function authenticateClient(Client $client) : void
+    protected static function authenticateClient(KernelBrowser $client) : void
     {
         if (! \interface_exists('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface')) {
             throw new \RuntimeException(
@@ -139,7 +139,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $queryParams = [],
         int $expectedStatusCode = Response::HTTP_OK,
         array $server = []
-    ) : Client {
+    ) : KernelBrowser {
         \parse_str(\parse_url($path, \PHP_URL_QUERY) ?? '', $queryParamsFromPath);
 
         $request = Request::create(
@@ -169,7 +169,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
         array $server = []
-    ) : Client {
+    ) : KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_POST,
@@ -197,7 +197,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) : Client {
+    ) : KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_PATCH,
@@ -225,7 +225,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) : Client {
+    ) : KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_PUT,
@@ -249,7 +249,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $path,
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $server = []
-    ) : Client {
+    ) : KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_DELETE,
@@ -268,8 +268,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param Request $request            The request to simulate.
      * @param int     $expectedStatusCode The expected HTTP response code.
      */
-    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK) : Client
-    {
+    protected function assertRestRequest(
+        Request $request,
+        int $expectedStatusCode = Response::HTTP_OK
+    ) : KernelBrowser {
         $expectedFile = null;
         $expected     = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
@@ -302,7 +304,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         ?string $expectedOutputContent = null,
         ?string $expectedOutputContentType = null
-    ) : Client {
+    ) : KernelBrowser {
         $client = static::createClient();
 
         $client->request(

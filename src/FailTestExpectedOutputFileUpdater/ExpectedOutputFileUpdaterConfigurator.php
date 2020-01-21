@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater;
 
+use Coduo\PHPMatcher\Factory\MatcherFactory;
+
 final class ExpectedOutputFileUpdaterConfigurator
 {
     /** @var JsonFileUpdater */
@@ -18,7 +20,11 @@ final class ExpectedOutputFileUpdaterConfigurator
      */
     public static function createOutputUpdater(array $fields, array $matcherPatterns) : void
     {
-        self::$outputUpdater = new JsonFileUpdater($fields, $matcherPatterns);
+        self::$outputUpdater = new JsonFileUpdater(
+            (new MatcherFactory())->createMatcher(),
+            $fields,
+            $matcherPatterns
+        );
     }
 
     public static function getOutputUpdater() : JsonFileUpdater
