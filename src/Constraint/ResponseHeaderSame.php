@@ -24,10 +24,8 @@ final class ResponseHeaderSame extends Constraint
 
     /**
      * @param Response|mixed $other
-     *
-     * @return bool|void|mixed
      */
-    public function evaluate($other, string $description = '', bool $returnResult = false)
+    public function evaluate($other, string $description = '', bool $returnResult = false) : ?bool
     {
         $success = false;
 
@@ -40,7 +38,7 @@ final class ResponseHeaderSame extends Constraint
         }
 
         if ($success) {
-            return;
+            return null;
         }
 
         $actualValue       = $other->headers->get($this->headerName);
