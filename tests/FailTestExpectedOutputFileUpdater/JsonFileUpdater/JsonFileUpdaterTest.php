@@ -32,6 +32,11 @@ final class JsonFileUpdaterTest extends TestCase
         $this->assertUpdateExpectedFileUpdatesExpectedOutput();
     }
 
+    public function testDoNotChangeTypeForArrayOfEmptyObjects() : void
+    {
+        $this->assertUpdateExpectedFileUpdatesExpectedOutput();
+    }
+
     public function testUpdatesObjectToNull() : void
     {
         $this->assertUpdateExpectedFileUpdatesExpectedOutput();

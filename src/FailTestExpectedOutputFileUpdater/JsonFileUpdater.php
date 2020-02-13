@@ -172,7 +172,7 @@ final class JsonFileUpdater
      */
     private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected) : array
     {
-        if (\is_object($originalExpected)) {
+        if (\is_object($originalExpected) || \is_array($originalExpected)) {
             foreach ($expectedData as $key => &$value) {
                 $keys = $parentKeys;
                 if (! \is_array($value)) {
@@ -201,6 +201,17 @@ final class JsonFileUpdater
      */
     private function getOriginalEmptyJsonValue($originalExpected, array $keys)
     {
+        if (\is_array($originalExpected)) {
+            $key = \array_shift($keys);
+            if (\array_key_exists($key, $originalExpected)) {
+                if (\count($keys) > 0) {
+                    return $this->getOriginalEmptyJsonValue($originalExpected[$key], $keys);
+                }
+
+                return $originalExpected[$key];
+            }
+        }
+
         if (! \is_object($originalExpected)) {
             return [];
         }
