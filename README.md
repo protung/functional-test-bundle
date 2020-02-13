@@ -16,33 +16,6 @@ $ composer require --dev speicher210/functional-test-bundle
 
 ### Enable the Bundle
 
-#### Symfony 3
-Add the following line in the `app/AppKernel.php` file to enable this bundle only for the `test` and `dev` environments:
-
-```php
-<?php
-// app/AppKernel.php
-
-// ...
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        // ...
-        if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
-            // ...
-            if ('test' === $this->getEnvironment()) {
-                $bundles[] = new Speicher210\FunctionalTestBundle\Speicher210FunctionalTestBundle();
-            }
-        }
-
-        return $bundles;
-    }
-
-    // ...
-}
-```
-
 #### Symfony 4
 ```php
 <?php
