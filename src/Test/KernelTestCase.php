@@ -11,20 +11,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
 {
     use PHPMatcherAssertions;
-
-    /**
-     * Property to hold the container for Symfony < 4.1 compatibility.
-     *
-     * @var ContainerInterface
-     */
-    protected static $container;
 
     protected function setUp() : void
     {
@@ -68,23 +59,6 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             $property->setAccessible(true);
             $property->setValue($this, null);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static function bootKernel(array $options = []) : KernelInterface
-    {
-        $kernel = parent::bootKernel($options);
-
-        // Symfony < 4.1 compatibility.
-        /** @var bool $isSymfony4 */
-        $isSymfony4 = \version_compare(Kernel::VERSION, '4.1.0', '>='); // make PHPStan happy
-        if ($isSymfony4 === false) {
-            static::$container = static::$kernel->getContainer();
-        }
-
-        return $kernel;
     }
 
     /**
