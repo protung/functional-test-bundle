@@ -506,9 +506,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Get a fake image upload file.
      *
-     * @param string     $imageType    The image type to set. Must be one of the IMAGE_TYPE_* constants.
-     * @param string     $originalName The name for the original file should have.
-     * @param int[]|null $imageSize    Example: ['width' => 10, 'height' => 20].
+     * @param string      $imageType    The image type to set. Must be one of the IMAGE_TYPE_* constants.
+     * @param string|null $originalName The name for the original file should have.
+     * @param int[]|null  $imageSize    Example: ['width' => 10, 'height' => 20].
      */
     protected function getRequestUploadImageFile(
         string $imageType = self::IMAGE_TYPE_PNG,
@@ -519,7 +519,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
         }
 
-        $originalName  = $originalName ?: 'fake_image';
+        $originalName  = $originalName ?? 'fake_image';
         $originalName .= '.' . $imageType;
 
         if ($imageSize === null) {

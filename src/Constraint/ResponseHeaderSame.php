@@ -50,6 +50,8 @@ final class ResponseHeaderSame extends Constraint
         );
 
         $this->fail($other, $description, $comparisonFailure);
+
+        return null;
     }
 
     /**

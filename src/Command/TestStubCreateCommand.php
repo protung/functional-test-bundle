@@ -75,7 +75,7 @@ class TestStubCreateCommand extends Command
             return 1;
         }
 
-        for ($i = 1; $i <= $input->getArgument('number-of-expected'); $i++) {
+        for ($i = 1; $i <= (int) $input->getArgument('number-of-expected'); $i++) {
             $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
             if ($fileSystem->exists($expectedFilename)) {
                 $output->writeln(

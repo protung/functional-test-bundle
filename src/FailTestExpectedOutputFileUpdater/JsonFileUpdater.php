@@ -99,7 +99,7 @@ final class JsonFileUpdater
             // Indent the output with 2 spaces instead of 4.
             $data = \preg_replace_callback(
                 '/^ +/m',
-                static function ($m) {
+                static function ($m) : string {
                     return \str_repeat(' ', \strlen($m[0]) / 2);
                 },
                 \json_encode($actual, \JSON_PRETTY_PRINT)
