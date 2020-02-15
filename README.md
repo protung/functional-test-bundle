@@ -79,14 +79,6 @@ this extension to your phpunit config:
 </extensions>
 ```
 
-It is also possible to add listener instead of extension:
-
-```xml
-<listeners>
-    <listener class="Speicher210\FunctionalTestBundle\Listener\RestRequestFailTestExpectedOutputFileUpdater" />
-</listeners>
-```
-
 Fixtures are loaded using Doctrine fixtures. 
 By default the framework will look by default under `Fixtures` directory (from where the test class is located)
 for a PHP file with the same name as the test. This file must return an array of class names that extend 
