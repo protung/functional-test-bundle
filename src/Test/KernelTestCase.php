@@ -7,8 +7,8 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use Coduo\PHPMatcher\PHPUnit\PHPMatcherAssertions;
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ObjectManager;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -28,7 +28,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function tearDown() : void
     {
-        /** @var \Doctrine\Common\Persistence\ConnectionRegistry $doctrine */
+        /** @var \Doctrine\Persistence\ConnectionRegistry $doctrine */
         $doctrine = static::$container->get('doctrine');
         /** @var Connection[] $connections */
         $connections = $doctrine->getConnections();
@@ -98,7 +98,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function getObjectManager() : ObjectManager
     {
-        /** @var \Doctrine\Common\Persistence\ManagerRegistry $doctrine */
+        /** @var \Doctrine\Persistence\ManagerRegistry $doctrine */
         $doctrine = static::$container->get('doctrine');
 
         return $doctrine->getManager();
