@@ -7,14 +7,38 @@ namespace Speicher210\FunctionalTestBundle\Extension;
 use PHPUnit\Runner\AfterLastTestHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
-use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\RestRequestFailTestExpectedOutput;
+use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
 
 /**
  * PHPUnit test extension that updates the rest requests expected output files.
  */
 final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstTestHook, AfterLastTestHook
 {
-    use RestRequestFailTestExpectedOutput;
+    /**
+     * Fields that will always be updated with a fixed value.
+     *
+     * Ex: ['createdAt' => '@string@.isDateTime()']
+     *
+     * @var array<string,string>
+     */
+    private $fields;
+
+    /**
+     * Array of patterns that should be kept when updating.
+     *
+     * @var string[]
+     */
+    private $matcherPatterns;
+
+    /**
+     * @param string[] $fields          The fields to update in the expected output.
+     * @param string[] $matcherPatterns
+     */
+    public function __construct(array $fields = [], array $matcherPatterns = JsonFileUpdater::DEFAULT_MATCHER_PATTERNS)
+    {
+        $this->fields          = $fields;
+        $this->matcherPatterns = $matcherPatterns;
+    }
 
     public function executeBeforeFirstTest() : void
     {
