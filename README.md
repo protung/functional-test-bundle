@@ -16,7 +16,7 @@ $ composer require --dev speicher210/functional-test-bundle
 
 ### Enable the Bundle
 
-#### Symfony 4
+#### Symfony
 ```php
 <?php
 // config/bundles.php
@@ -87,10 +87,10 @@ Example of fixture file can be:
 
 ```php
 <?php
-// Expected/testReturns200AndUserData.php
+// Fixtures/testReturns200AndUserData.php
 
 return [
-    \App\Tests\Fixtures\LoadOneUser::class
+    \App\Tests\Fixtures\Loader\LoadOneUser::class
 ];
 ```
 
