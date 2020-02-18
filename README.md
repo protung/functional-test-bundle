@@ -122,16 +122,3 @@ Services can also be accessed by using
 
 $this->getContainerService('my_service_id');
 ```
-
-In order for this to work on private services as well a special compiler pass needs to be registered in the kernel.
-
-```php
-<?php
-
-public function build(ContainerBuilder $container) : void
-{
-    // ...
-    $container->addCompilerPass(new PublicContainerServicesForTests());
-    // ...
-}
-```
