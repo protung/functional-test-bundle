@@ -393,12 +393,17 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
+        $this->assertRequest($request, Response::HTTP_FORBIDDEN, $this->getExpected403Response(), 'application/json');
+    }
+
+    protected function getExpected403Response() : string
+    {
         $expected = [
             'code' => 403,
             'message' => 'Forbidden',
         ];
 
-        $this->assertRequest($request, Response::HTTP_FORBIDDEN, \json_encode($expected), 'application/json');
+        return \json_encode($expected);
     }
 
     /**
@@ -424,12 +429,22 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
+        $this->assertRequest(
+            $request,
+            Response::HTTP_UNAUTHORIZED,
+            $this->getExpected401Response(),
+            'application/json'
+        );
+    }
+
+    protected function getExpected401Response() : string
+    {
         $expected = [
             'code' => 401,
             'message' => 'Unauthorized',
         ];
 
-        $this->assertRequest($request, Response::HTTP_UNAUTHORIZED, \json_encode($expected), 'application/json');
+        return \json_encode($expected);
     }
 
     /**
@@ -455,12 +470,17 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
+        $this->assertRequest($request, Response::HTTP_NOT_FOUND, $this->getExpected404Response(), 'application/json');
+    }
+
+    protected function getExpected404Response() : string
+    {
         $expected = [
             'code' => 404,
             'message' => 'Not Found',
         ];
 
-        $this->assertRequest($request, Response::HTTP_NOT_FOUND, \json_encode($expected), 'application/json');
+        return \json_encode($expected);
     }
 
     protected function prettifyJson(string $content) : ?string
