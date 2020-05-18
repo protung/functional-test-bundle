@@ -26,28 +26,30 @@ final class ResponseStatusCodeSame extends Constraint
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function matches($other) : bool
     {
-        return $this->statusCode === $other->getStatusCode();
+        if ($other instanceof Response) {
+            return $this->statusCode === $other->getStatusCode();
+        }
+
+        return false;
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function failureDescription($other) : string
     {
-        return \sprintf('response code "%s" matches expected "%s"', $other->getStatusCode(), $this->statusCode);
+        if ($other instanceof Response) {
+            return \sprintf('response code "%s" matches expected "%s"', $other->getStatusCode(), $this->statusCode);
+        }
+
+        return parent::failureDescription($other);
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function additionalFailureDescription($other) : string

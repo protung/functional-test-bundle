@@ -25,12 +25,14 @@ abstract class ResponseContentConstraint extends Constraint
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function additionalFailureDescription($other) : string
     {
-        return static::getMatcher()->getError();
+        if ($other instanceof Response) {
+            return static::getMatcher()->getError();
+        }
+
+        return parent::additionalFailureDescription($other);
     }
 }

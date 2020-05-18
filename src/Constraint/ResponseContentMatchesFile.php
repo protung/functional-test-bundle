@@ -25,22 +25,26 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function matches($other) : bool
     {
-        return static::getMatcher()->match($other->getContent(), \file_get_contents($this->expectedFile));
+        if ($other instanceof Response) {
+            return static::getMatcher()->match($other->getContent(), \file_get_contents($this->expectedFile));
+        }
+
+        return false;
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function failureDescription($other) : string
     {
-        return \sprintf('response content matches content of file "%s"', $this->expectedFile);
+        if ($other instanceof Response) {
+            return \sprintf('response content matches content of file "%s"', $this->expectedFile);
+        }
+
+        return parent::failureDescription($other);
     }
 }

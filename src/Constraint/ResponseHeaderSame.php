@@ -63,22 +63,26 @@ final class ResponseHeaderSame extends Constraint
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function matches($other) : bool
     {
-        return $this->expectedValue === $other->headers->get($this->headerName);
+        if ($other instanceof Response) {
+            return $this->expectedValue === $other->headers->get($this->headerName);
+        }
+
+        return false;
     }
 
     /**
-     * @param Response $other
-     *
      * {@inheritdoc}
      */
     protected function failureDescription($other) : string
     {
-        return 'the response ' . $this->toString();
+        if ($other instanceof Response) {
+            return 'the response ' . $this->toString();
+        }
+
+        return parent::failureDescription($other);
     }
 }
