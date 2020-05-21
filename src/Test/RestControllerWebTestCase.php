@@ -281,12 +281,18 @@ abstract class RestControllerWebTestCase extends WebTestCase
             }
         }
 
-        $client = $this->assertRequest($request, $expectedStatusCode, $expected, 'application/json');
+        if ($expectedStatusCode >= 400 && $expectedStatusCode <= 599) {
+            $expectedOutputContentType = $this->getExpectedErrorResponseContentType();
+        } else {
+            $expectedOutputContentType = 'application/json';
+        }
+
+        $client = $this->assertRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
         $this->getObjectManager()->clear();
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
-            static::assertResponseHeaderSame($response, 'Content-Type', 'application/json');
+            static::assertResponseHeaderSame($response, 'Content-Type', $expectedOutputContentType);
         }
 
         return $client;
@@ -345,6 +351,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
                     static::assertImageSimilarity($expectedOutputContent, $response->getContent());
                     break;
                 case 'application/json':
+                case 'application/problem+json':
                 default:
                     $this->assertJsonContentOutput($response, $expectedOutputContent);
                     break;
