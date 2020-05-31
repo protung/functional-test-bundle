@@ -12,7 +12,11 @@ $kernel->boot();
 /** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
 $entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
+$entityManager->beginTransaction();
+
 $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
 $schemaTool->dropDatabase();
 $metaData = $entityManager->getMetadataFactory()->getAllMetadata();
 $schemaTool->createSchema($metaData);
+
+$entityManager->commit();
