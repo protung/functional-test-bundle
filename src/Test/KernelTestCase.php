@@ -104,6 +104,11 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return $doctrine->getManager();
     }
 
+    protected function clearObjectManager() : void
+    {
+        $this->getObjectManager()->clear();
+    }
+
     /**
      * Prepare the text fixtures and the expected content file.
      */

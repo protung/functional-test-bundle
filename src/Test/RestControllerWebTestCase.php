@@ -288,7 +288,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         }
 
         $client = $this->assertRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
-        $this->getObjectManager()->clear();
+        $this->clearObjectManager();
 
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $response = $client->getResponse();
