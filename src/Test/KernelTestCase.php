@@ -9,6 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
+use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -70,6 +71,15 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $options['environment'] = $options['environment'] ?? 'test';
 
         return parent::createKernel($options);
+    }
+
+    protected static function getKernel() : KernelInterface
+    {
+        if (static::$kernel === null) {
+            throw new RuntimeException('Kernel not created. Was it booted ?');
+        }
+
+        return static::$kernel;
     }
 
     /**
