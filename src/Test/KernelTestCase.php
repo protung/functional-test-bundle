@@ -18,6 +18,13 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 {
     use PHPMatcherAssertions;
 
+    /**
+     * Array with the number of assertions against expected files per test.
+     *
+     * @var array<string,int>
+     */
+    private $assertionExpectedFiles = [];
+
     protected function setUp() : void
     {
         parent::setUp();
@@ -165,6 +172,35 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     protected function getAlwaysLoadingFixtures() : array
     {
         return [];
+    }
+
+    public function getCurrentExpectedResponseContentFile(string $type) : string
+    {
+        $reflection       = new \ReflectionObject($this);
+        $testName         = $this->getName(false);
+        $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
+
+        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+    }
+
+    /**
+     * Get the expected response content file.
+     *
+     * @param string $type The file type (txt, yml, etc).
+     */
+    protected function getExpectedContentFile(string $type) : string
+    {
+        $reflection = new \ReflectionObject($this);
+        $testName   = $this->getName(false);
+        if (isset($this->assertionExpectedFiles[$testName])) {
+            $this->assertionExpectedFiles[$testName]++;
+        } else {
+            $this->assertionExpectedFiles[$testName] = 1;
+        }
+
+        $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
+
+        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
     }
 
     /**

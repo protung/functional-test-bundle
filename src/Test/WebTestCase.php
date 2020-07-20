@@ -11,13 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class WebTestCase extends KernelTestCase
 {
     /**
-     * Array with the number of assertions against expected files per test.
-     *
-     * @var array<string,int>
-     */
-    private $assertionExpectedFiles = [];
-
-    /**
      * {@inheritdoc}
      */
     protected static function createClient(array $server = []) : KernelBrowser
@@ -36,26 +29,7 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected function getExpectedResponseContentFile(string $type) : string
     {
-        $reflection = new \ReflectionObject($this);
-        $testName   = $this->getName(false);
-        if (isset($this->assertionExpectedFiles[$testName])) {
-            $this->assertionExpectedFiles[$testName]++;
-        } else {
-            $this->assertionExpectedFiles[$testName] = 1;
-        }
-
-        $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
-
-        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
-    }
-
-    public function getCurrentExpectedResponseContentFile(string $type) : string
-    {
-        $reflection       = new \ReflectionObject($this);
-        $testName         = $this->getName(false);
-        $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
-
-        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+        return $this->getExpectedContentFile($type);
     }
 
     public static function assertResponseContentMatchesFile(
