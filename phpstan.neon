@@ -13,5 +13,5 @@ parameters:
         - '#Variable property access on object\.#'
         - '#Call to function method_exists\(\) with Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder#'
         - '#Class Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder does not have a constructor and must be instantiated without any parameters#'
-        - '#Call to an undefined method ReflectionProperty::getType().#'
+        - '#Call to an undefined method ReflectionProperty::getType\(\).#'
     reportUnmatchedIgnoredErrors: false

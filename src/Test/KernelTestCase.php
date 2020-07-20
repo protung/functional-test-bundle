@@ -53,7 +53,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
                 continue;
             }
 
-            if (\PHP_VERSION_ID >= 70400 && ! $property->getType()->allowsNull()) {
+            if (\PHP_VERSION_ID >= 70400 && $property->getType() !== null && ! $property->getType()->allowsNull()) {
                 continue;
             }
 
