@@ -174,13 +174,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return [];
     }
 
-    public function getCurrentExpectedResponseContentFile(string $type) : string
+    private function getTestNameForExpectedFiles() : string
     {
-        $reflection       = new \ReflectionObject($this);
-        $testName         = $this->getName(false);
-        $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
-
-        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+        return $this->getName(false) . ($this->dataName() !== '' ? '-' . $this->dataName() : '');
     }
 
     /**
@@ -190,17 +186,23 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function getExpectedContentFile(string $type) : string
     {
-        $reflection = new \ReflectionObject($this);
-        $testName   = $this->getName(false);
+        $testName = $this->getTestNameForExpectedFiles();
         if (isset($this->assertionExpectedFiles[$testName])) {
             $this->assertionExpectedFiles[$testName]++;
         } else {
             $this->assertionExpectedFiles[$testName] = 1;
         }
 
-        $expectedFile = $testName . '-' . $this->assertionExpectedFiles[$testName] . '.' . $type;
+        return $this->getCurrentExpectedResponseContentFile($type);
+    }
 
-        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFile;
+    public function getCurrentExpectedResponseContentFile(string $type) : string
+    {
+        $reflection       = new \ReflectionObject($this);
+        $testName         = $this->getTestNameForExpectedFiles();
+        $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
+
+        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
     }
 
     /**
