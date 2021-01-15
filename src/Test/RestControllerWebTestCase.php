@@ -491,6 +491,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function prettifyJson(string $content) : ?string
     {
-        return \json_encode(\json_decode($content), \JSON_PRETTY_PRINT);
+        return \json_encode(
+            \json_decode($content),
+            \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
+        );
     }
 }

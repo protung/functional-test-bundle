@@ -18,12 +18,16 @@ final class ExpectedOutputFileUpdaterConfigurator
      * @param string[] $fields          The fields to update in the expected output.
      * @param string[] $matcherPatterns
      */
-    public static function createOutputUpdater(array $fields, array $matcherPatterns) : void
-    {
+    public static function createOutputUpdater(
+        array $fields,
+        array $matcherPatterns,
+        int $jsonEncodeOptions = \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
+    ) : void {
         self::$outputUpdater = new JsonFileUpdater(
             CoduoMatcherFactory::getMatcher(),
             $fields,
-            $matcherPatterns
+            $matcherPatterns,
+            $jsonEncodeOptions
         );
     }
 

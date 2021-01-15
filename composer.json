@@ -57,7 +57,7 @@
     "cs-check": "vendor/bin/phpcs -p",
     "cs-fix": "vendor/bin/phpcbf -p",
     "phpunit": "vendor/bin/phpunit",
-    "analyse": "phpstan analyse --configuration=phpstan.neon src/ tests/ --level 5",
+    "analyse": "phpstan analyse --memory-limit=256M --configuration=phpstan.neon src/ tests/ --level 5",
     "test": [
       "@cs-check",
       "@analyse",

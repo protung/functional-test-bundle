@@ -39,6 +39,9 @@ final class JsonFileUpdater
      */
     private $matcherPatterns;
 
+    /** @var int */
+    private $jsonEncodeOptions;
+
     /** @var Matcher */
     private $matcher;
 
@@ -49,11 +52,13 @@ final class JsonFileUpdater
     public function __construct(
         Matcher $matcher,
         array $fields = [],
-        array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS
+        array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS,
+        int $jsonEncodeOptions = \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
     ) {
-        $this->fields          = $fields;
-        $this->matcherPatterns = $matcherPatterns;
-        $this->matcher         = $matcher;
+        $this->fields            = $fields;
+        $this->matcherPatterns   = $matcherPatterns;
+        $this->matcher           = $matcher;
+        $this->jsonEncodeOptions = $jsonEncodeOptions;
     }
 
     public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure) : void
@@ -65,7 +70,7 @@ final class JsonFileUpdater
         // Always encode and decode in order to convert everything into an array.
         $expected = $originalExpected = $comparisonFailure->getExpected();
         if ($expected !== null) {
-            $expected = \json_decode(\json_encode($expected), true);
+            $expected = \json_decode(\json_encode($expected, $this->jsonEncodeOptions), true);
             $expected = $this->parseExpectedData($expected, [], $originalExpected);
             if (\json_last_error() !== \JSON_ERROR_NONE) {
                 // probably not expecting json.
@@ -76,7 +81,7 @@ final class JsonFileUpdater
         }
 
         // Always encode and decode in order to convert everything into an array.
-        $actual = \json_decode(\json_encode($comparisonFailure->getActual()), true);
+        $actual = \json_decode(\json_encode($comparisonFailure->getActual(), $this->jsonEncodeOptions), true);
         if (\json_last_error() !== \JSON_ERROR_NONE) {
             // probably not expecting json.
             return;
@@ -102,7 +107,7 @@ final class JsonFileUpdater
                 static function ($m) : string {
                     return \str_repeat(' ', \strlen($m[0]) / 2);
                 },
-                \json_encode($actual, \JSON_PRETTY_PRINT)
+                \json_encode($actual, $this->jsonEncodeOptions)
             );
 
             \file_put_contents($expectedFile, $data);
@@ -130,7 +135,9 @@ final class JsonFileUpdater
             if (\is_array($actualField)) {
                 if (\count($actualField) === 0) {
                     // Value for actual should be an empty object if expected had any properties, otherwise empty array.
-                    $actualField = \is_array(\json_decode(\json_encode($expected[$actualKey]))) ? [] : new \stdClass();
+                    $actualField = \is_array(
+                        \json_decode(\json_encode($expected[$actualKey], $this->jsonEncodeOptions))
+                    ) ? [] : new \stdClass();
                     continue;
                 }
 
