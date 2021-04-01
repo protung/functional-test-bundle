@@ -16,6 +16,7 @@ $entityManager->beginTransaction();
 
 $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
 $schemaTool->dropDatabase();
+/** @var array<int, \Doctrine\ORM\Mapping\ClassMetadata> $metaData */
 $metaData = $entityManager->getMetadataFactory()->getAllMetadata();
 $schemaTool->createSchema($metaData);
 
