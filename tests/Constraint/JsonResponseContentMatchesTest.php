@@ -46,15 +46,25 @@ final class JsonResponseContentMatchesTest extends TestCase
         $constraint = new JsonResponseContentMatches('{"test":1}');
 
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage(
-            'Failed asserting that "{
+        if (\version_compare(\PHP_VERSION, '7.4', '>=')) {
+            $this->expectExceptionMessage(
+                'Failed asserting that "{
+    "test": "1"
+}" matches JSON string "{
+    "test": 1
+}".
+Value "1" does not match pattern "1" at path: "[test]"'
+            );
+        } else {
+            $this->expectExceptionMessage(
+                'Failed asserting that "{
     "test": "1"
 }" matches JSON string "{
     "test": 1
 }".
 Value {"test":"1"} does not match pattern {"test":1}'
-        );
-
+            );
+        }
         $constraint->evaluate($response);
     }
 
