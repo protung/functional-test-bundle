@@ -54,7 +54,7 @@ abstract class WebTestCase extends KernelTestCase
         string $message = ''
     ) : void {
         static::assertFileExists($expectedFile);
-        static::assertThat($response->getContent(), new ResponseContentMatchesFile($expectedFile), $message);
+        static::assertThat($response, new ResponseContentMatchesFile($expectedFile), $message);
     }
 
     /**
