@@ -7,6 +7,8 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
+use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +48,20 @@ abstract class WebTestCase extends KernelTestCase
     protected function getExpectedResponseContentFile(string $type) : string
     {
         return $this->getExpectedContentFile($type);
+    }
+
+    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
+    {
+        static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
+    }
+
+    public static function assertResponseHeaderSame(
+        Response $response,
+        string $headerName,
+        string $expectedValue,
+        string $message = ''
+    ) : void {
+        static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
     }
 
     public static function assertResponseContentMatchesFile(

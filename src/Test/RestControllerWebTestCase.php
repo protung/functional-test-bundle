@@ -6,8 +6,6 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
-use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
-use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,20 +26,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @var UserInterface|null
      */
     protected static $authentication;
-
-    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
-    {
-        static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
-    }
-
-    public static function assertResponseHeaderSame(
-        Response $response,
-        string $headerName,
-        string $expectedValue,
-        string $message = ''
-    ) : void {
-        static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
-    }
 
     public static function assertJsonResponseContent(
         Response $response,
