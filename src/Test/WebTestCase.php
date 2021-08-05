@@ -83,7 +83,7 @@ abstract class WebTestCase extends KernelTestCase
             ->withContent(new LargeFileContent($bytes))
             ->at($root);
 
-        return new UploadedFile($largeFile->url(), $originalName);
+        return new UploadedFile($largeFile->url(), $originalName, null, null, true);
     }
 
     /**
@@ -93,7 +93,10 @@ abstract class WebTestCase extends KernelTestCase
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
-            $originalName
+            $originalName,
+            null,
+            null,
+            true
         );
     }
 
@@ -104,7 +107,10 @@ abstract class WebTestCase extends KernelTestCase
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
-            $originalName
+            $originalName,
+            null,
+            null,
+            true
         );
     }
 
@@ -146,7 +152,7 @@ abstract class WebTestCase extends KernelTestCase
             \file_put_contents($filePath, $image->getImageBlob());
         }
 
-        return new UploadedFile($filePath, $originalName);
+        return new UploadedFile($filePath, $originalName, null, null, true);
     }
 
     /**
@@ -161,7 +167,10 @@ abstract class WebTestCase extends KernelTestCase
 
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/' . $fileName,
-            $originalName
+            $originalName,
+            null,
+            null,
+            true
         );
     }
 
@@ -174,7 +183,10 @@ abstract class WebTestCase extends KernelTestCase
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_video.mpeg',
-            $originalName
+            $originalName,
+            null,
+            null,
+            true
         );
     }
 }
