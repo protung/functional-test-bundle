@@ -14,33 +14,33 @@
     }
   ],
   "require": {
-    "php": "~7.2 || ~8.0",
+    "php": "~8.0",
     "ext-json": "*",
     "dama/doctrine-test-bundle": "^6.0",
     "doctrine/orm": "^2.7",
     "doctrine/data-fixtures": "^1.4.1",
     "doctrine/doctrine-fixtures-bundle": "^3.1",
-    "phpunit/phpunit": "^8.0|^9.0",
-    "coduo/php-matcher": "^5.0 || ^6.0",
-    "symfony/browser-kit": "^4.4 || ^5.1",
-    "symfony/css-selector": "^4.4 || ^5.1",
-    "symfony/framework-bundle": "^4.4 || ^5.1"
+    "phpunit/phpunit": "^9.0",
+    "coduo/php-matcher": "^6.0",
+    "symfony/browser-kit": "^5.4",
+    "symfony/css-selector": "^5.4",
+    "symfony/framework-bundle": "^5.4"
   },
   "require-dev": {
     "ext-imagick": "*",
-    "symfony/console": "^4.4 || ^5.1",
-    "symfony/security": "^4.4 || ^5.1",
+    "symfony/console": "^5.4",
+    "symfony/security-core": "^5.4",
     "mikey179/vfsstream": "^1.6",
-    "doctrine/coding-standard": "^8.0",
-    "phpstan/phpstan": "^0.12.54",
-    "phpstan/phpstan-phpunit": "^0.12.16",
-    "phpstan/phpstan-strict-rules": "^0.12.5",
-    "lexik/jwt-authentication-bundle": "^2.5"
+    "doctrine/coding-standard": "^9.0",
+    "phpstan/phpstan": "^1.4.6",
+    "phpstan/phpstan-phpunit": "^1.0.0",
+    "phpstan/phpstan-strict-rules": "^1.1.0",
+    "lexik/jwt-authentication-bundle": "^2.14"
   },
   "suggest": {
     "ext-imagick": "To assert images and create fixture images",
     "symfony/console": "To use command line tool to generate tests stubs",
-    "symfony/security": "To mock authentication",
+    "symfony/security-core": "To mock authentication",
     "mikey179/vfsstream": "To mock uploading large files"
   },
   "autoload": {
@@ -56,17 +56,23 @@
   "scripts": {
     "cs-check": "vendor/bin/phpcs -p",
     "cs-fix": "vendor/bin/phpcbf -p",
-    "phpunit": "vendor/bin/phpunit",
+    "test": "vendor/bin/phpunit",
     "analyse": "phpstan analyse --memory-limit=256M --configuration=phpstan.neon src/ tests/ --level 5",
-    "test": [
+    "check": [
       "@cs-check",
       "@analyse",
-      "@phpunit"
+      "@test"
     ]
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.0-dev"
+      "dev-master": "2.0-dev"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "ocramius/package-versions": true
     }
   }
 }
