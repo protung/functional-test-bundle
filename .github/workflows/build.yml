@@ -47,7 +47,7 @@ jobs:
 
       - name: Run checks lowest
         if: ${{ matrix.dependencies == 'lowest' }}
-        run: composer test
+        run: composer check
 
       - name: Run checks highest
         if: ${{ matrix.dependencies == 'highest' }}

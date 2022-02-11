@@ -13,15 +13,15 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 final class Speicher210FunctionalTestExtension extends ConfigurableExtension
 {
     /**
-     * {@inheritdoc}
+     * @param array<mixed> $mergedConfig
      */
-    public function loadInternal(array $config, ContainerBuilder $container) : void
+    public function loadInternal(array $mergedConfig, ContainerBuilder $container) : void
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
 
         $container
             ->getDefinition(TestStubCreateCommand::class)
-            ->setArgument('$fixtureLoaderExtendClass', $config['fixture_loader_extend_class']);
+            ->setArgument('$fixtureLoaderExtendClass', $mergedConfig['fixture_loader_extend_class']);
     }
 }

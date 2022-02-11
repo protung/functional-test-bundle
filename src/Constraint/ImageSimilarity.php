@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use Psl\Type;
 
 final class ImageSimilarity extends Constraint
 {
-    /** @var string */
-    private $expectedImageContent;
+    private string $expectedImageContent;
 
-    /** @var float */
-    private $similarityThreshold;
+    private float $similarityThreshold;
 
     public function __construct(string $expectedImageContent, float $similarityThreshold)
     {
@@ -20,23 +19,17 @@ final class ImageSimilarity extends Constraint
         $this->similarityThreshold  = $similarityThreshold;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toString() : string
     {
         return 'image is similar to ' . $this->expectedImageContent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function matches($other) : bool
+    protected function matches(mixed $other) : bool
     {
         $expectedImagick = new \Imagick();
         $expectedImagick->readImageBlob($this->expectedImageContent);
         $actualImagick = new \Imagick();
-        $actualImagick->readImageBlob($other);
+        $actualImagick->readImageBlob(Type\string()->coerce($other));
 
         $result = $expectedImagick->compareImages($actualImagick, \Imagick::METRIC_MEANSQUAREERROR);
 

@@ -29,12 +29,12 @@ abstract class WebTestCase extends KernelTestCase
     ];
 
     /**
-     * {@inheritdoc}
+     * @param array<mixed> $server
      */
     protected static function createClient(array $server = []) : KernelBrowser
     {
         /** @var KernelBrowser $client */
-        $client = static::$container->get('test.client');
+        $client = static::getContainer()->get('test.client');
         $client->setServerParameters($server);
 
         return $client;

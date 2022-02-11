@@ -8,29 +8,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseContentMatchesFile extends ResponseContentConstraint
 {
-    /** @var string */
-    private $expectedFile;
+    private string $expectedFile;
 
     public function __construct(string $expectedFile)
     {
         $this->expectedFile = $expectedFile;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toString() : string
     {
         return \sprintf('content matches "%s" file', $this->expectedFile);
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-assert-if-true Response $other
      */
-    protected function matches($other) : bool
+    protected function matches(mixed $other) : bool
     {
         if ($other instanceof Response) {
-            return static::getMatcher()->match($other->getContent(), \file_get_contents($this->expectedFile));
+            return self::getMatcher()->match($other->getContent(), \file_get_contents($this->expectedFile));
         }
 
         return false;

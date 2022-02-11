@@ -21,18 +21,18 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstT
      *
      * @var array<string,string>
      */
-    private $fields;
+    private array $fields;
 
     /**
      * Array of patterns that should be kept when updating.
      *
-     * @var string[]
+     * @var list<string>
      */
-    private $matcherPatterns;
+    private array $matcherPatterns;
 
     /**
-     * @param string[] $fields          The fields to update in the expected output.
-     * @param string[] $matcherPatterns
+     * @param array<string,string> $fields          The fields to update in the expected output.
+     * @param list<string>         $matcherPatterns
      */
     public function __construct(array $fields = [], array $matcherPatterns = JsonFileUpdater::DEFAULT_MATCHER_PATTERNS)
     {

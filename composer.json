@@ -1,8 +1,8 @@
 {
   "name": "speicher210/functional-test-bundle",
-  "type": "symfony-bundle",
   "description": "Symfony bundle for functional testing",
   "license": "MIT",
+  "type": "symfony-bundle",
   "authors": [
     {
       "name": "Dragos Protung",
@@ -14,34 +14,43 @@
     }
   ],
   "require": {
-    "php": "~8.0",
+    "php": "~8.0.0 || ~8.1.0",
     "ext-json": "*",
+    "azjezz/psl": "^1.9.3",
+    "coduo/php-matcher": "^6.0.3",
     "dama/doctrine-test-bundle": "^6.0",
-    "doctrine/orm": "^2.7",
     "doctrine/data-fixtures": "^1.4.1",
     "doctrine/doctrine-fixtures-bundle": "^3.1",
+    "doctrine/orm": "^2.7",
     "phpunit/phpunit": "^9.0",
-    "coduo/php-matcher": "^6.0",
     "symfony/browser-kit": "^5.4",
     "symfony/css-selector": "^5.4",
+    "symfony/dependency-injection": "^5.4",
     "symfony/framework-bundle": "^5.4"
   },
   "require-dev": {
     "ext-imagick": "*",
-    "symfony/console": "^5.4",
-    "symfony/security-core": "^5.4",
-    "mikey179/vfsstream": "^1.6",
     "doctrine/coding-standard": "^9.0",
+    "ergebnis/composer-normalize": "^2.23",
+    "lexik/jwt-authentication-bundle": "^2.14",
+    "mikey179/vfsstream": "^1.6.8",
+    "php-standard-library/psalm-plugin": "^1.1",
     "phpstan/phpstan": "^1.4.6",
     "phpstan/phpstan-phpunit": "^1.0.0",
     "phpstan/phpstan-strict-rules": "^1.1.0",
-    "lexik/jwt-authentication-bundle": "^2.14"
+    "phpstan/phpstan-symfony": "^1.1",
+    "psalm/plugin-phpunit": "^0.16",
+    "psalm/plugin-symfony": "^3.1",
+    "squizlabs/php_codesniffer": "^3.6.2",
+    "symfony/console": "^5.4",
+    "symfony/security-core": "^5.4",
+    "vimeo/psalm": "^4.20.0"
   },
   "suggest": {
     "ext-imagick": "To assert images and create fixture images",
+    "mikey179/vfsstream": "To mock uploading large files",
     "symfony/console": "To use command line tool to generate tests stubs",
-    "symfony/security-core": "To mock authentication",
-    "mikey179/vfsstream": "To mock uploading large files"
+    "symfony/security-core": "To mock authentication"
   },
   "autoload": {
     "psr-4": {
@@ -53,26 +62,44 @@
       "Speicher210\\FunctionalTestBundle\\Tests\\": "tests"
     }
   },
-  "scripts": {
-    "cs-check": "vendor/bin/phpcs -p",
-    "cs-fix": "vendor/bin/phpcbf -p",
-    "test": "vendor/bin/phpunit",
-    "analyse": "phpstan analyse --memory-limit=256M --configuration=phpstan.neon src/ tests/ --level 5",
-    "check": [
-      "@cs-check",
-      "@analyse",
-      "@test"
-    ]
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "ocramius/package-versions": true,
+      "ergebnis/composer-normalize": true
+    }
   },
   "extra": {
     "branch-alias": {
       "dev-master": "2.0-dev"
     }
   },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "ocramius/package-versions": true
-    }
+  "scripts": {
+    "analyse": [
+      "@analyse-phpstan",
+      "@analyse-psalm"
+    ],
+    "analyse-phpstan": [
+      "phpstan analyse --memory-limit=256M"
+    ],
+    "analyse-phpstan-update": [
+      "phpstan analyse  --memory-limit=256M --generate-baseline"
+    ],
+    "analyse-psalm": [
+      "psalm --no-cache --show-info=false"
+    ],
+    "analyse-psalm-update": [
+      "psalm --no-cache --set-baseline=psalm.baseline.xml"
+    ],
+    "check": [
+      "composer validate",
+      "composer normalize --dry-run",
+      "@cs-check",
+      "@analyse",
+      "@test"
+    ],
+    "cs-check": "phpcs -p",
+    "cs-fix": "phpcbf -p",
+    "test": "phpunit --testdox --color=always"
   }
 }

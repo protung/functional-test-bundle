@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\ExpectationFailedException;
+use Psl\Filesystem;
+use Psl\Json;
+use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -22,35 +26,33 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     /**
      * The authenticated user for the test.
-     *
-     * @var UserInterface|null
      */
-    protected static $authentication;
+    protected static UserInterface|null $authentication;
 
     public static function assertJsonResponseContent(
         Response $response,
         string $expectedContent,
         string $message = ''
-    ) : void {
+    ): void {
         static::assertThat($response, new JsonResponseContentMatches($expectedContent), $message);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         static::$authentication = self::AUTHENTICATION_NONE;
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         parent::tearDown();
         static::$authentication = self::AUTHENTICATION_NONE;
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<mixed> $server
      */
-    protected static function createClient(array $server = []) : KernelBrowser
+    protected static function createClient(array $server = []): KernelBrowser
     {
         $client = parent::createClient($server);
 
@@ -63,7 +65,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         return $client;
     }
 
-    protected static function authenticateClient(KernelBrowser $client) : void
+    protected static function authenticateClient(KernelBrowser $client): void
     {
         if (! \interface_exists('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface')) {
             throw new \RuntimeException(
@@ -75,21 +77,25 @@ abstract class RestControllerWebTestCase extends WebTestCase
             );
         }
 
-        /** @var \Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface $jwtManager */
-        $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
+        $jwtManager = Type\object(JWTTokenManagerInterface::class)->coerce(
+            static::getContainer()->get('lexik_jwt_authentication.jwt_manager')
+        );
+
+        $user = Type\object(UserInterface::class)->coerce(static::$authentication);
+
         $client->setServerParameter(
             'HTTP_Authorization',
-            \sprintf('Bearer %s', $jwtManager->create(static::$authentication))
+            \sprintf('Bearer %s', $jwtManager->create($user))
         );
     }
 
-    protected function loginAsAdmin() : void
+    protected function loginAsAdmin(): void
     {
-        $user = new User('admin', null, ['ROLE_ADMIN']);
+        $user = new InMemoryUser('admin', null, ['ROLE_ADMIN']);
         $this->loginAs($user);
     }
 
-    protected function loginAs(UserInterface $user) : void
+    protected function loginAs(UserInterface $user): void
     {
         self::$authentication = $user;
     }
@@ -107,8 +113,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $queryParams = [],
         int $expectedStatusCode = Response::HTTP_OK,
         array $server = []
-    ) : KernelBrowser {
-        \parse_str(\parse_url($path, \PHP_URL_QUERY) ?? '', $queryParamsFromPath);
+    ): KernelBrowser {
+        $query = Type\string()->coerce(\parse_url($path, \PHP_URL_QUERY) ?? '');
+        \parse_str($query, $queryParamsFromPath);
 
         $request = Request::create(
             $path,
@@ -137,7 +144,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
         array $server = []
-    ) : KernelBrowser {
+    ): KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_POST,
@@ -165,7 +172,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) : KernelBrowser {
+    ): KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_PATCH,
@@ -193,7 +200,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
         array $server = []
-    ) : KernelBrowser {
+    ): KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_PUT,
@@ -217,7 +224,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $path,
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $server = []
-    ) : KernelBrowser {
+    ): KernelBrowser {
         $request = Request::create(
             $path,
             Request::METHOD_DELETE,
@@ -239,13 +246,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function assertRestRequest(
         Request $request,
         int $expectedStatusCode = Response::HTTP_OK
-    ) : KernelBrowser {
-        $expectedFile = null;
-        $expected     = null;
+    ): KernelBrowser {
+        $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $expectedFile = $this->getExpectedResponseContentFile('json');
-            if (\file_exists($expectedFile)) {
-                $expected = $this->prettifyJson(\file_get_contents($expectedFile));
+            if (Filesystem\exists($expectedFile)) {
+                $expected = $this->prettifyJson(Filesystem\read_file($expectedFile));
             }
         }
 
@@ -278,7 +284,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_OK,
         ?string $expectedOutputContent = null,
         ?string $expectedOutputContentType = null
-    ) : KernelBrowser {
+    ): KernelBrowser {
         $client = static::createClient();
 
         $client->request(
@@ -306,17 +312,24 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode,
         ?string $expectedOutputContent,
         ?string $expectedOutputContentType
-    ) : void {
+    ): void {
         static::assertResponseStatusCode($response, $expectedStatusCode);
 
         if ($expectedOutputContent !== null) {
-            static::assertResponseHeaderSame($response, 'Content-Type', $expectedOutputContentType);
+            static::assertResponseHeaderSame(
+                $response,
+                'Content-Type',
+                Type\string()->coerce($expectedOutputContentType)
+            );
 
             switch ($response->headers->get('Content-Type')) {
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/jpg':
-                    static::assertImageSimilarity($expectedOutputContent, $response->getContent());
+                    static::assertImageSimilarity(
+                        $expectedOutputContent,
+                        Type\string()->coerce($response->getContent())
+                    );
                     break;
                 case 'application/json':
                 case 'application/problem+json':
@@ -329,7 +342,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         }
     }
 
-    private function assertJsonContentOutput(Response $response, string $expectedOutputContent) : void
+    private function assertJsonContentOutput(Response $response, string $expectedOutputContent): void
     {
         try {
             static::assertJsonResponseContent($response, $expectedOutputContent);
@@ -358,7 +371,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $method,
         array $content = [],
         array $server = []
-    ) : void {
+    ): void {
         $request = Request::create(
             $path,
             $method,
@@ -376,14 +389,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
         );
     }
 
-    protected function getExpected403Response() : string
+    protected function getExpected403Response(): string
     {
-        $expected = [
-            'code' => 403,
-            'message' => 'Forbidden',
-        ];
-
-        return \json_encode($expected);
+        return Filesystem\read_file(__DIR__ . '/Expected/403.json');
     }
 
     /**
@@ -397,7 +405,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $url,
         string $method,
         array $server = []
-    ) : void {
+    ): void {
         static::$authentication = self::AUTHENTICATION_NONE;
 
         $request = Request::create(
@@ -417,14 +425,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
         );
     }
 
-    protected function getExpected401Response() : string
+    protected function getExpected401Response(): string
     {
-        $expected = [
-            'code' => 401,
-            'message' => 'Unauthorized',
-        ];
-
-        return \json_encode($expected);
+        return Filesystem\read_file(__DIR__ . '/Expected/401.json');
     }
 
     /**
@@ -440,7 +443,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $method,
         array $content = [],
         array $server = []
-    ) : void {
+    ): void {
         $request = Request::create(
             $path,
             $method,
@@ -458,25 +461,21 @@ abstract class RestControllerWebTestCase extends WebTestCase
         );
     }
 
-    protected function getExpected404Response() : string
+    protected function getExpected404Response(): string
     {
-        $expected = [
-            'code' => 404,
-            'message' => 'Not Found',
-        ];
-
-        return \json_encode($expected);
+        return Filesystem\read_file(__DIR__ . '/Expected/404.json');
     }
 
-    protected function getExpectedErrorResponseContentType() : string
+    protected function getExpectedErrorResponseContentType(): string
     {
         return 'application/json';
     }
 
-    protected function prettifyJson(string $content) : ?string
+    protected function prettifyJson(string $content): string
     {
-        return \json_encode(
-            \json_decode($content),
+        return Json\encode(
+            Json\decode($content, false),
+            true,
             \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
         );
     }

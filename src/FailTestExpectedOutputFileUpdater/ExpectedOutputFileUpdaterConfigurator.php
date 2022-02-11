@@ -8,15 +8,13 @@ use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
 
 final class ExpectedOutputFileUpdaterConfigurator
 {
-    /** @var JsonFileUpdater */
-    private static $outputUpdater;
+    private static JsonFileUpdater|null $outputUpdater = null;
 
-    /** @var bool */
-    private static $outputUpdaterEnabled = false;
+    private static bool $outputUpdaterEnabled = false;
 
     /**
-     * @param string[] $fields          The fields to update in the expected output.
-     * @param string[] $matcherPatterns
+     * @param array<string,string> $fields          The fields to update in the expected output.
+     * @param list<string>         $matcherPatterns
      */
     public static function createOutputUpdater(
         array $fields,
