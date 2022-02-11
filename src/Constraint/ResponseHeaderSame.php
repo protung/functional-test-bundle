@@ -10,11 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseHeaderSame extends Constraint
 {
-    /** @var string */
-    private $headerName;
+    private string $headerName;
 
-    /** @var string */
-    private $expectedValue;
+    private string $expectedValue;
 
     public function __construct(string $headerName, string $expectedValue)
     {
@@ -22,10 +20,7 @@ final class ResponseHeaderSame extends Constraint
         $this->expectedValue = $expectedValue;
     }
 
-    /**
-     * @param Response|mixed $other
-     */
-    public function evaluate($other, string $description = '', bool $returnResult = false) : ?bool
+    public function evaluate(mixed $other, string $description = '', bool $returnResult = false) : ?bool
     {
         $success = false;
 

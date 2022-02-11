@@ -14,8 +14,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
-    /** @var ObjectManager */
-    private $manager;
+    private ObjectManager $manager;
 
     /**
      * Get the container.
@@ -57,10 +56,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
         return $this->manager;
     }
 
-    /**
-     * @param mixed $entity
-     */
-    public function persist($entity) : void
+    public function persist(object $entity) : void
     {
         $this->getManager()->persist($entity);
     }

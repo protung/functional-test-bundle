@@ -89,10 +89,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return static::$kernel;
     }
 
-    /**
-     * @return mixed
-     */
-    protected function getContainerService(string $id)
+    protected function getContainerService(string $id): mixed
     {
         if (static::$container->has('test.' . $id)) {
             $id = 'test.' . $id;
@@ -101,10 +98,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return static::$container->get($id);
     }
 
-    /**
-     * @param mixed $service
-     */
-    protected function mockContainerService(string $id, $service) : void
+    protected function mockContainerService(string $id, mixed $service) : void
     {
         if (static::$container->has('test.' . $id)) {
             $id = 'test.' . $id;

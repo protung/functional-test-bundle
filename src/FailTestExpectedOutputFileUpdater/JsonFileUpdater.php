@@ -173,11 +173,10 @@ final class JsonFileUpdater
      *
      * @param mixed[]  $expectedData
      * @param string[] $parentKeys
-     * @param mixed    $originalExpected
      *
      * @return mixed[]
      */
-    private function parseExpectedData(array &$expectedData, array $parentKeys, $originalExpected) : array
+    private function parseExpectedData(array &$expectedData, array $parentKeys, mixed $originalExpected) : array
     {
         if (\is_object($originalExpected) || \is_array($originalExpected)) {
             foreach ($expectedData as $key => &$value) {
@@ -201,12 +200,11 @@ final class JsonFileUpdater
     /**
      * Try to determine if original expected contained empty object or empty array.
      *
-     * @param mixed    $originalExpected
      * @param string[] $keys
      *
      * @return mixed Either empty array or empty object
      */
-    private function getOriginalEmptyJsonValue($originalExpected, array $keys)
+    private function getOriginalEmptyJsonValue(mixed $originalExpected, array $keys): mixed
     {
         if (\is_array($originalExpected)) {
             $key = \array_shift($keys);
