@@ -5,48 +5,39 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use PHPUnit\Util\Json;
+use Psl;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Symfony\Component\HttpFoundation\Response;
 
 final class JsonResponseContentMatches extends ResponseContentConstraint
 {
-    /** @var string */
-    private $expectedContent;
+    private string $expectedContent;
 
     public function __construct(string $expectedContent)
     {
         $this->expectedContent = $expectedContent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toString() : string
     {
         return 'content is ' . $this->expectedContent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function matches($other) : bool
+    protected function matches(mixed $other) : bool
     {
         if ($other instanceof Response) {
-            return static::getMatcher()->match($other->getContent(), $this->expectedContent);
+            return self::getMatcher()->match($other->getContent(), $this->expectedContent);
         }
 
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function failureDescription($other) : string
+    protected function failureDescription(mixed $other) : string
     {
         if ($other instanceof Response) {
-            return \sprintf(
+            return Psl\Str\format(
                 '"%s" matches JSON string "%s"',
-                Json::prettify($other->getContent()),
+                Json::prettify(Psl\Type\string()->coerce($other->getContent())),
                 Json::prettify($this->expectedContent)
             );
         }
@@ -55,12 +46,12 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function fail($other, $description, ?ComparisonFailure $comparisonFailure = null) : void
+    protected function fail(mixed $other, $description, ?ComparisonFailure $comparisonFailure = null) : void
     {
         if ($other instanceof Response) {
-            $actual = $other->getContent();
+            $actual = Psl\Type\string()->coerce($other->getContent());
             if ($comparisonFailure === null) {
                 [$error] = Json::canonicalize($actual);
 
@@ -75,8 +66,8 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
                 }
 
                 $comparisonFailure = new ComparisonFailure(
-                    \json_decode($this->expectedContent, false),
-                    \json_decode($actual, false),
+                    Psl\Json\decode($this->expectedContent, false),
+                    Psl\Json\decode($actual, false),
                     Json::prettify($this->expectedContent),
                     Json::prettify($actual),
                     false,

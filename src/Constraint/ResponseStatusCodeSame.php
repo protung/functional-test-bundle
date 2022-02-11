@@ -5,30 +5,28 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use Psl\Str;
+use Psl\Type;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseStatusCodeSame extends Constraint
 {
-    /** @var int */
-    private $statusCode;
+    private int $statusCode;
 
     public function __construct(int $statusCode)
     {
         $this->statusCode = $statusCode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toString() : string
+    public function toString(): string
     {
         return 'status code is ' . $this->statusCode;
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-assert-if-true Response $other
      */
-    protected function matches($other) : bool
+    protected function matches(mixed $other): bool
     {
         if ($other instanceof Response) {
             return $this->statusCode === $other->getStatusCode();
@@ -37,23 +35,22 @@ final class ResponseStatusCodeSame extends Constraint
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function failureDescription($other) : string
+    protected function failureDescription(mixed $other): string
     {
         if ($other instanceof Response) {
-            return \sprintf('response code "%s" matches expected "%s"', $other->getStatusCode(), $this->statusCode);
+            return Str\format('response code "%s" matches expected "%s"', $other->getStatusCode(), $this->statusCode);
         }
 
         return parent::failureDescription($other);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function additionalFailureDescription($other) : string
+    protected function additionalFailureDescription(mixed $other): string
     {
-        return \sprintf('Response body was: %s', $other->getContent());
+        $responseContent = Type\object(Response::class)->coerce($other)->getContent();
+
+        return Str\format(
+            'Response body was: %s',
+            $responseContent !== false ? $responseContent : ''
+        );
     }
 }

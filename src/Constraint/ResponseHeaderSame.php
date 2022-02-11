@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use Psl\Type;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +37,7 @@ final class ResponseHeaderSame extends Constraint
             return null;
         }
 
-        $actualValue       = $other->headers->get($this->headerName);
+        $actualValue       = Type\object(Response::class)->coerce($other)->headers->get($this->headerName);
         $comparisonFailure = new ComparisonFailure(
             $this->expectedValue,
             $actualValue,
@@ -47,18 +48,15 @@ final class ResponseHeaderSame extends Constraint
         $this->fail($other, $description, $comparisonFailure);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toString() : string
     {
         return \sprintf('has header "%s" with value "%s"', $this->headerName, $this->expectedValue);
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-assert-if-true Response $other
      */
-    protected function matches($other) : bool
+    protected function matches(mixed $other) : bool
     {
         if ($other instanceof Response) {
             return $this->expectedValue === $other->headers->get($this->headerName);

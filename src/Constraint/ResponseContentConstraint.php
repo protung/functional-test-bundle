@@ -6,13 +6,13 @@ namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use Coduo\PHPMatcher\Matcher;
 use PHPUnit\Framework\Constraint\Constraint;
+use Psl\Type;
 use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class ResponseContentConstraint extends Constraint
 {
-    /** @var Matcher */
-    private static $matcher;
+    private static Matcher|null $matcher = null;
 
     protected static function getMatcher() : Matcher
     {
@@ -23,13 +23,10 @@ abstract class ResponseContentConstraint extends Constraint
         return self::$matcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function additionalFailureDescription($other) : string
+    protected function additionalFailureDescription(mixed $other) : string
     {
         if ($other instanceof Response) {
-            return static::getMatcher()->getError();
+            return Type\string()->coerce(static::getMatcher()->getError());
         }
 
         return parent::additionalFailureDescription($other);

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater;
 
 use Coduo\PHPMatcher\Matcher;
+use Psl;
+use Psl\Json\Exception\DecodeException;
 use SebastianBergmann\Comparator\ComparisonFailure;
 
 final class JsonFileUpdater
@@ -30,24 +32,22 @@ final class JsonFileUpdater
      *
      * @var array<string,string>
      */
-    private $fields;
+    private array $fields;
 
     /**
      * Array of patterns that should be kept when updating.
      *
-     * @var string[]
+     * @var array<string>
      */
-    private $matcherPatterns;
+    private array $matcherPatterns;
 
-    /** @var int */
-    private $jsonEncodeOptions;
+    private int $jsonEncodeOptions;
 
-    /** @var Matcher */
-    private $matcher;
+    private Matcher $matcher;
 
     /**
-     * @param string[] $fields          The fields to update in the expected output.
-     * @param string[] $matcherPatterns
+     * @param array<string,string> $fields          The fields to update in the expected output.
+     * @param list<string>         $matcherPatterns
      */
     public function __construct(
         Matcher $matcher,
@@ -61,7 +61,7 @@ final class JsonFileUpdater
         $this->jsonEncodeOptions = $jsonEncodeOptions;
     }
 
-    public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure) : void
+    public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure): void
     {
         if (! \file_exists($expectedFile)) {
             return;
@@ -70,19 +70,27 @@ final class JsonFileUpdater
         // Always encode and decode in order to convert everything into an array.
         $expected = $originalExpected = $comparisonFailure->getExpected();
         if ($expected !== null) {
-            $expected = \json_decode(\json_encode($expected, $this->jsonEncodeOptions), true);
-            $expected = $this->parseExpectedData($expected, [], $originalExpected);
-            if (\json_last_error() !== \JSON_ERROR_NONE) {
+            try {
+                $expected = Psl\Json\decode(Psl\Json\encode($expected, false, $this->jsonEncodeOptions), true);
+            } catch (DecodeException) {
                 // probably not expecting json.
                 return;
             }
+
+            $expected = $this->parseExpectedData($expected, [], $originalExpected);
         } else {
             $expected = [];
         }
 
         // Always encode and decode in order to convert everything into an array.
-        $actual = \json_decode(\json_encode($comparisonFailure->getActual(), $this->jsonEncodeOptions), true);
-        if (\json_last_error() !== \JSON_ERROR_NONE) {
+        try {
+            $actual = Psl\Type\dict(Psl\Type\array_key(), Psl\Type\mixed())->coerce(
+                Psl\Json\decode(
+                    Psl\Json\encode($comparisonFailure->getActual(), false, $this->jsonEncodeOptions),
+                    true
+                )
+            );
+        } catch (DecodeException) {
             // probably not expecting json.
             return;
         }
@@ -90,7 +98,7 @@ final class JsonFileUpdater
         try {
             \array_walk_recursive(
                 $actual,
-                function (&$value, $key) : void {
+                function (&$value, $key): void {
                     if (! \array_key_exists($key, $this->fields)) {
                         return;
                     }
@@ -102,12 +110,10 @@ final class JsonFileUpdater
             $actual = $this->updateExpectedOutput($actual, $expected);
 
             // Indent the output with 2 spaces instead of 4.
-            $data = \preg_replace_callback(
+            $data = Psl\Regex\replace_with(
+                Psl\Json\encode($actual, false, $this->jsonEncodeOptions),
                 '/^ +/m',
-                static function ($m) : string {
-                    return \str_repeat(' ', \strlen($m[0]) / 2);
-                },
-                \json_encode($actual, $this->jsonEncodeOptions)
+                static fn (array $m): string => Psl\Str\repeat(' ', Psl\Str\length($m[0]) / 2),
             );
 
             \file_put_contents($expectedFile, $data);
@@ -125,7 +131,7 @@ final class JsonFileUpdater
      *
      * @return mixed[]
      */
-    private function updateExpectedOutput(array $actual, array $expected) : array
+    private function updateExpectedOutput(array $actual, array $expected): array
     {
         foreach ($actual as $actualKey => &$actualField) {
             if (! isset($expected[$actualKey])) {
@@ -136,7 +142,7 @@ final class JsonFileUpdater
                 if (\count($actualField) === 0) {
                     // Value for actual should be an empty object if expected had any properties, otherwise empty array.
                     $actualField = \is_array(
-                        \json_decode(\json_encode($expected[$actualKey], $this->jsonEncodeOptions))
+                        Psl\Json\decode(Psl\Json\encode($expected[$actualKey], false, $this->jsonEncodeOptions), false)
                     ) ? [] : new \stdClass();
                     continue;
                 }
@@ -154,7 +160,7 @@ final class JsonFileUpdater
             }
 
             foreach ($this->matcherPatterns as $matcherPattern) {
-                if (\is_string($expected[$actualKey]) && \strpos($expected[$actualKey], $matcherPattern) === 0) {
+                if (\is_string($expected[$actualKey]) && \str_starts_with($expected[$actualKey], $matcherPattern)) {
                     if (! $this->matcher->match($actualField, $expected[$actualKey])) {
                         break;
                     }
@@ -171,12 +177,12 @@ final class JsonFileUpdater
     /**
      * Perform additional parsing for array with expected data based on the original expected.
      *
-     * @param mixed[]  $expectedData
-     * @param string[] $parentKeys
+     * @param array<mixed> $expectedData
+     * @param list<string> $parentKeys
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
-    private function parseExpectedData(array &$expectedData, array $parentKeys, mixed $originalExpected) : array
+    private function parseExpectedData(array &$expectedData, array $parentKeys, mixed $originalExpected): array
     {
         if (\is_object($originalExpected) || \is_array($originalExpected)) {
             foreach ($expectedData as $key => &$value) {
@@ -200,7 +206,7 @@ final class JsonFileUpdater
     /**
      * Try to determine if original expected contained empty object or empty array.
      *
-     * @param string[] $keys
+     * @param non-empty-list<string> $keys
      *
      * @return mixed Either empty array or empty object
      */

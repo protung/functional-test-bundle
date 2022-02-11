@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Command;
 
+use Psl;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,16 +12,18 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 
 /**
  * Command to create necessary files and directories for a REST functional test.
  */
 class TestStubCreateCommand extends Command
 {
-    /** @var string */
-    private $fixtureLoaderExtendClass;
+    /** @var class-string */
+    private string $fixtureLoaderExtendClass;
 
+    /**
+     * @param class-string $fixtureLoaderExtendClass
+     */
     public function __construct(string $fixtureLoaderExtendClass)
     {
         $this->fixtureLoaderExtendClass = $fixtureLoaderExtendClass;
@@ -28,7 +31,7 @@ class TestStubCreateCommand extends Command
         parent::__construct();
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this
             ->setName('sp210:test:stub:create')
@@ -57,11 +60,11 @@ class TestStubCreateCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = $this->getTestDirectoryPath($input->getArgument('path'));
+        $directory = $this->getTestDirectoryPath(Psl\Type\string()->coerce($input->getArgument('path')));
         $namespace = $this->getNamespace($directory);
-        $name      = $input->getArgument('name');
+        $name      = Psl\Type\string()->coerce($input->getArgument('name'));
 
         $customLoader = (bool) $input->getOption('custom-loader');
 
@@ -75,7 +78,8 @@ class TestStubCreateCommand extends Command
             return 1;
         }
 
-        for ($i = 1; $i <= (int) $input->getArgument('number-of-expected'); $i++) {
+        $numberOfExpected = Psl\Type\int()->coerce($input->getArgument('number-of-expected'));
+        for ($i = 1; $i <= $numberOfExpected; $i++) {
             $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
             if ($fileSystem->exists($expectedFilename)) {
                 $output->writeln(
@@ -126,9 +130,8 @@ class TestStubCreateCommand extends Command
     /**
      * Get the namespace for the codes.
      */
-    private function getNamespace(string $path) : string
+    private function getNamespace(string $path): string
     {
-        /** @var FilenameFilterIterator|\Countable $finder */
         $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
         if (\count($finder) === 0) {
             throw new \RuntimeException('No test case found in ' . $path);
@@ -136,9 +139,9 @@ class TestStubCreateCommand extends Command
 
         $namespace = '';
         foreach ($finder as $splFileInfo) {
-            $matches = [];
-            if (\preg_match('/(^|\s)namespace(.*?)\s*;/i', $splFileInfo->getContents(), $matches)) {
-                $namespace = \trim($matches[2]);
+            $matches = Psl\Regex\first_match($splFileInfo->getContents(), '/(^|\s)namespace(.*?)\s*;/i');
+            if ($matches !== null) {
+                $namespace = Psl\Str\trim($matches[2]);
                 break;
             }
         }
@@ -146,16 +149,16 @@ class TestStubCreateCommand extends Command
         return $namespace . '\Fixtures\Loaders';
     }
 
-    private function getTestDirectoryPath(string $path) : string
+    private function getTestDirectoryPath(string $path): string
     {
-        if (! \is_dir($path)) {
-            $path = \getcwd() . $path;
+        if (! Psl\Filesystem\is_directory($path)) {
+            $path = Psl\Env\current_dir() . $path;
         }
 
-        return \realpath($path);
+        return Psl\Type\string()->coerce(Psl\Filesystem\canonicalize($path));
     }
 
-    private function getFixturesContent(string $namespace, string $name, bool $customLoader) : string
+    private function getFixturesContent(string $namespace, string $name, bool $customLoader): string
     {
         $content   = [];
         $content[] = '<?php';
@@ -176,7 +179,7 @@ class TestStubCreateCommand extends Command
         return \implode(\PHP_EOL, $content);
     }
 
-    private function getFixturesLoaderContent(string $namespace, string $name) : string
+    private function getFixturesLoaderContent(string $namespace, string $name): string
     {
         $loaderParentAlias = \explode('\\', $this->fixtureLoaderExtendClass);
 

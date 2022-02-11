@@ -7,8 +7,15 @@ namespace Speicher210\FunctionalTestBundle\Test;
 use Coduo\PHPMatcher\PHPUnit\PHPMatcherAssertions;
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ConnectionRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Psl\Filesystem;
+use Psl\Str;
+use Psl\Type;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
@@ -23,9 +30,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      *
      * @var array<string,int>
      */
-    private $assertionExpectedFiles = [];
+    private array $assertionExpectedFiles = [];
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,14 +41,13 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $this->loadTestFixtures();
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
-        /** @var \Doctrine\Persistence\ConnectionRegistry $doctrine */
-        $doctrine = static::$container->get('doctrine');
-        /** @var Connection[] $connections */
+        $doctrine = Type\object(ConnectionRegistry::class)->coerce(static::getContainer()->get('doctrine'));
+
         $connections = $doctrine->getConnections();
         foreach ($connections as $connection) {
-            $connection->close();
+            Type\object(Connection::class)->coerce($connection)->close();
         }
 
         parent::tearDown();
@@ -52,15 +58,15 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Unset test case properties to speed up GC.
      */
-    protected function cleanupPHPUnit() : void
+    protected function cleanupPHPUnit(): void
     {
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
-            if ($property->isStatic() || \strpos($property->getDeclaringClass()->getName(), 'PHPUnit\\') === 0) {
+            if ($property->isStatic() || \str_starts_with($property->getDeclaringClass()->getName(), 'PHPUnit\\')) {
                 continue;
             }
 
-            if (\PHP_VERSION_ID >= 70400 && $property->getType() !== null && ! $property->getType()->allowsNull()) {
+            if ($property->getType() !== null && ! $property->getType()->allowsNull()) {
                 continue;
             }
 
@@ -70,9 +76,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<mixed> $options
      */
-    protected static function createKernel(array $options = []) : KernelInterface
+    protected static function createKernel(array $options = []): KernelInterface
     {
         $options['debug']       = $options['debug'] ?? false;
         $options['environment'] = $options['environment'] ?? 'test';
@@ -80,7 +86,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return parent::createKernel($options);
     }
 
-    protected static function getKernel() : KernelInterface
+    protected static function getKernel(): KernelInterface
     {
         if (static::$kernel === null) {
             throw new RuntimeException('Kernel not created. Was it booted ?');
@@ -89,33 +95,50 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return static::$kernel;
     }
 
-    protected function getContainerService(string $id): mixed
+    /**
+     * @param non-empty-string|class-string<TService> $id
+     * @phpstan-param (non-empty-string&literal-string)|class-string<TService> $id
+     *
+     * @return TService
+     *
+     * @template TService of object
+     */
+    protected function getContainerService(string $id): object
     {
-        if (static::$container->has('test.' . $id)) {
+        if (static::getContainer()->has('test.' . $id)) {
+            $service = static::getContainer()->get('test.' . $id);
+        } else {
+            $service = static::getContainer()->get($id);
+        }
+
+        if ($service === null) {
+            throw new RuntimeException(Str\format('Service "%s" does not exist in the container.', $id));
+        }
+
+        if (\class_exists($id) || \interface_exists($id)) {
+            return Type\object($id)->coerce($service);
+        }
+
+        return $service;
+    }
+
+    protected function mockContainerService(string $id, object $service): void
+    {
+        if (static::getContainer()->has('test.' . $id)) {
             $id = 'test.' . $id;
         }
 
-        return static::$container->get($id);
+        static::getContainer()->set($id, $service);
     }
 
-    protected function mockContainerService(string $id, mixed $service) : void
+    protected function getObjectManager(): ObjectManager
     {
-        if (static::$container->has('test.' . $id)) {
-            $id = 'test.' . $id;
-        }
-
-        static::$container->set($id, $service);
-    }
-
-    protected function getObjectManager() : ObjectManager
-    {
-        /** @var \Doctrine\Persistence\ManagerRegistry $doctrine */
-        $doctrine = static::$container->get('doctrine');
+        $doctrine = Type\object(ManagerRegistry::class)->coerce(static::getContainer()->get('doctrine'));
 
         return $doctrine->getManager();
     }
 
-    protected function clearObjectManager() : void
+    protected function clearObjectManager(): void
     {
         $this->getObjectManager()->clear();
     }
@@ -123,14 +146,12 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Prepare the text fixtures and the expected content file.
      */
-    protected function loadTestFixtures() : void
+    protected function loadTestFixtures(): void
     {
-        $reflection = new \ReflectionObject($this);
-
         $fixtures = $this->getAlwaysLoadingFixtures();
 
-        $fixturesFile = \dirname($reflection->getFileName()) . '/Fixtures/' . $this->getName(false) . '.php';
-        if (\file_exists($fixturesFile)) {
+        $fixturesFile = $this->getFixturesFileForTest();
+        if (Filesystem\exists($fixturesFile)) {
             $fixtures = \array_merge($fixtures, require $fixturesFile);
         }
 
@@ -141,19 +162,26 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $this->loadFixtures($fixtures);
     }
 
-    /**
-     * @param string[] $classNames
-     */
-    private function loadFixtures(array $classNames = []) : void
+    protected function getFixturesFileForTest(): string
     {
-        $fixtureLoader = new SymfonyFixturesLoader(static::$container);
+        return $this->getTestDirectory() . '/Fixtures/' . $this->getName(false) . '.php';
+    }
+
+    /**
+     * @param list<class-string<FixtureInterface>> $classNames
+     */
+    private function loadFixtures(array $classNames = []): void
+    {
+        $fixtureLoader = new SymfonyFixturesLoader(static::getContainer());
         foreach ($classNames as $className) {
             $fixture = new $className();
             $fixtureLoader->addFixture($fixture);
         }
 
-        /** @var \Doctrine\ORM\EntityManagerInterface $em */
-        $em       = static::$container->get('doctrine.orm.entity_manager');
+        $em = Type\object(EntityManagerInterface::class)->coerce(
+            static::getContainer()->get('doctrine.orm.entity_manager')
+        );
+
         $executor = new ORMExecutor($em);
         $executor->execute($fixtureLoader->getFixtures(), true);
     }
@@ -161,14 +189,14 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Get the fixtures to always load when preparing the test fixtures.
      *
-     * @return string[]
+     * @return list<class-string<FixtureInterface>>
      */
-    protected function getAlwaysLoadingFixtures() : array
+    protected function getAlwaysLoadingFixtures(): array
     {
         return [];
     }
 
-    private function getTestNameForExpectedFiles() : string
+    private function getTestNameForExpectedFiles(): string
     {
         return $this->getName(false) . ($this->dataName() !== '' ? '-' . $this->dataName() : '');
     }
@@ -178,7 +206,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      *
      * @param string $type The file type (txt, yml, etc).
      */
-    protected function getExpectedContentFile(string $type) : string
+    protected function getExpectedContentFile(string $type): string
     {
         $testName = $this->getTestNameForExpectedFiles();
         if (isset($this->assertionExpectedFiles[$testName])) {
@@ -190,13 +218,20 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return $this->getCurrentExpectedResponseContentFile($type);
     }
 
-    public function getCurrentExpectedResponseContentFile(string $type) : string
+    public function getCurrentExpectedResponseContentFile(string $type): string
     {
-        $reflection       = new \ReflectionObject($this);
         $testName         = $this->getTestNameForExpectedFiles();
         $expectedFileName = $testName . '-' . ($this->assertionExpectedFiles[$testName] ?? 1);
 
-        return \dirname($reflection->getFileName()) . '/Expected/' . $expectedFileName . '.' . $type;
+        return $this->getTestDirectory() . '/Expected/' . $expectedFileName . '.' . $type;
+    }
+
+    protected function getTestDirectory(): string
+    {
+        $reflection = new \ReflectionObject($this);
+        $fileName   = Type\string()->coerce($reflection->getFileName());
+
+        return Filesystem\get_directory($fileName);
     }
 
     /**
@@ -210,7 +245,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         string $actual,
         float $threshold = 0.0,
         string $message = ''
-    ) : void {
+    ): void {
         static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
     }
 }

@@ -10,8 +10,7 @@ use Coduo\PHPMatcher\Matcher;
 
 final class CoduoMatcherFactory
 {
-    /** @var Matcher */
-    private static $matcher;
+    private static Matcher|null $matcher = null;
 
     private function __construct()
     {

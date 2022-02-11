@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.20.0@f82a70e7edfc6cf2705e9374c8a0b6a974a779ed">
+  <file src="src/Command/TestStubCreateCommand.php">
+    <RedundantCast occurrences="1">
+      <code>(bool) $input-&gt;getOption('custom-loader')</code>
+    </RedundantCast>
+  </file>
+  <file src="src/Constraint/JsonResponseContentMatches.php">
+    <InternalClass occurrences="6">
+      <code>Json::canonicalize($actual)</code>
+      <code>Json::canonicalize($this-&gt;expectedContent)</code>
+      <code>Json::prettify($actual)</code>
+      <code>Json::prettify($this-&gt;expectedContent)</code>
+      <code>Json::prettify($this-&gt;expectedContent)</code>
+      <code>Json::prettify(Psl\Type\string()-&gt;coerce($other-&gt;getContent()))</code>
+    </InternalClass>
+    <InternalMethod occurrences="6">
+      <code>Json::canonicalize($actual)</code>
+      <code>Json::canonicalize($this-&gt;expectedContent)</code>
+      <code>Json::prettify($actual)</code>
+      <code>Json::prettify($this-&gt;expectedContent)</code>
+      <code>Json::prettify($this-&gt;expectedContent)</code>
+      <code>Json::prettify(Psl\Type\string()-&gt;coerce($other-&gt;getContent()))</code>
+    </InternalMethod>
+  </file>
+  <file src="src/DependencyInjection/Configuration.php">
+    <PossiblyNullReference occurrences="1">
+      <code>end</code>
+    </PossiblyNullReference>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>end</code>
+    </PossiblyUndefinedMethod>
+  </file>
+  <file src="src/FailTestExpectedOutputFileUpdater/JsonFileUpdater.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>Psl\Str\length($m[0]) / 2</code>
+    </InvalidScalarArgument>
+    <MissingClosureParamType occurrences="2">
+      <code>$key</code>
+      <code>$value</code>
+    </MissingClosureParamType>
+  </file>
+  <file src="src/Test/KernelTestCase.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>static::$kernel === null</code>
+    </DocblockTypeContradiction>
+    <InternalMethod occurrences="4">
+      <code>dataName</code>
+      <code>dataName</code>
+      <code>getName</code>
+      <code>getName</code>
+    </InternalMethod>
+    <InvalidDocblock occurrences="1">
+      <code>(non-empty-string&amp;literal-string)|class-string&lt;TService&gt;</code>
+    </InvalidDocblock>
+    <InvalidReturnStatement occurrences="2">
+      <code>$service</code>
+      <code>Type\object($id)-&gt;coerce($service)</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>TService</code>
+    </InvalidReturnType>
+    <UnresolvableInclude occurrences="1">
+      <code>require $fixturesFile</code>
+    </UnresolvableInclude>
+  </file>
+  <file src="src/Test/RestControllerWebTestCase.php">
+    <InternalMethod occurrences="1">
+      <code>getComparisonFailure</code>
+    </InternalMethod>
+  </file>
+  <file src="src/Test/WebTestCase.php">
+    <InternalMethod occurrences="1">
+      <code>getName</code>
+    </InternalMethod>
+  </file>
+</files>
