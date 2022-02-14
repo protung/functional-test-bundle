@@ -32,7 +32,6 @@
     "ext-imagick": "*",
     "doctrine/coding-standard": "^9.0",
     "ergebnis/composer-normalize": "^2.23",
-    "lexik/jwt-authentication-bundle": "^2.14",
     "mikey179/vfsstream": "^1.6.8",
     "php-standard-library/psalm-plugin": "^1.1",
     "phpstan/phpstan": "^1.4.6",
