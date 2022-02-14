@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\ExpectationFailedException;
 use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
+use Speicher210\FunctionalTestBundle\Test\Security\TestToken;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -67,25 +68,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected static function authenticateClient(KernelBrowser $client): void
     {
-        if (! \interface_exists('Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface')) {
-            throw new \RuntimeException(
-                \sprintf(
-                    'Package "%s" was not found. Please install it or overwrite method "%s"',
-                    'lexik/jwt-authentication-bundle',
-                    __METHOD__
-                )
-            );
-        }
-
-        $jwtManager = Type\object(JWTTokenManagerInterface::class)->coerce(
-            static::getContainer()->get('lexik_jwt_authentication.jwt_manager')
+        $tokenStorage = Type\object(TokenStorageInterface::class)->coerce(
+            static::getContainer()->get(TokenStorageInterface::class)
         );
 
-        $user = Type\object(UserInterface::class)->coerce(static::$authentication);
-
-        $client->setServerParameter(
-            'HTTP_Authorization',
-            \sprintf('Bearer %s', $jwtManager->create($user))
+        $tokenStorage->setToken(
+            TestToken::create(Type\object(UserInterface::class)->coerce(static::$authentication))
         );
     }
 

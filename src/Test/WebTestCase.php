@@ -6,13 +6,13 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
+use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use Psl\Type;
 
 abstract class WebTestCase extends KernelTestCase
 {
