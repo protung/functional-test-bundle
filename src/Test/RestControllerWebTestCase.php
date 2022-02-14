@@ -243,10 +243,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * @param Request $request            The request to simulate.
      * @param int     $expectedStatusCode The expected HTTP response code.
      */
-    protected function assertRestRequest(
-        Request $request,
-        int $expectedStatusCode = Response::HTTP_OK
-    ): KernelBrowser {
+    protected function assertRestRequest(Request $request, int $expectedStatusCode = Response::HTTP_OK): KernelBrowser
+    {
         $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $expectedFile = $this->getExpectedResponseContentFile('json');
@@ -255,19 +253,20 @@ abstract class RestControllerWebTestCase extends WebTestCase
             }
         }
 
-        if ($expectedStatusCode >= 400 && $expectedStatusCode <= 599) {
-            $expectedOutputContentType = $this->getExpectedErrorResponseContentType();
+        $expectedOutputContentType = match (true) {
+            $expectedStatusCode >= Response::HTTP_BAD_REQUEST => $this->getExpectedErrorResponseContentType(),
+            $expectedStatusCode === Response::HTTP_NO_CONTENT => null,
+            default => 'application/json'
+        };
+
+        // If request contains files we cannot make a JSON request, so we perform a generic one.
+        if ($request->files->count() > 0) {
+            $client = $this->assertRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
         } else {
-            $expectedOutputContentType = 'application/json';
+            $client = $this->assertJsonRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
         }
 
-        $client = $this->assertRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
         $this->clearObjectManager();
-
-        if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
-            $response = $client->getResponse();
-            static::assertResponseHeaderSame($response, 'Content-Type', $expectedOutputContentType);
-        }
 
         return $client;
     }
@@ -296,9 +295,37 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $request->getContent()
         );
 
-        $response = $client->getResponse();
         $this->assertRequestResponse(
-            $response,
+            $client->getResponse(),
+            $expectedStatusCode,
+            $expectedOutputContent,
+            $expectedOutputContentType
+        );
+
+        return $client;
+    }
+
+    protected function assertJsonRequest(
+        Request $request,
+        int $expectedStatusCode = Response::HTTP_OK,
+        ?string $expectedOutputContent = null,
+        ?string $expectedOutputContentType = null
+    ): KernelBrowser {
+        $client = static::createClient();
+
+        $server                 = $request->server->all();
+        $server['CONTENT_TYPE'] = 'application/json';
+        $server['HTTP_ACCEPT']  = 'application/json';
+
+        $client->jsonRequest(
+            $request->getMethod(),
+            $request->getUri(),
+            $request->request->all(),
+            $server
+        );
+
+        $this->assertRequestResponse(
+            $client->getResponse(),
             $expectedStatusCode,
             $expectedOutputContent,
             $expectedOutputContentType
@@ -381,7 +408,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertRequest(
+        $this->assertJsonRequest(
             $request,
             Response::HTTP_FORBIDDEN,
             $this->getExpected403Response(),
@@ -417,7 +444,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertRequest(
+        $this->assertJsonRequest(
             $request,
             Response::HTTP_UNAUTHORIZED,
             $this->getExpected401Response(),
@@ -453,7 +480,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertRequest(
+        $this->assertJsonRequest(
             $request,
             Response::HTTP_NOT_FOUND,
             $this->getExpected404Response(),
@@ -468,7 +495,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpectedErrorResponseContentType(): string
     {
-        return 'application/json';
+        return 'application/problem+json';
     }
 
     protected function prettifyJson(string $content): string

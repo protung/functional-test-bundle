@@ -12,6 +12,7 @@ use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Psl\Type;
 
 abstract class WebTestCase extends KernelTestCase
 {
@@ -33,8 +34,7 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected static function createClient(array $server = []) : KernelBrowser
     {
-        /** @var KernelBrowser $client */
-        $client = static::getContainer()->get('test.client');
+        $client = Type\object(KernelBrowser::class)->coerce(static::getContainer()->get('test.client'));
         $client->setServerParameters($server);
 
         return $client;
