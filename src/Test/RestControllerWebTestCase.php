@@ -91,10 +91,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a GET request.
      *
-     * @param string  $path               The API path to test.
-     * @param mixed[] $queryParams        The query parameters.
-     * @param int     $expectedStatusCode The expected HTTP response code.
-     * @param mixed[] $server             The server parameters.
+     * @param string       $path               The API path to test.
+     * @param array<mixed> $queryParams        The query parameters.
+     * @param int          $expectedStatusCode The expected HTTP response code.
+     * @param array<mixed> $server             The server parameters.
      */
     protected function assertRestGetPath(
         string $path,
@@ -120,11 +120,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a POST request.
      *
-     * @param string  $path               The API path to test.
-     * @param mixed[] $content            The POST content.
-     * @param int     $expectedStatusCode The expected HTTP response code.
-     * @param mixed[] $files              The files to send with the request.
-     * @param mixed[] $server             The server parameters.
+     * @param string       $path               The API path to test.
+     * @param array<mixed> $content            The POST content.
+     * @param int          $expectedStatusCode The expected HTTP response code.
+     * @param array<mixed> $files              The files to send with the request.
+     * @param array<mixed> $server             The server parameters.
      */
     protected function assertRestPostPath(
         string $path,
@@ -148,11 +148,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a PATCH request.
      *
-     * @param string  $path               The API path to test.
-     * @param mixed[] $content            The PATCH content.
-     * @param int     $expectedStatusCode The expected HTTP response code.
-     * @param mixed[] $files              The files to send with the request.
-     * @param mixed[] $server             The server parameters.
+     * @param string       $path               The API path to test.
+     * @param array<mixed> $content            The PATCH content.
+     * @param int          $expectedStatusCode The expected HTTP response code.
+     * @param array<mixed> $files              The files to send with the request.
+     * @param array<mixed> $server             The server parameters.
      */
     protected function assertRestPatchPath(
         string $path,
@@ -176,11 +176,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a PUT request.
      *
-     * @param string  $path               The API path to test.
-     * @param mixed[] $content            The PUT content.
-     * @param int     $expectedStatusCode The expected HTTP response code.
-     * @param mixed[] $files              The files to send with the request.
-     * @param mixed[] $server             The server parameters.
+     * @param string       $path               The API path to test.
+     * @param array<mixed> $content            The PUT content.
+     * @param int          $expectedStatusCode The expected HTTP response code.
+     * @param array<mixed> $files              The files to send with the request.
+     * @param array<mixed> $server             The server parameters.
      */
     protected function assertRestPutPath(
         string $path,
@@ -204,9 +204,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Shorthand method for assertRestRequest() with a DELETE request.
      *
-     * @param string  $path               The API path to test.
-     * @param int     $expectedStatusCode The expected HTTP response code.
-     * @param mixed[] $server             The server parameters.
+     * @param string       $path               The API path to test.
+     * @param int          $expectedStatusCode The expected HTTP response code.
+     * @param array<mixed> $server             The server parameters.
      */
     protected function assertRestDeletePath(
         string $path,
@@ -249,29 +249,25 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
         // If request contains files we cannot make a JSON request, so we perform a generic one.
         if ($request->files->count() > 0) {
-            $client = $this->assertRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
+            $client = $this->makeRequest($request);
         } else {
-            $client = $this->assertJsonRequest($request, $expectedStatusCode, $expected, $expectedOutputContentType);
+            $client = $this->makeJsonRequest($request);
         }
+
+        $this->assertRestRequestResponse(
+            $client->getResponse(),
+            $expectedStatusCode,
+            $expected,
+            $expectedOutputContentType
+        );
 
         $this->clearObjectManager();
 
         return $client;
     }
 
-    /**
-     * Assert if a request returns the expected result.
-     *
-     * @param Request $request               The request to simulate.
-     * @param int     $expectedStatusCode    The expected HTTP response code.
-     * @param string  $expectedOutputContent The expected output content.
-     */
-    protected function assertRequest(
-        Request $request,
-        int $expectedStatusCode = Response::HTTP_OK,
-        ?string $expectedOutputContent = null,
-        ?string $expectedOutputContentType = null
-    ): KernelBrowser {
+    protected function makeRequest(Request $request): KernelBrowser
+    {
         $client = static::createClient();
 
         $client->request(
@@ -283,22 +279,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $request->getContent()
         );
 
-        $this->assertRequestResponse(
-            $client->getResponse(),
-            $expectedStatusCode,
-            $expectedOutputContent,
-            $expectedOutputContentType
-        );
-
         return $client;
     }
 
-    protected function assertJsonRequest(
-        Request $request,
-        int $expectedStatusCode = Response::HTTP_OK,
-        ?string $expectedOutputContent = null,
-        ?string $expectedOutputContentType = null
-    ): KernelBrowser {
+    protected function makeJsonRequest(Request $request): KernelBrowser
+    {
         $client = static::createClient();
 
         $server                 = $request->server->all();
@@ -312,17 +297,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertRequestResponse(
-            $client->getResponse(),
-            $expectedStatusCode,
-            $expectedOutputContent,
-            $expectedOutputContentType
-        );
-
         return $client;
     }
 
-    protected function assertRequestResponse(
+    protected function assertRestRequestResponse(
         Response $response,
         int $expectedStatusCode,
         ?string $expectedOutputContent,
@@ -341,10 +319,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/jpg':
-                    static::assertImageSimilarity(
-                        $expectedOutputContent,
-                        Type\string()->coerce($response->getContent())
-                    );
+                    $this->assertImageContentOutput($response, $expectedOutputContent);
                     break;
                 case 'application/json':
                 case 'application/problem+json':
@@ -355,6 +330,14 @@ abstract class RestControllerWebTestCase extends WebTestCase
         } else {
             static::assertEmpty($response->getContent());
         }
+    }
+
+    private function assertImageContentOutput(Response $response, string $expectedOutputContent): void
+    {
+        static::assertImageSimilarity(
+            $expectedOutputContent,
+            Type\string()->coerce($response->getContent())
+        );
     }
 
     private function assertJsonContentOutput(Response $response, string $expectedOutputContent): void
@@ -376,10 +359,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 403.
      *
-     * @param string  $path    The API path to test.
-     * @param string  $method  The HTTP verb.
-     * @param mixed[] $content The POST content.
-     * @param mixed[] $server  The server parameters.
+     * @param string       $path    The API path to test.
+     * @param string       $method  The HTTP verb.
+     * @param array<mixed> $content The POST content.
+     * @param array<mixed> $server  The server parameters.
      */
     protected function assertRestRequestReturns403(
         string $path,
@@ -396,8 +379,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertJsonRequest(
-            $request,
+        $client = $this->makeJsonRequest($request);
+
+        $this->assertRestRequestResponse(
+            $client->getResponse(),
             Response::HTTP_FORBIDDEN,
             $this->getExpected403Response(),
             $this->getExpectedErrorResponseContentType()
@@ -412,9 +397,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 401 if the user is not authenticated.
      *
-     * @param string  $url    The URL to call.
-     * @param string  $method The HTTP verb.
-     * @param mixed[] $server The server parameters.
+     * @param string       $url    The URL to call.
+     * @param string       $method The HTTP verb.
+     * @param array<mixed> $server The server parameters.
      */
     protected function assertRestRequestReturns401IfUserIsNotAuthenticated(
         string $url,
@@ -432,8 +417,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertJsonRequest(
-            $request,
+        $client = $this->makeJsonRequest($request);
+
+        $this->assertRestRequestResponse(
+            $client->getResponse(),
             Response::HTTP_UNAUTHORIZED,
             $this->getExpected401Response(),
             $this->getExpectedErrorResponseContentType()
@@ -448,10 +435,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 404.
      *
-     * @param string  $path    The API path to test.
-     * @param string  $method  The HTTP verb.
-     * @param mixed[] $content The POST content.
-     * @param mixed[] $server  The server parameters.
+     * @param string       $path    The API path to test.
+     * @param string       $method  The HTTP verb.
+     * @param array<mixed> $content The POST content.
+     * @param array<mixed> $server  The server parameters.
      */
     protected function assertRestRequestReturns404(
         string $path,
@@ -468,8 +455,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $server
         );
 
-        $this->assertJsonRequest(
-            $request,
+        $client = $this->makeJsonRequest($request);
+
+        $this->assertRestRequestResponse(
+            $client->getResponse(),
             Response::HTTP_NOT_FOUND,
             $this->getExpected404Response(),
             $this->getExpectedErrorResponseContentType()

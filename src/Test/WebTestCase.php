@@ -32,7 +32,7 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * @param array<mixed> $server
      */
-    protected static function createClient(array $server = []) : KernelBrowser
+    protected static function createClient(array $server = []): KernelBrowser
     {
         $client = Type\object(KernelBrowser::class)->coerce(static::getContainer()->get('test.client'));
         $client->setServerParameters($server);
@@ -45,12 +45,12 @@ abstract class WebTestCase extends KernelTestCase
      *
      * @param string $type The file type (txt, yml, etc).
      */
-    protected function getExpectedResponseContentFile(string $type) : string
+    protected function getExpectedResponseContentFile(string $type): string
     {
         return $this->getExpectedContentFile($type);
     }
 
-    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = '') : void
+    public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = ''): void
     {
         static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
     }
@@ -68,7 +68,7 @@ abstract class WebTestCase extends KernelTestCase
         Response $response,
         string $expectedFile,
         string $message = ''
-    ) : void {
+    ): void {
         static::assertFileExists($expectedFile);
         static::assertThat($response, new ResponseContentMatchesFile($expectedFile), $message);
     }
@@ -76,7 +76,7 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * Get a fake file containing only empty space of a certain size.
      */
-    protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt') : UploadedFile
+    protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt'): UploadedFile
     {
         $root      = vfsStream::setup();
         $largeFile = vfsStream::newFile('large.txt')
@@ -89,7 +89,7 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * Get a fake text upload file.
      */
-    protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf') : UploadedFile
+    protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
@@ -103,7 +103,7 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * Get a fake text upload file.
      */
-    protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt') : UploadedFile
+    protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_text.txt',
@@ -125,7 +125,7 @@ abstract class WebTestCase extends KernelTestCase
         string $imageType = self::IMAGE_TYPE_PNG,
         ?string $originalName = null,
         ?array $imageSize = null
-    ) : UploadedFile {
+    ): UploadedFile {
         if (! \in_array($imageType, self::IMAGE_TYPES, true)) {
             throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
         }
@@ -161,7 +161,7 @@ abstract class WebTestCase extends KernelTestCase
      * @param bool   $withTags     Flag if the media file should have tags defined or not.
      * @param string $originalName The name for the original file should have.
      */
-    protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3') : UploadedFile
+    protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3'): UploadedFile
     {
         $fileName = $withTags ? 'fake_audio_tags.mp3' : 'fake_audio_notags.mp3';
 
@@ -179,7 +179,7 @@ abstract class WebTestCase extends KernelTestCase
      *
      * @param string $originalName The name for the original file should have.
      */
-    protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg') : UploadedFile
+    protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg'): UploadedFile
     {
         return new UploadedFile(
             __DIR__ . '/Fixtures/Resources/fake_video.mpeg',
