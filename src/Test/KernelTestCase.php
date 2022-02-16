@@ -115,7 +115,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             throw new RuntimeException(Str\format('Service "%s" does not exist in the container.', $id));
         }
 
-        if (\class_exists($id) || \interface_exists($id)) {
+        if (\class_exists($id, false) || \interface_exists($id, false)) {
             return Type\object($id)->coerce($service);
         }
 
