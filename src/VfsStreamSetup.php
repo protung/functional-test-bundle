@@ -10,8 +10,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 
 final class VfsStreamSetup
 {
-    /** @var vfsStreamDirectory|null $root */
-    private static $root = null;
+    private static ?vfsStreamDirectory $root = null;
 
     private function __construct()
     {
@@ -29,7 +28,7 @@ final class VfsStreamSetup
             throw new LogicException(
                 \sprintf(
                     'vsf stream was never initialized. Make sure you call %s::initialize() in your PHPUnit bootstrap',
-                    __CLASS__
+                    self::class
                 )
             );
         }
