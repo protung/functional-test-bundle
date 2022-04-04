@@ -10,6 +10,7 @@ use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
+use Speicher210\FunctionalTestBundle\VfsStreamSetup;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,7 +79,7 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt'): UploadedFile
     {
-        $root      = vfsStream::setup();
+        $root      = VfsStreamSetup::getRoot();
         $largeFile = vfsStream::newFile('large.txt')
             ->withContent(new LargeFileContent($bytes))
             ->at($root);
