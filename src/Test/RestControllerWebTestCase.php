@@ -10,11 +10,9 @@ use Psl\Json;
 use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
-use Speicher210\FunctionalTestBundle\Test\Security\TestToken;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -68,13 +66,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected static function authenticateClient(KernelBrowser $client): void
     {
-        $tokenStorage = Type\object(TokenStorageInterface::class)->coerce(
-            static::getContainer()->get(TokenStorageInterface::class)
-        );
-
-        $tokenStorage->setToken(
-            TestToken::create(Type\object(UserInterface::class)->coerce(static::$authentication))
-        );
+        $user = Type\object(UserInterface::class)->coerce(static::$authentication);
+        $client->loginUser($user);
     }
 
     protected function loginAsAdmin(): void
