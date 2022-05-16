@@ -43,10 +43,12 @@
     "squizlabs/php_codesniffer": "^3.6.2",
     "symfony/console": "^5.4.8",
     "symfony/security-core": "^5.4.8",
+    "twig/twig": "^3.0.0",
     "vimeo/psalm": "^4.23.0"
   },
   "conflict": {
-    "nikic/php-parser": "<4.13.2"
+    "nikic/php-parser": "<4.13.2",
+    "twig/twig": "<3.0.0"
   },
   "suggest": {
     "ext-imagick": "To assert images and create fixture images",
