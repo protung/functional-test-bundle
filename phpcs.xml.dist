@@ -21,6 +21,9 @@
     <rule ref="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming">
         <exclude-pattern>src/Test/Loader/AbstractLoader.php</exclude-pattern>
     </rule>
+    <rule ref="Generic.Files.LineLength">
+        <severity>0</severity>
+    </rule>
 
     <!-- Paths to check -->
     <file>src</file>

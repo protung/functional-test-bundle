@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use PHPUnit\Framework\ExpectationFailedException;
+use Psl\File;
 use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
@@ -66,7 +67,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected static function authenticateClient(KernelBrowser $client): void
     {
-        $user = Type\object(UserInterface::class)->coerce(static::$authentication);
+        $user = Type\instance_of(UserInterface::class)->coerce(static::$authentication);
         $client->loginUser($user);
     }
 
@@ -228,9 +229,9 @@ abstract class RestControllerWebTestCase extends WebTestCase
     {
         $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
-            $expectedFile = $this->getExpectedResponseContentFile('json');
+            $expectedFile = Type\non_empty_string()->coerce($this->getExpectedResponseContentFile('json'));
             if (Filesystem\exists($expectedFile)) {
-                $expected = $this->prettifyJson(Filesystem\read_file($expectedFile));
+                $expected = $this->prettifyJson(File\read($expectedFile));
             }
         }
 
@@ -384,7 +385,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected403Response(): string
     {
-        return Filesystem\read_file(__DIR__ . '/Expected/403.json');
+        return File\read(__DIR__ . '/Expected/403.json');
     }
 
     /**
@@ -422,7 +423,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected401Response(): string
     {
-        return Filesystem\read_file(__DIR__ . '/Expected/401.json');
+        return File\read(__DIR__ . '/Expected/401.json');
     }
 
     /**
@@ -460,7 +461,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected404Response(): string
     {
-        return Filesystem\read_file(__DIR__ . '/Expected/404.json');
+        return File\read(__DIR__ . '/Expected/404.json');
     }
 
     protected function getExpectedErrorResponseContentType(): string

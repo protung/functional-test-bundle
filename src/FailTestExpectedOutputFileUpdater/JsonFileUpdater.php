@@ -113,7 +113,7 @@ final class JsonFileUpdater
             $data = Psl\Regex\replace_with(
                 Psl\Json\encode($actual, false, $this->jsonEncodeOptions),
                 '/^ +/m',
-                static fn (array $m): string => Psl\Str\repeat(' ', Psl\Str\length($m[0]) / 2),
+                static fn (array $m): string => Psl\Str\repeat(' ', Psl\Type\positive_int()->coerce(Psl\Str\length($m[0]) / 2)),
             );
 
             \file_put_contents($expectedFile, $data);

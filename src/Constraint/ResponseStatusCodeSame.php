@@ -46,7 +46,7 @@ final class ResponseStatusCodeSame extends Constraint
 
     protected function additionalFailureDescription(mixed $other): string
     {
-        $responseContent = Type\object(Response::class)->coerce($other)->getContent();
+        $responseContent = Type\instance_of(Response::class)->coerce($other)->getContent();
 
         return Str\format(
             'Response body was: %s',

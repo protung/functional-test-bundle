@@ -62,7 +62,7 @@ class TestStubCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $directory = $this->getTestDirectoryPath(Psl\Type\string()->coerce($input->getArgument('path')));
+        $directory = $this->getTestDirectoryPath(Psl\Type\non_empty_string()->coerce($input->getArgument('path')));
         $namespace = $this->getNamespace($directory);
         $name      = Psl\Type\string()->coerce($input->getArgument('name'));
 
@@ -149,6 +149,9 @@ class TestStubCreateCommand extends Command
         return $namespace . '\Fixtures\Loaders';
     }
 
+    /**
+     * @param non-empty-string $path
+     */
     private function getTestDirectoryPath(string $path): string
     {
         if (! Psl\Filesystem\is_directory($path)) {
