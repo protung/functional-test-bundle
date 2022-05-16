@@ -55,7 +55,7 @@
     </InvalidDocblock>
     <InvalidReturnStatement occurrences="2">
       <code>$service</code>
-      <code>Type\object($id)-&gt;coerce($service)</code>
+      <code>Type\instance_of($id)-&gt;coerce($service)</code>
     </InvalidReturnStatement>
     <InvalidReturnType occurrences="1">
       <code>TService</code>

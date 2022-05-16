@@ -37,7 +37,7 @@ final class ResponseHeaderSame extends Constraint
             return null;
         }
 
-        $actualValue       = Type\object(Response::class)->coerce($other)->headers->get($this->headerName);
+        $actualValue       = Type\instance_of(Response::class)->coerce($other)->headers->get($this->headerName);
         $comparisonFailure = new ComparisonFailure(
             $this->expectedValue,
             $actualValue,

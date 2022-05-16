@@ -35,7 +35,7 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected static function createClient(array $server = []): KernelBrowser
     {
-        $client = Type\object(KernelBrowser::class)->coerce(static::getContainer()->get('test.client'));
+        $client = Type\instance_of(KernelBrowser::class)->coerce(static::getContainer()->get('test.client'));
         $client->setServerParameters($server);
 
         return $client;

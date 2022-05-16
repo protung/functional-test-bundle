@@ -61,7 +61,6 @@
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
-        <pluginClass class="Psl\Integration\Psalm\Plugin"/>
         <pluginClass class="Psl\Psalm\Plugin"/>
     </plugins>
 </psalm>

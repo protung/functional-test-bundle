@@ -6,6 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Tests\FailTestExpectedOutputFileUpdat
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Psl\File;
 use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
@@ -116,9 +117,9 @@ final class JsonFileUpdaterTest extends TestCase
     {
         $reflection = new \ReflectionObject($this);
 
-        $file = Type\string()->coerce($reflection->getFileName());
+        $file = Type\non_empty_string()->coerce($reflection->getFileName());
 
-        return Filesystem\read_file(
+        return File\read(
             Filesystem\get_directory($file) . '/' . $this->getName() . '/' . $fileName . '.json'
         );
     }

@@ -43,11 +43,11 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function tearDown(): void
     {
-        $doctrine = Type\object(ConnectionRegistry::class)->coerce(static::getContainer()->get('doctrine'));
+        $doctrine = Type\instance_of(ConnectionRegistry::class)->coerce(static::getContainer()->get('doctrine'));
 
         $connections = $doctrine->getConnections();
         foreach ($connections as $connection) {
-            Type\object(Connection::class)->coerce($connection)->close();
+            Type\instance_of(Connection::class)->coerce($connection)->close();
         }
 
         parent::tearDown();
@@ -116,7 +116,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         if (\class_exists($id, false) || \interface_exists($id, false)) {
-            return Type\object($id)->coerce($service);
+            return Type\instance_of($id)->coerce($service);
         }
 
         return $service;
@@ -133,7 +133,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function getObjectManager(): ObjectManager
     {
-        $doctrine = Type\object(ManagerRegistry::class)->coerce(static::getContainer()->get('doctrine'));
+        $doctrine = Type\instance_of(ManagerRegistry::class)->coerce(static::getContainer()->get('doctrine'));
 
         return $doctrine->getManager();
     }
@@ -178,7 +178,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             $fixtureLoader->addFixture($fixture);
         }
 
-        $em = Type\object(EntityManagerInterface::class)->coerce(
+        $em = Type\instance_of(EntityManagerInterface::class)->coerce(
             static::getContainer()->get('doctrine.orm.entity_manager')
         );
 
@@ -229,7 +229,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     protected function getTestDirectory(): string
     {
         $reflection = new \ReflectionObject($this);
-        $fileName   = Type\string()->coerce($reflection->getFileName());
+        $fileName   = Type\non_empty_string()->coerce($reflection->getFileName());
 
         return Filesystem\get_directory($fileName);
     }
