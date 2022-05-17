@@ -204,7 +204,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Get the expected response content file.
      *
-     * @param string $type The file type (txt, yml, etc).
+     * @param non-empty-string $type The file type (txt, yml, etc).
+     *
+     * @return non-empty-string
      */
     protected function getExpectedContentFile(string $type): string
     {
@@ -218,6 +220,11 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return $this->getCurrentExpectedResponseContentFile($type);
     }
 
+    /**
+     * @param non-empty-string $type
+     *
+     * @return non-empty-string
+     */
     public function getCurrentExpectedResponseContentFile(string $type): string
     {
         $testName         = $this->getTestNameForExpectedFiles();

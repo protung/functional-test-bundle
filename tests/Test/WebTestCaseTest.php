@@ -13,6 +13,11 @@ final class WebTestCaseTest extends TestCase
     {
         $testClass = new class() extends WebTestCase
         {
+            /**
+             * @param non-empty-string $type
+             *
+             * @return non-empty-string
+             */
             public function testGetExpectedResponseContentFile(string $type) : string
             {
                 return parent::getExpectedResponseContentFile($type);

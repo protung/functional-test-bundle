@@ -44,7 +44,9 @@ abstract class WebTestCase extends KernelTestCase
     /**
      * Get the expected response content file.
      *
-     * @param string $type The file type (txt, yml, etc).
+     * @param non-empty-string $type The file type (txt, yml, etc).
+     *
+     * @return non-empty-string
      */
     protected function getExpectedResponseContentFile(string $type): string
     {
