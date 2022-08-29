@@ -12,8 +12,11 @@ use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\VfsStreamSetup;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory;
 
 abstract class WebTestCase extends KernelTestCase
 {
@@ -39,6 +42,25 @@ abstract class WebTestCase extends KernelTestCase
         $client->setServerParameters($server);
 
         return $client;
+    }
+
+    /**
+     * Set up a session before making a request.
+     *
+     * @param array<string, mixed> $sessionAttributes
+     */
+    public function prepareSession(KernelBrowser $client, array $sessionAttributes): void
+    {
+        /** @var MockFileSessionStorageFactory $sessionStorageFactory */
+        $sessionStorageFactory = $this->getContainerService('session.storage.factory.mock_file');
+        /** @var MockFileSessionStorage $sessionStorage */
+        $sessionStorage = $sessionStorageFactory->createStorage(null);
+        $sessionStorage->start();
+        $sessionStorage->setSessionData(['_sf2_attributes' => $sessionAttributes]);
+        $sessionStorage->save();
+
+        $cookie = new Cookie($sessionStorage->getName(), $sessionStorage->getId());
+        $client->getCookieJar()->set($cookie);
     }
 
     /**
