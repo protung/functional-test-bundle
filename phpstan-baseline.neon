@@ -1,9 +1,19 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Unable to resolve the template type T in call to function Psl\\\\Regex\\\\first_match$#"
+			count: 1
+			path: src/Command/TestStubCreateCommand.php
+
+		-
 			message: "#^Variable property access on object\\.$#"
 			count: 3
 			path: src/FailTestExpectedOutputFileUpdater/JsonFileUpdater.php
+
+		-
+			message: "#^Call to function Psl\\\\Filesystem\\\\exists\\(\\) with non\\-empty\\-string will always evaluate to true\\.$#"
+			count: 1
+			path: src/Test/KernelTestCase.php
 
 		-
 			message: "#^Method Speicher210\\\\FunctionalTestBundle\\\\Test\\\\KernelTestCase\\:\\:getContainerService\\(\\) should return TService of object but returns object\\.$#"
@@ -11,6 +21,6 @@ parameters:
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to function Psl\\\\Regex\\\\first_match$#"
+			message: "#^Call to function Psl\\\\Filesystem\\\\exists\\(\\) with non\\-empty\\-string will always evaluate to true\\.$#"
 			count: 1
-			path: src/Command/TestStubCreateCommand.php
+			path: src/Test/RestControllerWebTestCase.php

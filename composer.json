@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "php": "~8.1.0",
+    "php": "~8.1.0 || ~8.2.0",
     "ext-json": "*",
     "azjezz/psl": "^2.0.1",
     "coduo/php-matcher": "^6.0.7",
@@ -31,20 +31,20 @@
   "require-dev": {
     "ext-imagick": "*",
     "doctrine/coding-standard": "^9.0.2",
-    "ergebnis/composer-normalize": "^2.28.3",
+    "ergebnis/composer-normalize": "^2.29",
     "mikey179/vfsstream": "^1.6.11",
     "php-standard-library/psalm-plugin": "^2.0.2",
-    "phpstan/phpstan": "^1.8.2",
-    "phpstan/phpstan-phpunit": "^1.1.1",
-    "phpstan/phpstan-strict-rules": "^1.4.2",
-    "phpstan/phpstan-symfony": "^1.2.13",
-    "psalm/plugin-phpunit": "^0.17.0",
-    "psalm/plugin-symfony": "^3.1.8",
+    "phpstan/phpstan": "^1.9.2",
+    "phpstan/phpstan-phpunit": "^1.2.2",
+    "phpstan/phpstan-strict-rules": "^1.4.4",
+    "phpstan/phpstan-symfony": "^1.2.16",
+    "psalm/plugin-phpunit": "^0.18.4",
+    "psalm/plugin-symfony": "^4.0.0",
     "squizlabs/php_codesniffer": "^3.7.1",
-    "symfony/console": "^5.4.8 || ^6.1",
-    "symfony/security-core": "^5.4.8 || ^6.1",
-    "twig/twig": "^3.4.2",
-    "vimeo/psalm": "^4.26.0"
+    "symfony/console": "^5.4.8 || ^6.2.1",
+    "symfony/security-core": "^5.4.8 || ^6.2",
+    "twig/twig": "^3.4.3",
+    "vimeo/psalm": "^4.30"
   },
   "conflict": {
     "nikic/php-parser": "<4.13.2",

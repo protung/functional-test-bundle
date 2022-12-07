@@ -162,6 +162,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $this->loadFixtures($fixtures);
     }
 
+    /**
+     * @return non-empty-string
+     */
     protected function getFixturesFileForTest(): string
     {
         return $this->getTestDirectory() . '/Fixtures/' . $this->getName(false) . '.php';

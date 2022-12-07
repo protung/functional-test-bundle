@@ -4,7 +4,7 @@ parameters:
         - src
         - tests
     polluteScopeWithLoopInitialAssignments: true
-    reportUnmatchedIgnoredErrors: true
+    reportUnmatchedIgnoredErrors: false
 
 includes:
     - phpstan-baseline.neon

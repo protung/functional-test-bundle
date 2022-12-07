@@ -229,7 +229,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     {
         $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
-            $expectedFile = Type\non_empty_string()->coerce($this->getExpectedResponseContentFile('json'));
+            $expectedFile = $this->getExpectedResponseContentFile('json');
             if (Filesystem\exists($expectedFile)) {
                 $expected = $this->prettifyJson(File\read($expectedFile));
             }
