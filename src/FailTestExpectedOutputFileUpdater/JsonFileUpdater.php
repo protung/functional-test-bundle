@@ -177,8 +177,8 @@ final class JsonFileUpdater
     /**
      * Perform additional parsing for array with expected data based on the original expected.
      *
-     * @param array<mixed> $expectedData
-     * @param list<string> $parentKeys
+     * @param array<mixed>    $expectedData
+     * @param list<array-key> $parentKeys
      *
      * @return array<mixed>
      */
@@ -206,7 +206,7 @@ final class JsonFileUpdater
     /**
      * Try to determine if original expected contained empty object or empty array.
      *
-     * @param non-empty-list<string> $keys
+     * @param non-empty-list<array-key> $keys
      *
      * @return mixed Either empty array or empty object
      */

@@ -16,6 +16,7 @@ use Doctrine\Persistence\ObjectManager;
 use Psl\Filesystem;
 use Psl\Str;
 use Psl\Type;
+use Psl\Vec;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
@@ -152,7 +153,10 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
         $fixturesFile = $this->getFixturesFileForTest();
         if (Filesystem\exists($fixturesFile)) {
-            $fixtures = \array_merge($fixtures, require $fixturesFile);
+            $fixtures = Vec\concat(
+                $fixtures,
+                require $fixturesFile,
+            );
         }
 
         if (\count($fixtures) <= 0) {
