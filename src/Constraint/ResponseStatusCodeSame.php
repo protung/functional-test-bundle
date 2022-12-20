@@ -50,7 +50,7 @@ final class ResponseStatusCodeSame extends Constraint
 
         return Str\format(
             'Response body was: %s',
-            $responseContent !== false ? $responseContent : ''
+            $responseContent !== false ? $responseContent : '',
         );
     }
 }

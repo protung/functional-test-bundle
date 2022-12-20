@@ -40,13 +40,13 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstT
         $this->matcherPatterns = $matcherPatterns;
     }
 
-    public function executeBeforeFirstTest() : void
+    public function executeBeforeFirstTest(): void
     {
         ExpectedOutputFileUpdaterConfigurator::createOutputUpdater($this->fields, $this->matcherPatterns);
         ExpectedOutputFileUpdaterConfigurator::enableOutputUpdater();
     }
 
-    public function executeAfterLastTest() : void
+    public function executeAfterLastTest(): void
     {
         ExpectedOutputFileUpdaterConfigurator::disableOutputUpdater();
     }

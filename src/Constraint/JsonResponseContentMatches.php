@@ -18,12 +18,12 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
         $this->expectedContent = $expectedContent;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return 'content is ' . $this->expectedContent;
     }
 
-    protected function matches(mixed $other) : bool
+    protected function matches(mixed $other): bool
     {
         if ($other instanceof Response) {
             return self::getMatcher()->match($other->getContent(), $this->expectedContent);
@@ -32,13 +32,13 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
         return false;
     }
 
-    protected function failureDescription(mixed $other) : string
+    protected function failureDescription(mixed $other): string
     {
         if ($other instanceof Response) {
             return Psl\Str\format(
                 '"%s" matches JSON string "%s"',
                 Json::prettify(Psl\Type\string()->coerce($other->getContent())),
-                Json::prettify($this->expectedContent)
+                Json::prettify($this->expectedContent),
             );
         }
 
@@ -48,7 +48,7 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
     /**
      * {@inheritDoc}
      */
-    protected function fail(mixed $other, $description, ?ComparisonFailure $comparisonFailure = null) : void
+    protected function fail(mixed $other, $description, ComparisonFailure|null $comparisonFailure = null): void
     {
         if ($other instanceof Response) {
             $actual = Psl\Type\string()->coerce($other->getContent());
@@ -71,7 +71,7 @@ final class JsonResponseContentMatches extends ResponseContentConstraint
                     Json::prettify($this->expectedContent),
                     Json::prettify($actual),
                     false,
-                    'Failed asserting that two json values are equal.'
+                    'Failed asserting that two json values are equal.',
                 );
             }
         }

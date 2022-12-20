@@ -6,6 +6,9 @@ namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use function file_get_contents;
+use function sprintf;
+
 final class ResponseContentMatchesFile extends ResponseContentConstraint
 {
     private string $expectedFile;
@@ -15,18 +18,18 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
         $this->expectedFile = $expectedFile;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
-        return \sprintf('content matches "%s" file', $this->expectedFile);
+        return sprintf('content matches "%s" file', $this->expectedFile);
     }
 
     /**
      * @psalm-assert-if-true Response $other
      */
-    protected function matches(mixed $other) : bool
+    protected function matches(mixed $other): bool
     {
         if ($other instanceof Response) {
-            return self::getMatcher()->match($other->getContent(), \file_get_contents($this->expectedFile));
+            return self::getMatcher()->match($other->getContent(), file_get_contents($this->expectedFile));
         }
 
         return false;
@@ -35,10 +38,10 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
     /**
      * {@inheritdoc}
      */
-    protected function failureDescription($other) : string
+    protected function failureDescription($other): string
     {
         if ($other instanceof Response) {
-            return \sprintf('response content matches content of file "%s"', $this->expectedFile);
+            return sprintf('response content matches content of file "%s"', $this->expectedFile);
         }
 
         return parent::failureDescription($other);

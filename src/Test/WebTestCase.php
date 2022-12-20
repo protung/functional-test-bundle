@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
+use Imagick;
+use ImagickPixel;
+use InvalidArgumentException;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
 use Psl\Type;
+use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
@@ -17,6 +21,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory;
+
+use function extension_loaded;
+use function file_put_contents;
+use function in_array;
+use function sprintf;
+use function sys_get_temp_dir;
+use function tempnam;
 
 abstract class WebTestCase extends KernelTestCase
 {
@@ -84,15 +95,15 @@ abstract class WebTestCase extends KernelTestCase
         Response $response,
         string $headerName,
         string $expectedValue,
-        string $message = ''
-    ) : void {
+        string $message = '',
+    ): void {
         static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
     }
 
     public static function assertResponseContentMatchesFile(
         Response $response,
         string $expectedFile,
-        string $message = ''
+        string $message = '',
     ): void {
         static::assertFileExists($expectedFile);
         static::assertThat($response, new ResponseContentMatchesFile($expectedFile), $message);
@@ -121,7 +132,7 @@ abstract class WebTestCase extends KernelTestCase
             $originalName,
             null,
             null,
-            true
+            true,
         );
     }
 
@@ -135,7 +146,7 @@ abstract class WebTestCase extends KernelTestCase
             $originalName,
             null,
             null,
-            true
+            true,
         );
     }
 
@@ -148,33 +159,34 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected function getRequestUploadImageFile(
         string $imageType = self::IMAGE_TYPE_PNG,
-        ?string $originalName = null,
-        ?array $imageSize = null
+        string|null $originalName = null,
+        array|null $imageSize = null,
     ): UploadedFile {
-        if (! \in_array($imageType, self::IMAGE_TYPES, true)) {
-            throw new \InvalidArgumentException(\sprintf('Unknown image type %s', $imageType));
+        if (! in_array($imageType, self::IMAGE_TYPES, true)) {
+            throw new InvalidArgumentException(sprintf('Unknown image type %s', $imageType));
         }
 
-        $originalName  = $originalName ?? 'fake_image';
-        $originalName .= '.' . $imageType;
+        $originalName ??= 'fake_image';
+        $originalName  .= '.' . $imageType;
 
         if ($imageSize === null) {
             $filePath = __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType;
         } else {
-            if (! \extension_loaded('imagick')) {
-                throw new \RuntimeException('Imagick extension is required to resize the image.');
+            if (! extension_loaded('imagick')) {
+                throw new RuntimeException('Imagick extension is required to resize the image.');
             }
+
             if (! isset($imageSize['width'], $imageSize['height'])) {
-                throw new \InvalidArgumentException(
-                    'The "width" and "height" must be specified for the size of the image.'
+                throw new InvalidArgumentException(
+                    'The "width" and "height" must be specified for the size of the image.',
                 );
             }
 
-            $image = new \Imagick();
-            $image->newImage($imageSize['width'], $imageSize['height'], new \ImagickPixel('#ffffff'));
+            $image = new Imagick();
+            $image->newImage($imageSize['width'], $imageSize['height'], new ImagickPixel('#ffffff'));
             $image->setImageFormat($imageType);
-            $filePath = \tempnam(\sys_get_temp_dir(), $this->getName(false)) . '.' . $imageType;
-            \file_put_contents($filePath, $image->getImageBlob());
+            $filePath = tempnam(sys_get_temp_dir(), $this->getName(false)) . '.' . $imageType;
+            file_put_contents($filePath, $image->getImageBlob());
         }
 
         return new UploadedFile($filePath, $originalName, null, null, true);
@@ -195,7 +207,7 @@ abstract class WebTestCase extends KernelTestCase
             $originalName,
             null,
             null,
-            true
+            true,
         );
     }
 
@@ -211,7 +223,7 @@ abstract class WebTestCase extends KernelTestCase
             $originalName,
             null,
             null,
-            true
+            true,
         );
     }
 }

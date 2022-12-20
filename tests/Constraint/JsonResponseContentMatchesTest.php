@@ -9,12 +9,16 @@ use PHPUnit\Framework\TestCase;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
 use Symfony\Component\HttpFoundation\Response;
 
+use function version_compare;
+
+use const PHP_VERSION;
+
 final class JsonResponseContentMatchesTest extends TestCase
 {
     /**
      * @return mixed[]
      */
-    public static function dataProviderTestEvaluateTheSameJsonContent() : array
+    public static function dataProviderTestEvaluateTheSameJsonContent(): array
     {
         return [
             ['{}', '[]'],
@@ -28,7 +32,7 @@ final class JsonResponseContentMatchesTest extends TestCase
     /**
      * @dataProvider dataProviderTestEvaluateTheSameJsonContent
      */
-    public function testEvaluateReturnsNullForTheSameJsonContent(string $expected, string $content) : void
+    public function testEvaluateReturnsNullForTheSameJsonContent(string $expected, string $content): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn($content);
@@ -38,7 +42,7 @@ final class JsonResponseContentMatchesTest extends TestCase
         self::assertNull($constraint->evaluate($response));
     }
 
-    public function testEvaluateThrowsExceptionForDifferentJsonContent() : void
+    public function testEvaluateThrowsExceptionForDifferentJsonContent(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::exactly(3))->method('getContent')->willReturn('{"test":"1"}');
@@ -46,14 +50,14 @@ final class JsonResponseContentMatchesTest extends TestCase
         $constraint = new JsonResponseContentMatches('{"test":1}');
 
         $this->expectException(AssertionFailedError::class);
-        if (\version_compare(\PHP_VERSION, '7.4', '>=')) {
+        if (version_compare(PHP_VERSION, '7.4', '>=')) {
             $this->expectExceptionMessage(
                 'Failed asserting that "{
     "test": "1"
 }" matches JSON string "{
     "test": 1
 }".
-Value "1" does not match pattern "1" at path: "[test]"'
+Value "1" does not match pattern "1" at path: "[test]"',
             );
         } else {
             $this->expectExceptionMessage(
@@ -62,13 +66,14 @@ Value "1" does not match pattern "1" at path: "[test]"'
 }" matches JSON string "{
     "test": 1
 }".
-Value {"test":"1"} does not match pattern {"test":1}'
+Value {"test":"1"} does not match pattern {"test":1}',
             );
         }
+
         $constraint->evaluate($response);
     }
 
-    public function testEvaluateReturnsTrueForTheSameJsonContentWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsTrueForTheSameJsonContentWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('{"some":"json"}');
@@ -78,7 +83,7 @@ Value {"test":"1"} does not match pattern {"test":1}'
         self::assertTrue($constraint->evaluate($response, '', true));
     }
 
-    public function testEvaluateReturnsFalseForDifferentJsonContentWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsFalseForDifferentJsonContentWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('{"some":"json"}');

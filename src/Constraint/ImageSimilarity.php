@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
+use Imagick;
 use PHPUnit\Framework\Constraint\Constraint;
 use Psl\Type;
+
+use function sprintf;
 
 final class ImageSimilarity extends Constraint
 {
@@ -19,19 +22,19 @@ final class ImageSimilarity extends Constraint
         $this->similarityThreshold  = $similarityThreshold;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return 'image is similar to ' . $this->expectedImageContent;
     }
 
-    protected function matches(mixed $other) : bool
+    protected function matches(mixed $other): bool
     {
-        $expectedImagick = new \Imagick();
+        $expectedImagick = new Imagick();
         $expectedImagick->readImageBlob($this->expectedImageContent);
-        $actualImagick = new \Imagick();
+        $actualImagick = new Imagick();
         $actualImagick->readImageBlob(Type\string()->coerce($other));
 
-        $result = $expectedImagick->compareImages($actualImagick, \Imagick::METRIC_MEANSQUAREERROR);
+        $result = $expectedImagick->compareImages($actualImagick, Imagick::METRIC_MEANSQUAREERROR);
 
         return $result[1] <= $this->similarityThreshold;
     }
@@ -39,8 +42,8 @@ final class ImageSimilarity extends Constraint
     /**
      * {@inheritdoc}
      */
-    protected function failureDescription($other) : string
+    protected function failureDescription($other): string
     {
-        return \sprintf('images are similar');
+        return sprintf('images are similar');
     }
 }

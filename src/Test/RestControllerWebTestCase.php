@@ -17,6 +17,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use function array_replace_recursive;
+use function parse_str;
+use function parse_url;
+
+use const JSON_PRESERVE_ZERO_FRACTION;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
+use const PHP_URL_QUERY;
+
 /**
  * Abstract class for restful controllers.
  */
@@ -32,7 +41,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     public static function assertJsonResponseContent(
         Response $response,
         string $expectedContent,
-        string $message = ''
+        string $message = '',
     ): void {
         static::assertThat($response, new JsonResponseContentMatches($expectedContent), $message);
     }
@@ -40,12 +49,14 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         static::$authentication = self::AUTHENTICATION_NONE;
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
+
         static::$authentication = self::AUTHENTICATION_NONE;
     }
 
@@ -94,18 +105,18 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $path,
         array $queryParams = [],
         int $expectedStatusCode = Response::HTTP_OK,
-        array $server = []
+        array $server = [],
     ): KernelBrowser {
-        $query = Type\string()->coerce(\parse_url($path, \PHP_URL_QUERY) ?? '');
-        \parse_str($query, $queryParamsFromPath);
+        $query = Type\string()->coerce(parse_url($path, PHP_URL_QUERY) ?? '');
+        parse_str($query, $queryParamsFromPath);
 
         $request = Request::create(
             $path,
             Request::METHOD_GET,
-            \array_replace_recursive($queryParamsFromPath, $queryParams),
+            array_replace_recursive($queryParamsFromPath, $queryParams),
             [],
             [],
-            $server
+            $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -125,7 +136,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $content = [],
         int $expectedStatusCode = Response::HTTP_OK,
         array $files = [],
-        array $server = []
+        array $server = [],
     ): KernelBrowser {
         $request = Request::create(
             $path,
@@ -133,7 +144,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $content,
             [],
             $files,
-            $server
+            $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -153,7 +164,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $content = [],
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
-        array $server = []
+        array $server = [],
     ): KernelBrowser {
         $request = Request::create(
             $path,
@@ -161,7 +172,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $content,
             [],
             $files,
-            $server
+            $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -181,7 +192,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $content = [],
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $files = [],
-        array $server = []
+        array $server = [],
     ): KernelBrowser {
         $request = Request::create(
             $path,
@@ -189,7 +200,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $content,
             [],
             $files,
-            $server
+            $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -205,7 +216,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function assertRestDeletePath(
         string $path,
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
-        array $server = []
+        array $server = [],
     ): KernelBrowser {
         $request = Request::create(
             $path,
@@ -213,7 +224,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             [],
             [],
             [],
-            $server
+            $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -252,7 +263,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $client->getResponse(),
             $expectedStatusCode,
             $expected,
-            $expectedOutputContentType
+            $expectedOutputContentType,
         );
 
         $this->clearObjectManager();
@@ -270,7 +281,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $request->request->all(),
             $request->files->all(),
             $request->server->all(),
-            $request->getContent()
+            $request->getContent(),
         );
 
         return $client;
@@ -288,7 +299,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $request->getMethod(),
             $request->getUri(),
             $request->request->all(),
-            $server
+            $server,
         );
 
         return $client;
@@ -297,8 +308,8 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function assertRestRequestResponse(
         Response $response,
         int $expectedStatusCode,
-        ?string $expectedOutputContent,
-        ?string $expectedOutputContentType
+        string|null $expectedOutputContent,
+        string|null $expectedOutputContentType,
     ): void {
         static::assertResponseStatusCode($response, $expectedStatusCode);
 
@@ -306,7 +317,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             static::assertResponseHeaderSame(
                 $response,
                 'Content-Type',
-                Type\string()->coerce($expectedOutputContentType)
+                Type\string()->coerce($expectedOutputContentType),
             );
 
             switch ($response->headers->get('Content-Type')) {
@@ -330,7 +341,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     {
         static::assertImageSimilarity(
             $expectedOutputContent,
-            Type\string()->coerce($response->getContent())
+            Type\string()->coerce($response->getContent()),
         );
     }
 
@@ -343,9 +354,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             if ($comparisonFailure !== null && ExpectedOutputFileUpdaterConfigurator::isOutputUpdaterEnabled()) {
                 ExpectedOutputFileUpdaterConfigurator::getOutputUpdater()->updateExpectedFile(
                     $this->getCurrentExpectedResponseContentFile('json'),
-                    $comparisonFailure
+                    $comparisonFailure,
                 );
             }
+
             throw $e;
         }
     }
@@ -362,7 +374,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $path,
         string $method,
         array $content = [],
-        array $server = []
+        array $server = [],
     ): void {
         $request = Request::create(
             $path,
@@ -370,7 +382,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $content,
             [],
             [],
-            $server
+            $server,
         );
 
         $client = $this->makeJsonRequest($request);
@@ -379,7 +391,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $client->getResponse(),
             Response::HTTP_FORBIDDEN,
             $this->getExpected403Response(),
-            $this->getExpectedErrorResponseContentType()
+            $this->getExpectedErrorResponseContentType(),
         );
     }
 
@@ -398,7 +410,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     protected function assertRestRequestReturns401IfUserIsNotAuthenticated(
         string $url,
         string $method,
-        array $server = []
+        array $server = [],
     ): void {
         static::$authentication = self::AUTHENTICATION_NONE;
 
@@ -408,7 +420,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             [],
             [],
             [],
-            $server
+            $server,
         );
 
         $client = $this->makeJsonRequest($request);
@@ -417,7 +429,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $client->getResponse(),
             Response::HTTP_UNAUTHORIZED,
             $this->getExpected401Response(),
-            $this->getExpectedErrorResponseContentType()
+            $this->getExpectedErrorResponseContentType(),
         );
     }
 
@@ -438,7 +450,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $path,
         string $method,
         array $content = [],
-        array $server = []
+        array $server = [],
     ): void {
         $request = Request::create(
             $path,
@@ -446,7 +458,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $content,
             [],
             [],
-            $server
+            $server,
         );
 
         $client = $this->makeJsonRequest($request);
@@ -455,7 +467,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
             $client->getResponse(),
             Response::HTTP_NOT_FOUND,
             $this->getExpected404Response(),
-            $this->getExpectedErrorResponseContentType()
+            $this->getExpectedErrorResponseContentType(),
         );
     }
 
@@ -474,7 +486,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         return Json\encode(
             Json\decode($content, false),
             true,
-            \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION,
         );
     }
 }

@@ -8,6 +8,23 @@ use Coduo\PHPMatcher\Matcher;
 use Psl;
 use Psl\Json\Exception\DecodeException;
 use SebastianBergmann\Comparator\ComparisonFailure;
+use stdClass;
+use Throwable;
+
+use function array_key_exists;
+use function array_shift;
+use function array_walk_recursive;
+use function count;
+use function file_exists;
+use function file_put_contents;
+use function is_array;
+use function is_object;
+use function is_string;
+use function str_starts_with;
+
+use const JSON_PRESERVE_ZERO_FRACTION;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
 
 final class JsonFileUpdater
 {
@@ -53,7 +70,7 @@ final class JsonFileUpdater
         Matcher $matcher,
         array $fields = [],
         array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS,
-        int $jsonEncodeOptions = \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION
+        int $jsonEncodeOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION,
     ) {
         $this->fields            = $fields;
         $this->matcherPatterns   = $matcherPatterns;
@@ -63,7 +80,7 @@ final class JsonFileUpdater
 
     public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure): void
     {
-        if (! \file_exists($expectedFile)) {
+        if (! file_exists($expectedFile)) {
             return;
         }
 
@@ -87,8 +104,8 @@ final class JsonFileUpdater
             $actual = Psl\Type\dict(Psl\Type\array_key(), Psl\Type\mixed())->coerce(
                 Psl\Json\decode(
                     Psl\Json\encode($comparisonFailure->getActual(), false, $this->jsonEncodeOptions),
-                    true
-                )
+                    true,
+                ),
             );
         } catch (DecodeException) {
             // probably not expecting json.
@@ -96,15 +113,15 @@ final class JsonFileUpdater
         }
 
         try {
-            \array_walk_recursive(
+            array_walk_recursive(
                 $actual,
                 function (&$value, $key): void {
-                    if (! \array_key_exists($key, $this->fields)) {
+                    if (! array_key_exists($key, $this->fields)) {
                         return;
                     }
 
                     $value = $this->fields[$key];
-                }
+                },
             );
 
             $actual = $this->updateExpectedOutput($actual, $expected);
@@ -116,8 +133,8 @@ final class JsonFileUpdater
                 static fn (array $m): string => Psl\Str\repeat(' ', Psl\Type\positive_int()->coerce(Psl\Str\length($m[0]) / 2)),
             );
 
-            \file_put_contents($expectedFile, $data);
-        } catch (\Throwable $e) {
+            file_put_contents($expectedFile, $data);
+        } catch (Throwable $e) {
             print $e->getTraceAsString();
             exit;
         }
@@ -138,21 +155,21 @@ final class JsonFileUpdater
                 continue;
             }
 
-            if (\is_array($actualField)) {
-                if (\count($actualField) === 0) {
+            if (is_array($actualField)) {
+                if (count($actualField) === 0) {
                     // Value for actual should be an empty object if expected had any properties, otherwise empty array.
-                    $actualField = \is_array(
-                        Psl\Json\decode(Psl\Json\encode($expected[$actualKey], false, $this->jsonEncodeOptions), false)
-                    ) ? [] : new \stdClass();
+                    $actualField = is_array(
+                        Psl\Json\decode(Psl\Json\encode($expected[$actualKey], false, $this->jsonEncodeOptions), false),
+                    ) ? [] : new stdClass();
                     continue;
                 }
 
-                if (\is_array($expected[$actualKey])) {
+                if (is_array($expected[$actualKey])) {
                     $actualField = $this->updateExpectedOutput($actualField, $expected[$actualKey]);
                     continue;
                 }
 
-                if (\is_object($expected[$actualKey])) {
+                if (is_object($expected[$actualKey])) {
                     // This is possible only for empty objects so we can safely pass an empty array as $expected.
                     $actualField = $this->updateExpectedOutput($actualField, []);
                     continue;
@@ -160,7 +177,7 @@ final class JsonFileUpdater
             }
 
             foreach ($this->matcherPatterns as $matcherPattern) {
-                if (\is_string($expected[$actualKey]) && \str_starts_with($expected[$actualKey], $matcherPattern)) {
+                if (is_string($expected[$actualKey]) && str_starts_with($expected[$actualKey], $matcherPattern)) {
                     if (! $this->matcher->match($actualField, $expected[$actualKey])) {
                         break;
                     }
@@ -184,10 +201,10 @@ final class JsonFileUpdater
      */
     private function parseExpectedData(array &$expectedData, array $parentKeys, mixed $originalExpected): array
     {
-        if (\is_object($originalExpected) || \is_array($originalExpected)) {
+        if (is_object($originalExpected) || is_array($originalExpected)) {
             foreach ($expectedData as $key => &$value) {
                 $keys = $parentKeys;
-                if (! \is_array($value)) {
+                if (! is_array($value)) {
                     continue;
                 }
 
@@ -212,10 +229,10 @@ final class JsonFileUpdater
      */
     private function getOriginalEmptyJsonValue(mixed $originalExpected, array $keys): mixed
     {
-        if (\is_array($originalExpected)) {
-            $key = \array_shift($keys);
-            if (\array_key_exists($key, $originalExpected)) {
-                if (\count($keys) > 0) {
+        if (is_array($originalExpected)) {
+            $key = array_shift($keys);
+            if (array_key_exists($key, $originalExpected)) {
+                if (count($keys) > 0) {
                     return $this->getOriginalEmptyJsonValue($originalExpected[$key], $keys);
                 }
 
@@ -223,13 +240,13 @@ final class JsonFileUpdater
             }
         }
 
-        if (! \is_object($originalExpected)) {
+        if (! is_object($originalExpected)) {
             return [];
         }
 
-        $key = \array_shift($keys);
+        $key = array_shift($keys);
         if (isset($originalExpected->{$key})) {
-            if (\count($keys) > 0) {
+            if (count($keys) > 0) {
                 return $this->getOriginalEmptyJsonValue($originalExpected->{$key}, $keys);
             }
 

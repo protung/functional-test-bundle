@@ -14,7 +14,7 @@ abstract class ResponseContentConstraint extends Constraint
 {
     private static Matcher|null $matcher = null;
 
-    protected static function getMatcher() : Matcher
+    protected static function getMatcher(): Matcher
     {
         if (self::$matcher === null) {
             self::$matcher = CoduoMatcherFactory::getMatcher();
@@ -23,7 +23,7 @@ abstract class ResponseContentConstraint extends Constraint
         return self::$matcher;
     }
 
-    protected function additionalFailureDescription(mixed $other) : string
+    protected function additionalFailureDescription(mixed $other): string
     {
         if ($other instanceof Response) {
             return Type\string()->coerce(static::getMatcher()->getError());

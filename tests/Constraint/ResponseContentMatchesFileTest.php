@@ -10,9 +10,11 @@ use PHPUnit\Framework\TestCase;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Symfony\Component\HttpFoundation\Response;
 
+use function sprintf;
+
 final class ResponseContentMatchesFileTest extends TestCase
 {
-    public function testEvaluateReturnsNullForTheResponseContentMatchingFile() : void
+    public function testEvaluateReturnsNullForTheResponseContentMatchingFile(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('some content');
@@ -25,7 +27,7 @@ final class ResponseContentMatchesFileTest extends TestCase
         self::assertNull($constraint->evaluate($response));
     }
 
-    public function testEvaluateThrowsExceptionForResponseContentNotMatchingFile() : void
+    public function testEvaluateThrowsExceptionForResponseContentNotMatchingFile(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('some content');
@@ -37,17 +39,17 @@ final class ResponseContentMatchesFileTest extends TestCase
 
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage(
-            \sprintf(
+            sprintf(
                 "%s\n%s",
                 'Failed asserting that response content matches content of file "vfs://root/expected".',
-                '"some content" does not match "some content1" pattern'
-            )
+                '"some content" does not match "some content1" pattern',
+            ),
         );
 
         $constraint->evaluate($response);
     }
 
-    public function testEvaluateReturnsTrueForTheResponseContentMatchingFileWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsTrueForTheResponseContentMatchingFileWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('some content');
@@ -60,7 +62,7 @@ final class ResponseContentMatchesFileTest extends TestCase
         self::assertTrue($constraint->evaluate($response, '', true));
     }
 
-    public function testEvaluateReturnsFalseForResponseContentNotMatchingFileWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsFalseForResponseContentNotMatchingFileWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getContent')->willReturn('some content');

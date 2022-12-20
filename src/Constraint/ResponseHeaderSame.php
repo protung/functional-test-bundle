@@ -9,6 +9,8 @@ use Psl\Type;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Symfony\Component\HttpFoundation\Response;
 
+use function sprintf;
+
 final class ResponseHeaderSame extends Constraint
 {
     private string $headerName;
@@ -21,7 +23,7 @@ final class ResponseHeaderSame extends Constraint
         $this->expectedValue = $expectedValue;
     }
 
-    public function evaluate(mixed $other, string $description = '', bool $returnResult = false) : ?bool
+    public function evaluate(mixed $other, string $description = '', bool $returnResult = false): bool|null
     {
         $success = false;
 
@@ -42,21 +44,21 @@ final class ResponseHeaderSame extends Constraint
             $this->expectedValue,
             $actualValue,
             $this->exporter()->export($this->expectedValue),
-            $this->exporter()->export($actualValue)
+            $this->exporter()->export($actualValue),
         );
 
         $this->fail($other, $description, $comparisonFailure);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
-        return \sprintf('has header "%s" with value "%s"', $this->headerName, $this->expectedValue);
+        return sprintf('has header "%s" with value "%s"', $this->headerName, $this->expectedValue);
     }
 
     /**
      * @psalm-assert-if-true Response $other
      */
-    protected function matches(mixed $other) : bool
+    protected function matches(mixed $other): bool
     {
         if ($other instanceof Response) {
             return $this->expectedValue === $other->headers->get($this->headerName);
@@ -68,7 +70,7 @@ final class ResponseHeaderSame extends Constraint
     /**
      * {@inheritdoc}
      */
-    protected function failureDescription($other) : string
+    protected function failureDescription($other): string
     {
         if ($other instanceof Response) {
             return 'the response ' . $this->toString();

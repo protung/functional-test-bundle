@@ -17,10 +17,16 @@ use Psl\Filesystem;
 use Psl\Str;
 use Psl\Type;
 use Psl\Vec;
+use ReflectionObject;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
+
+use function class_exists;
+use function count;
+use function interface_exists;
+use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
 {
@@ -61,9 +67,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function cleanupPHPUnit(): void
     {
-        $reflection = new \ReflectionObject($this);
+        $reflection = new ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
-            if ($property->isStatic() || \str_starts_with($property->getDeclaringClass()->getName(), 'PHPUnit\\')) {
+            if ($property->isStatic() || str_starts_with($property->getDeclaringClass()->getName(), 'PHPUnit\\')) {
                 continue;
             }
 
@@ -81,8 +87,8 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected static function createKernel(array $options = []): KernelInterface
     {
-        $options['debug']       = $options['debug'] ?? false;
-        $options['environment'] = $options['environment'] ?? 'test';
+        $options['debug']       ??= false;
+        $options['environment'] ??= 'test';
 
         return parent::createKernel($options);
     }
@@ -116,7 +122,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             throw new RuntimeException(Str\format('Service "%s" does not exist in the container.', $id));
         }
 
-        if (\class_exists($id, false) || \interface_exists($id, false)) {
+        if (class_exists($id, false) || interface_exists($id, false)) {
             return Type\instance_of($id)->coerce($service);
         }
 
@@ -159,7 +165,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             );
         }
 
-        if (\count($fixtures) <= 0) {
+        if (count($fixtures) <= 0) {
             return;
         }
 
@@ -186,7 +192,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         $em = Type\instance_of(EntityManagerInterface::class)->coerce(
-            static::getContainer()->get('doctrine.orm.entity_manager')
+            static::getContainer()->get('doctrine.orm.entity_manager'),
         );
 
         $executor = new ORMExecutor($em);
@@ -242,7 +248,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function getTestDirectory(): string
     {
-        $reflection = new \ReflectionObject($this);
+        $reflection = new ReflectionObject($this);
         $fileName   = Type\non_empty_string()->coerce($reflection->getFileName());
 
         return Filesystem\get_directory($fileName);
@@ -258,7 +264,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         string $expected,
         string $actual,
         float $threshold = 0.0,
-        string $message = ''
+        string $message = '',
     ): void {
         static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
     }

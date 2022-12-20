@@ -15,7 +15,7 @@ final class Speicher210FunctionalTestExtension extends ConfigurableExtension
     /**
      * @param array<mixed> $mergedConfig
      */
-    public function loadInternal(array $mergedConfig, ContainerBuilder $container) : void
+    public function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');

@@ -10,12 +10,14 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function urldecode;
+
 final class RestControllerWebTestCaseTest extends TestCase
 {
     /**
      * @return mixed[]
      */
-    public static function dataProviderTestAssertRestGetPathWithCustomQueryParams() : array
+    public static function dataProviderTestAssertRestGetPathWithCustomQueryParams(): array
     {
         return [
             ['/test/path', [], '/test/path', null],
@@ -67,22 +69,22 @@ final class RestControllerWebTestCaseTest extends TestCase
         string $path,
         array $queryParams,
         string $expectedPathInfo,
-        ?string $expectedQueryString
-    ) : void {
-        $testClass = new class() extends RestControllerWebTestCase
+        string|null $expectedQueryString,
+    ): void {
+        $testClass = new class () extends RestControllerWebTestCase
         {
             /**
              * @param mixed[] $queryParams
              */
-            public function testAssertRestGetPath(string $path, array $queryParams = []) : KernelBrowser
+            public function testAssertRestGetPath(string $path, array $queryParams = []): KernelBrowser
             {
                 return parent::assertRestGetPath($path, $queryParams);
             }
 
             protected function assertRestRequest(
                 Request $request,
-                int $expectedStatusCode = Response::HTTP_OK
-            ) : KernelBrowser {
+                int $expectedStatusCode = Response::HTTP_OK,
+            ): KernelBrowser {
                 $client = $this->createMock(KernelBrowser::class);
                 $client->method('getRequest')->willReturn($request);
 
@@ -96,7 +98,7 @@ final class RestControllerWebTestCaseTest extends TestCase
         $requestQueryString = $client->getRequest()->getQueryString();
         self::assertSame(
             $expectedQueryString,
-            $requestQueryString !== null ? \urldecode($requestQueryString) : null
+            $requestQueryString !== null ? urldecode($requestQueryString) : null,
         );
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseStatusCodeSameTest extends TestCase
 {
-    public function testEvaluateReturnsNullForTheSameStatusCode() : void
+    public function testEvaluateReturnsNullForTheSameStatusCode(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getStatusCode')->willReturn(200);
@@ -21,7 +21,7 @@ final class ResponseStatusCodeSameTest extends TestCase
         self::assertNull($constraint->evaluate($response));
     }
 
-    public function testEvaluateThrowsExceptionForDifferentStatusCode() : void
+    public function testEvaluateThrowsExceptionForDifferentStatusCode(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::exactly(2))->method('getStatusCode')->willReturn(201);
@@ -34,7 +34,7 @@ final class ResponseStatusCodeSameTest extends TestCase
         $constraint->evaluate($response);
     }
 
-    public function testEvaluateReturnsTrueForTheSameStatusCodeWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsTrueForTheSameStatusCodeWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getStatusCode')->willReturn(200);
@@ -44,7 +44,7 @@ final class ResponseStatusCodeSameTest extends TestCase
         self::assertTrue($constraint->evaluate($response, '', true));
     }
 
-    public function testEvaluateReturnsFalseForDifferentStatusCodeWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsFalseForDifferentStatusCodeWithReturnResultSetToTrue(): void
     {
         $response = $this->createMock(Response::class);
         $response->expects(self::once())->method('getStatusCode')->willReturn(201);

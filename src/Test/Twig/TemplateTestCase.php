@@ -38,7 +38,7 @@ abstract class TemplateTestCase extends KernelTestCase
         if ($this->disableTwigCache) {
             $twig->addExtension(
                 new class extends AbstractExtension {
-                }
+                },
             );
         }
 

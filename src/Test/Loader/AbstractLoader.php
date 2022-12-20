@@ -19,7 +19,7 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Get the container.
      */
-    protected function getContainer() : ?ContainerInterface
+    protected function getContainer(): ContainerInterface|null
     {
         return $this->container;
     }
@@ -27,11 +27,11 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run before loading the fixtures.
      */
-    protected function beforeLoad() : void
+    protected function beforeLoad(): void
     {
     }
 
-    public function load(ObjectManager $manager) : void
+    public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;
 
@@ -43,20 +43,20 @@ abstract class AbstractLoader extends AbstractFixture implements ContainerAwareI
     /**
      * Code to run after loading the fixtures.
      */
-    protected function afterLoad() : void
+    protected function afterLoad(): void
     {
         $this->manager->flush();
         $this->manager->clear();
     }
 
-    abstract protected function doLoad() : void;
+    abstract protected function doLoad(): void;
 
-    public function getManager() : ObjectManager
+    public function getManager(): ObjectManager
     {
         return $this->manager;
     }
 
-    public function persist(object $entity) : void
+    public function persist(object $entity): void
     {
         $this->getManager()->persist($entity);
     }

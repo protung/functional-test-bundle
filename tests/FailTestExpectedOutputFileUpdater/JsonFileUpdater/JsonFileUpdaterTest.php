@@ -10,6 +10,7 @@ use Psl\File;
 use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
+use ReflectionObject;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
 use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
@@ -115,12 +116,12 @@ final class JsonFileUpdaterTest extends TestCase
 
     private function getTestFile(string $fileName): string
     {
-        $reflection = new \ReflectionObject($this);
+        $reflection = new ReflectionObject($this);
 
         $file = Type\non_empty_string()->coerce($reflection->getFileName());
 
         return File\read(
-            Filesystem\get_directory($file) . '/' . $this->getName() . '/' . $fileName . '.json'
+            Filesystem\get_directory($file) . '/' . $this->getName() . '/' . $fileName . '.json',
         );
     }
 }

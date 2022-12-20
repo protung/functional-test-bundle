@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 final class ResponseHeaderSameTest extends TestCase
 {
-    public function testEvaluateReturnsNullForTheSameHeader() : void
+    public function testEvaluateReturnsNullForTheSameHeader(): void
     {
         $response      = $this->createMock(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
@@ -24,7 +24,7 @@ final class ResponseHeaderSameTest extends TestCase
         self::assertNull($constraint->evaluate($response));
     }
 
-    public function testEvaluateThrowsExceptionForDifferentHeader() : void
+    public function testEvaluateThrowsExceptionForDifferentHeader(): void
     {
         $response      = $this->createMock(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
@@ -35,13 +35,13 @@ final class ResponseHeaderSameTest extends TestCase
 
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage(
-            'Failed asserting that the response has header "header-name" with value "some_value1".'
+            'Failed asserting that the response has header "header-name" with value "some_value1".',
         );
 
         $constraint->evaluate($response);
     }
 
-    public function testEvaluateReturnsTrueForTheSameHeaderWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsTrueForTheSameHeaderWithReturnResultSetToTrue(): void
     {
         $response      = $this->createMock(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
@@ -53,7 +53,7 @@ final class ResponseHeaderSameTest extends TestCase
         self::assertTrue($constraint->evaluate($response, '', true));
     }
 
-    public function testEvaluateReturnsFalseForDifferentHeaderWithReturnResultSetToTrue() : void
+    public function testEvaluateReturnsFalseForDifferentHeaderWithReturnResultSetToTrue(): void
     {
         $response      = $this->createMock(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);

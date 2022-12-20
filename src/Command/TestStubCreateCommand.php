@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Command;
 
 use Psl;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +13,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+
+use function count;
+use function end;
+use function explode;
+use function implode;
+use function sprintf;
+use function ucfirst;
+
+use const PHP_EOL;
 
 /**
  * Command to create necessary files and directories for a REST functional test.
@@ -39,24 +49,24 @@ class TestStubCreateCommand extends Command
             ->addArgument(
                 'path',
                 InputArgument::REQUIRED,
-                'The path to the directory of the test case.'
+                'The path to the directory of the test case.',
             )
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'The name of the test.'
+                'The name of the test.',
             )
             ->addArgument(
                 'number-of-expected',
                 InputArgument::OPTIONAL,
                 'The number of expected files to generate.',
-                '1'
+                '1',
             )
             ->addOption(
                 'custom-loader',
                 'l',
                 InputOption::VALUE_NONE,
-                'Flag if a custom loader class for the test should be created.'
+                'Flag if a custom loader class for the test should be created.',
             );
     }
 
@@ -72,7 +82,7 @@ class TestStubCreateCommand extends Command
 
         if (! $fileSystem->exists($directory)) {
             $output->writeln(
-                \sprintf('Invalid directory <info>%s</info>', $directory)
+                sprintf('Invalid directory <info>%s</info>', $directory),
             );
 
             return 1;
@@ -83,12 +93,12 @@ class TestStubCreateCommand extends Command
             $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
             if ($fileSystem->exists($expectedFilename)) {
                 $output->writeln(
-                    \sprintf('Expected file <info>%s</info> already exists.', $expectedFilename)
+                    sprintf('Expected file <info>%s</info> already exists.', $expectedFilename),
                 );
             } else {
                 $fileSystem->dumpFile($expectedFilename, '{}');
                 $output->writeln(
-                    \sprintf('Added Expected file: <info>%s</info>', $expectedFilename)
+                    sprintf('Added Expected file: <info>%s</info>', $expectedFilename),
                 );
             }
         }
@@ -96,12 +106,12 @@ class TestStubCreateCommand extends Command
         $fixturesFilename = $directory . '/Fixtures/' . $name . '.php';
         if ($fileSystem->exists($fixturesFilename)) {
             $output->writeln(
-                \sprintf('Fixtures file <info>%s</info> already exists.', $fixturesFilename)
+                sprintf('Fixtures file <info>%s</info> already exists.', $fixturesFilename),
             );
         } else {
             $fileSystem->dumpFile($fixturesFilename, $this->getFixturesContent($namespace, $name, $customLoader));
             $output->writeln(
-                \sprintf('Added Fixtures file: <info>%s</info>', $fixturesFilename)
+                sprintf('Added Fixtures file: <info>%s</info>', $fixturesFilename),
             );
         }
 
@@ -109,18 +119,18 @@ class TestStubCreateCommand extends Command
             return 0;
         }
 
-        $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . \ucfirst($name) . '.php';
+        $fixturesLoaderFilename = $directory . '/Fixtures/Loaders/' . ucfirst($name) . '.php';
         if ($fileSystem->exists($fixturesLoaderFilename)) {
             $output->writeln(
-                \sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename)
+                sprintf('Fixtures Loader file <info>%s</info> already exists.', $fixturesLoaderFilename),
             );
         } else {
             $fileSystem->dumpFile(
                 $fixturesLoaderFilename,
-                $this->getFixturesLoaderContent($namespace, \ucfirst($name))
+                $this->getFixturesLoaderContent($namespace, ucfirst($name)),
             );
             $output->writeln(
-                \sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename)
+                sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename),
             );
         }
 
@@ -133,8 +143,8 @@ class TestStubCreateCommand extends Command
     private function getNamespace(string $path): string
     {
         $finder = Finder::create()->in($path)->depth(0)->files()->name('*Test.php');
-        if (\count($finder) === 0) {
-            throw new \RuntimeException('No test case found in ' . $path);
+        if (count($finder) === 0) {
+            throw new RuntimeException('No test case found in ' . $path);
         }
 
         $namespace = '';
@@ -170,21 +180,21 @@ class TestStubCreateCommand extends Command
         $content[] = null;
 
         if ($customLoader) {
-            $content[] = 'use ' . $namespace . '\\' . \ucfirst($name) . ';';
+            $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
             $content[] = null;
-            $content[] = 'return [' . \ucfirst($name) . '::class];';
+            $content[] = 'return [' . ucfirst($name) . '::class];';
             $content[] = null;
         } else {
             $content[] = 'return [];';
             $content[] = null;
         }
 
-        return \implode(\PHP_EOL, $content);
+        return implode(PHP_EOL, $content);
     }
 
     private function getFixturesLoaderContent(string $namespace, string $name): string
     {
-        $loaderParentAlias = \explode('\\', $this->fixtureLoaderExtendClass);
+        $loaderParentAlias = explode('\\', $this->fixtureLoaderExtendClass);
 
         $content   = [];
         $content[] = '<?php';
@@ -195,7 +205,7 @@ class TestStubCreateCommand extends Command
         $content[] = null;
         $content[] = 'use ' . $this->fixtureLoaderExtendClass . ';';
         $content[] = null;
-        $content[] = 'final class ' . $name . ' extends ' . \end($loaderParentAlias);
+        $content[] = 'final class ' . $name . ' extends ' . end($loaderParentAlias);
         $content[] = '{';
         $content[] = '    public function doLoad(): void';
         $content[] = '    {';
@@ -203,6 +213,6 @@ class TestStubCreateCommand extends Command
         $content[] = '}';
         $content[] = null;
 
-        return \implode(\PHP_EOL, $content);
+        return implode(PHP_EOL, $content);
     }
 }

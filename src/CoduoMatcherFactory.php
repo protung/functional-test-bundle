@@ -16,7 +16,7 @@ final class CoduoMatcherFactory
     {
     }
 
-    public static function getMatcher() : Matcher
+    public static function getMatcher(): Matcher
     {
         if (self::$matcher === null) {
             self::$matcher = (new MatcherFactory())->createMatcher(new VoidBacktrace());

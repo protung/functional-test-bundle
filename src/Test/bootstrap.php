@@ -2,23 +2,28 @@
 
 declare(strict_types=1);
 
-$method = new ReflectionMethod(\Speicher210\FunctionalTestBundle\Test\KernelTestCase::class, 'createKernel');
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
+use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
+
+$method = new ReflectionMethod(KernelTestCase::class, 'createKernel');
 $method->setAccessible(true);
 
-/** @var \Symfony\Component\HttpKernel\KernelInterface $kernel */
+/** @var KernelInterface $kernel */
 $kernel = $method->invoke(null);
 $kernel->boot();
 
-/** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
+/** @var EntityManagerInterface $entityManager */
 $entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
 $entityManager->beginTransaction();
 
-$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
+$schemaTool = new SchemaTool($entityManager);
 $schemaTool->dropDatabase();
 
 $schemaTool->createSchema(
-    $entityManager->getMetadataFactory()->getAllMetadata()
+    $entityManager->getMetadataFactory()->getAllMetadata(),
 );
 
 $entityManager->commit();
