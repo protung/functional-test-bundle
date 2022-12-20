@@ -71,4 +71,9 @@
       <code>$entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Test/WebTestCase.php">
+    <InternalMethod occurrences="1">
+      <code>getName</code>
+    </InternalMethod>
+  </file>
 </files>
