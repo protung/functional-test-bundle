@@ -5,30 +5,52 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use PHPUnit\Framework\Constraint\Callback;
+use PHPUnit\Framework\Constraint\Constraint;
 
-use function func_get_args;
+use function array_column;
+use function count;
 
 trait PHPUnitHelper
 {
     /**
-     * @param array<mixed> ...$arguments
+     * @param array<mixed> $firstCallArguments
+     * @param array<mixed> ...$consecutiveCallsArguments
      *
-     * @return Callback<mixed>
+     * @return iterable<Callback<mixed>>
      */
-    public static function withConsecutive(array ...$arguments): Callback
+    public static function withConsecutive(array $firstCallArguments, array ...$consecutiveCallsArguments): iterable
     {
-        return new Callback(
-            static function () use ($arguments): bool {
-                static $call = 0;
+        foreach ($consecutiveCallsArguments as $consecutiveCallArguments) {
+            self::assertSameSize($firstCallArguments, $consecutiveCallArguments, 'Each expected arguments list need to have the same size.');
+        }
 
-                $expected = $arguments[$call] ?? [];
+        $allConsecutiveCallsArguments = [$firstCallArguments, ...$consecutiveCallsArguments];
 
-                self::assertEquals($expected, func_get_args());
+        $numberOfArguments = count($firstCallArguments);
+        $argumentList      = [];
+        for ($argumentPosition = 0; $argumentPosition < $numberOfArguments; $argumentPosition++) {
+            $argumentList[$argumentPosition] = array_column($allConsecutiveCallsArguments, $argumentPosition);
+        }
 
-                $call++;
+        $mockedMethodCall = 0;
+        $callbackCall     = 0;
+        foreach ($argumentList as $index => $argument) {
+            yield new Callback(
+                static function (mixed $actualArgument) use ($argumentList, &$mockedMethodCall, &$callbackCall, $index, $numberOfArguments): bool {
+                    $expected = $argumentList[$index][$mockedMethodCall] ?? null;
 
-                return true;
-            },
-        );
+                    $callbackCall++;
+                    $mockedMethodCall = (int) ($callbackCall / $numberOfArguments);
+
+                    if ($expected instanceof Constraint) {
+                        self::assertThat($actualArgument, $expected);
+                    } else {
+                        self::assertEquals($expected, $actualArgument);
+                    }
+
+                    return true;
+                },
+            );
+        }
     }
 }
