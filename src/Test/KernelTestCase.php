@@ -31,6 +31,7 @@ use function str_starts_with;
 abstract class KernelTestCase extends SymfonyKernelTestCase
 {
     use PHPMatcherAssertions;
+    use PHPUnitHelper;
 
     /**
      * Array with the number of assertions against expected files per test.
