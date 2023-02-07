@@ -13,10 +13,10 @@ use function count;
 trait PHPUnitHelper
 {
     /**
-     * @param array<mixed> $firstCallArguments
-     * @param array<mixed> ...$consecutiveCallsArguments
+     * @param list<mixed> $firstCallArguments
+     * @param list<mixed> ...$consecutiveCallsArguments
      *
-     * @return iterable<Callback<mixed>>
+     * @return iterable<int, Callback<mixed>>
      */
     public static function withConsecutive(array $firstCallArguments, array ...$consecutiveCallsArguments): iterable
     {
