@@ -21,7 +21,7 @@
     "dama/doctrine-test-bundle": "^7.0.0",
     "doctrine/data-fixtures": "^1.6.3",
     "doctrine/doctrine-fixtures-bundle": "^3.4.2",
-    "doctrine/orm": "^2.8.4",
+    "doctrine/orm": "^2.13",
     "phpunit/phpunit": "^9.6",
     "symfony/browser-kit": "^5.4 || ^6.2",
     "symfony/css-selector": "^5.4 || ^6.2",
