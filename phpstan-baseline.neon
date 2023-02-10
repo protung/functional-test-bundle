@@ -24,3 +24,8 @@ parameters:
 			message: "#^Call to function Psl\\\\Filesystem\\\\exists\\(\\) with non\\-empty\\-string will always evaluate to true\\.$#"
 			count: 1
 			path: src/Test/RestControllerWebTestCase.php
+
+		-
+			message: "#^PHPDoc tag @extends contains generic type Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase\\<Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\> but class Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase is not generic\\.$#"
+			count: 1
+			path: src/Test/Symfony/Validator/ValidatorTestCase.php
