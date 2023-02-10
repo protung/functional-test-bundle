@@ -6,58 +6,22 @@ namespace Speicher210\FunctionalTestBundle\Test\Loader;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Generator;
 
-abstract class AbstractLoader extends AbstractFixture implements ContainerAwareInterface
+abstract class AbstractLoader extends AbstractFixture
 {
-    use ContainerAwareTrait;
-
-    private ObjectManager $manager;
-
-    /**
-     * Get the container.
-     */
-    protected function getContainer(): ContainerInterface|null
-    {
-        return $this->container;
-    }
-
-    /**
-     * Code to run before loading the fixtures.
-     */
-    protected function beforeLoad(): void
-    {
-    }
-
     public function load(ObjectManager $manager): void
     {
-        $this->manager = $manager;
+        foreach ($this->doLoad() as $entity) {
+            $manager->persist($entity);
+        }
 
-        $this->beforeLoad();
-        $this->doLoad();
-        $this->afterLoad();
+        $manager->flush();
+        $manager->clear();
     }
 
     /**
-     * Code to run after loading the fixtures.
+     * @return Generator<object>
      */
-    protected function afterLoad(): void
-    {
-        $this->manager->flush();
-        $this->manager->clear();
-    }
-
-    abstract protected function doLoad(): void;
-
-    public function getManager(): ObjectManager
-    {
-        return $this->manager;
-    }
-
-    public function persist(object $entity): void
-    {
-        $this->getManager()->persist($entity);
-    }
+    abstract protected function doLoad(): Generator;
 }
