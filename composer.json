@@ -41,6 +41,8 @@
     "psalm/plugin-phpunit": "^0.18.4",
     "psalm/plugin-symfony": "^5.0.1",
     "roave/security-advisories": "dev-latest",
+    "spatie/pdf-to-image": "^2.2.0",
+    "spatie/pdf-to-text": "^1.52",
     "squizlabs/php_codesniffer": "^3.7.1",
     "symfony/console": "^5.4.8 || ^6.2.5",
     "symfony/security-core": "^5.4.8 || ^6.2.5",
@@ -53,8 +55,10 @@
     "twig/twig": "<3.0.0"
   },
   "suggest": {
-    "ext-imagick": "To assert images and create fixture images",
+    "ext-imagick": "To assert PDF files, images or create fixture images",
     "mikey179/vfsstream": "To mock uploading large files",
+    "spatie/pdf-to-image": "To test PDF files",
+    "spatie/pdf-to-text": "To test PDF files",
     "symfony/console": "To use command line tool to generate tests stubs",
     "symfony/security-core": "To mock authentication"
   },
