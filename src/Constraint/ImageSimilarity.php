@@ -8,18 +8,16 @@ use Imagick;
 use PHPUnit\Framework\Constraint\Constraint;
 use Psl\Type;
 
-use function sprintf;
-
 final class ImageSimilarity extends Constraint
 {
     private string $expectedImageContent;
 
-    private float $similarityThreshold;
+    private float $similarityDelta;
 
-    public function __construct(string $expectedImageContent, float $similarityThreshold)
+    public function __construct(string $expectedImageContent, float $similarityDelta)
     {
         $this->expectedImageContent = $expectedImageContent;
-        $this->similarityThreshold  = $similarityThreshold;
+        $this->similarityDelta      = $similarityDelta;
     }
 
     public function toString(): string
@@ -36,7 +34,7 @@ final class ImageSimilarity extends Constraint
 
         $result = $expectedImagick->compareImages($actualImagick, Imagick::METRIC_MEANSQUAREERROR);
 
-        return $result[1] <= $this->similarityThreshold;
+        return $result[1] <= $this->similarityDelta;
     }
 
     /**
@@ -44,6 +42,6 @@ final class ImageSimilarity extends Constraint
      */
     protected function failureDescription($other): string
     {
-        return sprintf('images are similar');
+        return 'images are similar';
     }
 }

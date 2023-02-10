@@ -9,17 +9,17 @@ use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 trait Image
 {
     /**
-     * @param string $expected  Binary content of expected image.
-     * @param string $actual    Binary content of actual image.
-     * @param float  $threshold Similarity threshold.
-     * @param string $message   Fail message.
+     * @param string $expected Binary content of expected image.
+     * @param string $actual   Binary content of actual image.
+     * @param float  $delta    Similarity threshold.
+     * @param string $message  Fail message.
      */
     public static function assertImageSimilarity(
         string $expected,
         string $actual,
-        float $threshold = 0.0,
+        float $delta = 0.0,
         string $message = '',
     ): void {
-        static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
+        static::assertThat($actual, new ImageSimilarity($expected, $delta), $message);
     }
 }
