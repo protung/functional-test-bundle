@@ -203,11 +203,12 @@ class TestStubCreateCommand extends Command
         $content[] = null;
         $content[] = 'namespace ' . $namespace . ';';
         $content[] = null;
+        $content[] = 'use Generator;';
         $content[] = 'use ' . $this->fixtureLoaderExtendClass . ';';
         $content[] = null;
         $content[] = 'final class ' . $name . ' extends ' . end($loaderParentAlias);
         $content[] = '{';
-        $content[] = '    public function doLoad(): void';
+        $content[] = '    protected function doLoad(): Generator';
         $content[] = '    {';
         $content[] = '    }';
         $content[] = '}';

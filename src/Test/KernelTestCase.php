@@ -16,14 +16,12 @@ use Doctrine\Persistence\ObjectManager;
 use Psl\Filesystem;
 use Psl\Str;
 use Psl\Type;
-use Psl\Vec;
 use ReflectionObject;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 use function class_exists;
-use function count;
 use function interface_exists;
 use function str_starts_with;
 
@@ -155,21 +153,18 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function loadTestFixtures(): void
     {
-        $fixtures = $this->getAlwaysLoadingFixtures();
+        $this->loadFixtures(
+            ...$this->getAlwaysLoadingFixtures(),
+        );
 
         $fixturesFile = $this->getFixturesFileForTest();
-        if (Filesystem\exists($fixturesFile)) {
-            $fixtures = Vec\concat(
-                $fixtures,
-                require $fixturesFile,
-            );
-        }
-
-        if (count($fixtures) <= 0) {
+        if (! Filesystem\exists($fixturesFile)) {
             return;
         }
 
-        $this->loadFixtures($fixtures);
+        $this->loadFixtures(
+            ...require $fixturesFile,
+        );
     }
 
     /**
@@ -181,10 +176,14 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     }
 
     /**
-     * @param list<class-string<FixtureInterface>> $classNames
+     * @param class-string<FixtureInterface> ...$classNames
      */
-    private function loadFixtures(array $classNames = []): void
+    private function loadFixtures(string ...$classNames): void
     {
+        if ($classNames === []) {
+            return;
+        }
+
         $fixtureLoader = new SymfonyFixturesLoader(static::getContainer());
         foreach ($classNames as $className) {
             $fixture = new $className();
@@ -202,9 +201,9 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * Get the fixtures to always load when preparing the test fixtures.
      *
-     * @return list<class-string<FixtureInterface>>
+     * @return iterable<int, class-string<FixtureInterface>>
      */
-    protected function getAlwaysLoadingFixtures(): array
+    protected function getAlwaysLoadingFixtures(): iterable
     {
         return [];
     }
