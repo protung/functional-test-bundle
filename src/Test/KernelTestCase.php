@@ -19,7 +19,6 @@ use Psl\Type;
 use Psl\Vec;
 use ReflectionObject;
 use RuntimeException;
-use Speicher210\FunctionalTestBundle\Constraint\ImageSimilarity;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -30,6 +29,7 @@ use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
 {
+    use Assert\Image;
     use PHPMatcherAssertions;
     use PHPUnitHelper;
 
@@ -253,20 +253,5 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $fileName   = Type\non_empty_string()->coerce($reflection->getFileName());
 
         return Filesystem\get_directory($fileName);
-    }
-
-    /**
-     * @param string $expected  Binary content of expected image.
-     * @param string $actual    Binary content of actual image.
-     * @param float  $threshold Similarity threshold.
-     * @param string $message   Fail message.
-     */
-    public static function assertImageSimilarity(
-        string $expected,
-        string $actual,
-        float $threshold = 0.0,
-        string $message = '',
-    ): void {
-        static::assertThat($actual, new ImageSimilarity($expected, $threshold), $message);
     }
 }
