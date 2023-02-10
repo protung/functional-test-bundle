@@ -78,7 +78,6 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
                 continue;
             }
 
-            $property->setAccessible(true);
             $property->setValue($this, null);
         }
     }

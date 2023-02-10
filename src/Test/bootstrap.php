@@ -8,7 +8,6 @@ use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 $method = new ReflectionMethod(KernelTestCase::class, 'createKernel');
-$method->setAccessible(true);
 
 /** @var KernelInterface $kernel */
 $kernel = $method->invoke(null);
