@@ -9,8 +9,9 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+use PHPUnit\Framework\TestCase;
 
-abstract class FunctionTestCase
+abstract class FunctionTestCase extends TestCase
 {
     /**
      * @return iterable<non-empty-string, class-string<FunctionNode>>
