@@ -15,7 +15,6 @@ trait Pdf
 
     /**
      * @param non-empty-string $expectedFile
-     * @param non-empty-string $actualPdfContent
      */
     public static function assertPdfTextEqualsFile(string $expectedFile, string $actualPdfContent, string $message = ''): void
     {
@@ -39,7 +38,6 @@ trait Pdf
 
     /**
      * @param non-empty-string $expectedDirectory
-     * @param non-empty-string $actualPdfContent
      */
     public static function assertPdfPagesImagesEqualsFiles(
         string $expectedDirectory,
