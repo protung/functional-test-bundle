@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.4.0@62db5d4f6a7ae0a20f7cc5a4952d730272fc0863">
+<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
   <file src="src/Command/TestStubCreateCommand.php">
-    <RedundantCast occurrences="1">
+    <RedundantCast>
       <code>(bool) $input-&gt;getOption('custom-loader')</code>
     </RedundantCast>
   </file>
   <file src="src/Constraint/JsonResponseContentMatches.php">
-    <InternalClass occurrences="6">
+    <InternalClass>
       <code>Json::canonicalize($actual)</code>
       <code>Json::canonicalize($this-&gt;expectedContent)</code>
       <code>Json::prettify($actual)</code>
@@ -14,7 +14,7 @@
       <code>Json::prettify($this-&gt;expectedContent)</code>
       <code>Json::prettify(Psl\Type\string()-&gt;coerce($other-&gt;getContent()))</code>
     </InternalClass>
-    <InternalMethod occurrences="6">
+    <InternalMethod>
       <code>Json::canonicalize($actual)</code>
       <code>Json::canonicalize($this-&gt;expectedContent)</code>
       <code>Json::prettify($actual)</code>
@@ -24,55 +24,60 @@
     </InternalMethod>
   </file>
   <file src="src/DependencyInjection/Configuration.php">
-    <PossiblyNullReference occurrences="1">
+    <PossiblyNullReference>
       <code>end</code>
     </PossiblyNullReference>
-    <PossiblyUndefinedMethod occurrences="1">
+    <PossiblyUndefinedMethod>
       <code>end</code>
     </PossiblyUndefinedMethod>
   </file>
   <file src="src/FailTestExpectedOutputFileUpdater/JsonFileUpdater.php">
-    <MissingClosureParamType occurrences="2">
+    <MissingClosureParamType>
       <code>$key</code>
       <code>$value</code>
     </MissingClosureParamType>
   </file>
+  <file src="src/Test/Doctrine/DBAL/Types/TypeTestCase.php">
+    <DeprecatedMethod>
+      <code>getName</code>
+    </DeprecatedMethod>
+  </file>
   <file src="src/Test/KernelTestCase.php">
-    <DocblockTypeContradiction occurrences="1">
+    <DocblockTypeContradiction>
       <code>static::$kernel === null</code>
     </DocblockTypeContradiction>
-    <InternalMethod occurrences="4">
+    <InternalMethod>
       <code>dataName</code>
       <code>dataName</code>
       <code>getName</code>
       <code>getName</code>
     </InternalMethod>
-    <InvalidDocblock occurrences="1">
+    <InvalidDocblock>
       <code>(non-empty-string&amp;literal-string)|class-string&lt;TService&gt;</code>
     </InvalidDocblock>
-    <InvalidReturnStatement occurrences="2">
+    <InvalidReturnStatement>
       <code>$service</code>
       <code>Type\instance_of($id)-&gt;coerce($service)</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
+    <InvalidReturnType>
       <code>TService</code>
     </InvalidReturnType>
-    <UnresolvableInclude occurrences="1">
+    <UnresolvableInclude>
       <code>require $fixturesFile</code>
     </UnresolvableInclude>
   </file>
   <file src="src/Test/RestControllerWebTestCase.php">
-    <InternalMethod occurrences="1">
+    <InternalMethod>
       <code>getComparisonFailure</code>
     </InternalMethod>
   </file>
   <file src="src/Test/bootstrap.php">
-    <ArgumentTypeCoercion occurrences="1">
+    <ArgumentTypeCoercion>
       <code>$entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Test/WebTestCase.php">
-    <InternalMethod occurrences="1">
+    <InternalMethod>
       <code>getName</code>
     </InternalMethod>
   </file>
