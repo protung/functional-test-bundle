@@ -31,11 +31,16 @@
       <code>end</code>
     </PossiblyUndefinedMethod>
   </file>
-  <file src="src/FailTestExpectedOutputFileUpdater/JsonFileUpdater.php">
+  <file src="src/SnapshotUpdater/Driver/Json.php">
     <MissingClosureParamType>
       <code>$key</code>
       <code>$value</code>
     </MissingClosureParamType>
+  </file>
+  <file src="src/Test/Command/CommandTestCase.php">
+    <InternalMethod>
+      <code>getComparisonFailure</code>
+    </InternalMethod>
   </file>
   <file src="src/Test/Doctrine/DBAL/Types/TypeTestCase.php">
     <DeprecatedMethod>
@@ -80,6 +85,11 @@
     <ArgumentTypeCoercion>
       <code>$entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Test/Twig/TemplateTestCase.php">
+    <InternalMethod>
+      <code>getComparisonFailure</code>
+    </InternalMethod>
   </file>
   <file src="src/Test/WebTestCase.php">
     <InternalMethod>

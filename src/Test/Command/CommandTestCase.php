@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test\Command;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use Psl\Env;
 use Psl\Str;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -50,8 +53,19 @@ abstract class CommandTestCase extends KernelTestCase
 
         $expectedFile = $this->getExpectedContentFile('txt');
 
-//        file_put_contents($expectedFile, $actual);self::fail('Expected updated.');
-        self::assertStringEqualsFile($expectedFile, $actual);
+        try {
+            self::assertStringEqualsFile($expectedFile, $actual);
+        } catch (ExpectationFailedException $e) {
+            $comparisonFailure = $e->getComparisonFailure();
+            if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                SnapshotUpdater::updateText(
+                    $comparisonFailure,
+                    $expectedFile,
+                );
+            }
+
+            throw $e;
+        }
     }
 
     /**

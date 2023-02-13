@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test\Twig;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use Psl\Str;
 use Psl\Type;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
@@ -47,8 +50,19 @@ abstract class TemplateTestCase extends KernelTestCase
 
         $expectedFile = $this->getExpectedContentFile('html');
 
-//        file_put_contents($expectedFile, $actual);self::fail('Expected updated.');
-        self::assertXmlStringEqualsXmlFile($expectedFile, $actual);
+        try {
+            self::assertXmlStringEqualsXmlFile($expectedFile, $actual);
+        } catch (ExpectationFailedException $e) {
+            $comparisonFailure = $e->getComparisonFailure();
+            if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                SnapshotUpdater::updateText(
+                    $comparisonFailure,
+                    $expectedFile,
+                );
+            }
+
+            throw $e;
+        }
     }
 
     private function getTwigEnvironment(): Environment

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test\Assert;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use Psl\File;
 use Psl\Filesystem;
 use Spatie\PdfToImage\Pdf as PdfToImage;
 use Spatie\PdfToText\Pdf as PdfToText;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 
 trait Pdf
 {
@@ -22,9 +25,20 @@ trait Pdf
         File\write($tempFile, $actualPdfContent, File\WriteMode::TRUNCATE);
 
         $actual = PdfToText::getText($tempFile, null, ['layout']);
-//        File\write($expectedFile, $actual, File\WriteMode::TRUNCATE);self::fail('Expected updated');
 
-        self::assertStringEqualsFile($expectedFile, $actual, $message);
+        try {
+            self::assertStringEqualsFile($expectedFile, $actual, $message);
+        } catch (ExpectationFailedException $e) {
+            $comparisonFailure = $e->getComparisonFailure();
+            if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                SnapshotUpdater::updateText(
+                    $comparisonFailure,
+                    $expectedFile,
+                );
+            }
+
+            throw $e;
+        }
     }
 
     /**
