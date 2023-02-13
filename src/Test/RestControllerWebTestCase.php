@@ -10,7 +10,8 @@ use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
-use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -351,10 +352,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
             static::assertJsonResponseContent($response, $expectedOutputContent);
         } catch (ExpectationFailedException $e) {
             $comparisonFailure = $e->getComparisonFailure();
-            if ($comparisonFailure !== null && ExpectedOutputFileUpdaterConfigurator::isOutputUpdaterEnabled()) {
-                ExpectedOutputFileUpdaterConfigurator::getOutputUpdater()->updateExpectedFile(
-                    $this->getCurrentExpectedResponseContentFile('json'),
+            if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                SnapshotUpdater::updateJson(
                     $comparisonFailure,
+                    $this->getCurrentExpectedResponseContentFile('json'),
                 );
             }
 

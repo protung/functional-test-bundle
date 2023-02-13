@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater;
+namespace Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver;
 
 use Coduo\PHPMatcher\Matcher;
 use Psl;
-use Psl\Json\Exception\DecodeException;
 use SebastianBergmann\Comparator\ComparisonFailure;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Exception\ActualNotSerializable;
 use stdClass;
 use Throwable;
 
@@ -15,8 +16,6 @@ use function array_key_exists;
 use function array_shift;
 use function array_walk_recursive;
 use function count;
-use function file_exists;
-use function file_put_contents;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -26,7 +25,7 @@ use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
 
-final class JsonFileUpdater
+final class Json implements Driver
 {
     public const DEFAULT_MATCHER_PATTERNS = [
         '@string@',
@@ -78,22 +77,12 @@ final class JsonFileUpdater
         $this->jsonEncodeOptions = $jsonEncodeOptions;
     }
 
-    public function updateExpectedFile(string $expectedFile, ComparisonFailure $comparisonFailure): void
+    public function serialize(ComparisonFailure $comparisonFailure): string
     {
-        if (! file_exists($expectedFile)) {
-            return;
-        }
-
         // Always encode and decode in order to convert everything into an array.
         $expected = $originalExpected = $comparisonFailure->getExpected();
         if ($expected !== null) {
-            try {
-                $expected = Psl\Json\decode(Psl\Json\encode($expected, false, $this->jsonEncodeOptions), true);
-            } catch (DecodeException) {
-                // probably not expecting json.
-                return;
-            }
-
+            $expected = Psl\Json\decode(Psl\Json\encode($expected, false, $this->jsonEncodeOptions), true);
             $expected = $this->parseExpectedData($expected, [], $originalExpected);
         } else {
             $expected = [];
@@ -107,9 +96,8 @@ final class JsonFileUpdater
                     true,
                 ),
             );
-        } catch (DecodeException) {
-            // probably not expecting json.
-            return;
+        } catch (Psl\Json\Exception\EncodeException | Psl\Json\Exception\DecodeException | Psl\Type\Exception\CoercionException $e) {
+            throw new ActualNotSerializable(previous: $e);
         }
 
         try {
@@ -127,16 +115,13 @@ final class JsonFileUpdater
             $actual = $this->updateExpectedOutput($actual, $expected);
 
             // Indent the output with 2 spaces instead of 4.
-            $data = Psl\Regex\replace_with(
+            return Psl\Regex\replace_with(
                 Psl\Json\encode($actual, false, $this->jsonEncodeOptions),
                 '/^ +/m',
                 static fn (array $m): string => Psl\Str\repeat(' ', Psl\Type\positive_int()->coerce(Psl\Str\length($m[0]) / 2)),
             );
-
-            file_put_contents($expectedFile, $data);
         } catch (Throwable $e) {
-            print $e->getTraceAsString();
-            exit;
+            throw new ActualNotSerializable(previous: $e);
         }
     }
 

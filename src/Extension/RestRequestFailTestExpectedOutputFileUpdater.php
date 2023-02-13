@@ -6,8 +6,8 @@ namespace Speicher210\FunctionalTestBundle\Extension;
 
 use PHPUnit\Runner\AfterLastTestHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
-use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\ExpectedOutputFileUpdaterConfigurator;
-use Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater\JsonFileUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Json;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 
 /**
  * PHPUnit test extension that updates the rest requests expected output files.
@@ -34,7 +34,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstT
      * @param array<string,string> $fields          The fields to update in the expected output.
      * @param list<string>         $matcherPatterns
      */
-    public function __construct(array $fields = [], array $matcherPatterns = JsonFileUpdater::DEFAULT_MATCHER_PATTERNS)
+    public function __construct(array $fields = [], array $matcherPatterns = Json::DEFAULT_MATCHER_PATTERNS)
     {
         $this->fields          = $fields;
         $this->matcherPatterns = $matcherPatterns;
@@ -42,12 +42,12 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstT
 
     public function executeBeforeFirstTest(): void
     {
-        ExpectedOutputFileUpdaterConfigurator::createOutputUpdater($this->fields, $this->matcherPatterns);
-        ExpectedOutputFileUpdaterConfigurator::enableOutputUpdater();
+        DriverConfigurator::createDrivers($this->fields, $this->matcherPatterns);
+        DriverConfigurator::enableOutputUpdater();
     }
 
     public function executeAfterLastTest(): void
     {
-        ExpectedOutputFileUpdaterConfigurator::disableOutputUpdater();
+        DriverConfigurator::disableOutputUpdater();
     }
 }

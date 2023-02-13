@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Speicher210\FunctionalTestBundle\FailTestExpectedOutputFileUpdater;
+namespace Speicher210\FunctionalTestBundle\SnapshotUpdater;
 
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Json;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Text;
 
 use function sprintf;
 
-use const JSON_PRESERVE_ZERO_FRACTION;
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
-
-final class ExpectedOutputFileUpdaterConfigurator
+final class DriverConfigurator
 {
-    private static JsonFileUpdater|null $outputUpdater = null;
+    private static Json|null $jsonDriver = null;
+
+    private static Text|null $textDriver = null;
 
     private static bool $outputUpdaterEnabled = false;
 
@@ -23,20 +23,19 @@ final class ExpectedOutputFileUpdaterConfigurator
      * @param array<string,string> $fields          The fields to update in the expected output.
      * @param list<string>         $matcherPatterns
      */
-    public static function createOutputUpdater(
+    public static function createDrivers(
         array $fields,
         array $matcherPatterns,
-        int $jsonEncodeOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION,
     ): void {
-        self::$outputUpdater = new JsonFileUpdater(
+        self::$jsonDriver = new Json(
             CoduoMatcherFactory::getMatcher(),
             $fields,
             $matcherPatterns,
-            $jsonEncodeOptions,
         );
+        self::$textDriver = new Text();
     }
 
-    public static function getOutputUpdater(): JsonFileUpdater
+    public static function getJsonDriver(): Json
     {
         if (self::$outputUpdaterEnabled === false) {
             throw new RuntimeException(
@@ -47,7 +46,7 @@ final class ExpectedOutputFileUpdaterConfigurator
             );
         }
 
-        if (self::$outputUpdater === null) {
+        if (self::$jsonDriver === null) {
             throw new RuntimeException(
                 sprintf(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
@@ -56,7 +55,30 @@ final class ExpectedOutputFileUpdaterConfigurator
             );
         }
 
-        return self::$outputUpdater;
+        return self::$jsonDriver;
+    }
+
+    public static function getTextDriver(): Text
+    {
+        if (self::$outputUpdaterEnabled === false) {
+            throw new RuntimeException(
+                sprintf(
+                    'Updater is not enabled. You should call %s::enableOutputUpdater first to enable it.',
+                    self::class,
+                ),
+            );
+        }
+
+        if (self::$textDriver === null) {
+            throw new RuntimeException(
+                sprintf(
+                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    self::class,
+                ),
+            );
+        }
+
+        return self::$textDriver;
     }
 
     public static function isOutputUpdaterEnabled(): bool
@@ -66,7 +88,7 @@ final class ExpectedOutputFileUpdaterConfigurator
 
     public static function enableOutputUpdater(): void
     {
-        if (self::$outputUpdater === null) {
+        if (self::$jsonDriver === null) {
             throw new RuntimeException(
                 sprintf(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
