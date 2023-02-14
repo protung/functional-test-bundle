@@ -30,6 +30,7 @@
   },
   "require-dev": {
     "ext-imagick": "*",
+    "ext-intl": "*",
     "doctrine/coding-standard": "^11.1.0",
     "ergebnis/composer-normalize": "^2.29",
     "mikey179/vfsstream": "^1.6.11",
