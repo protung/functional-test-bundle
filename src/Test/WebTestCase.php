@@ -14,7 +14,6 @@ use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
-use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
 use Speicher210\FunctionalTestBundle\VfsStreamSetup;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
@@ -32,8 +31,6 @@ use function tempnam;
 
 abstract class WebTestCase extends KernelTestCase
 {
-    use LocaleSensitiveTestCase;
-
     protected const IMAGE_TYPE_BMP = 'bmp';
     protected const IMAGE_TYPE_GIF = 'gif';
     protected const IMAGE_TYPE_JPG = 'jpg';
