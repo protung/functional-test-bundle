@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test\Intl;
 
 use Locale;
+use Psl\Type;
 
 trait LocaleSensitiveTestCase
 {
+    /** @var non-empty-string|null */
     private static string|null $originalLocale = null;
 
     /**
@@ -20,21 +22,15 @@ trait LocaleSensitiveTestCase
         Locale::setDefault($locale);
     }
 
-    /**
-     * @internal
-     */
     private static function backupLocale(): void
     {
         if (self::$originalLocale !== null) {
             return;
         }
 
-        self::$originalLocale = Locale::getDefault();
+        self::$originalLocale = Type\non_empty_string()->coerce(Locale::getDefault());
     }
 
-    /**
-     * @internal
-     */
     private static function restoreLocale(): void
     {
         if (self::$originalLocale === null) {
@@ -53,8 +49,8 @@ trait LocaleSensitiveTestCase
 
     protected function tearDown(): void
     {
-        self::restoreLocale();
-
         parent::tearDown();
+
+        self::restoreLocale();
     }
 }

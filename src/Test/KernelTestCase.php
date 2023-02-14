@@ -18,6 +18,7 @@ use Psl\Str;
 use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
+use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -30,6 +31,10 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     use Assert\Image;
     use PHPMatcherAssertions;
     use PHPUnitHelper;
+    use LocaleSensitiveTestCase {
+        setUp as localeSensitiveTestCaseSetUp;
+        tearDown as localeSensitiveTestCaseTearDown;
+    }
 
     /**
      * Array with the number of assertions against expected files per test.
@@ -40,6 +45,8 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     protected function setUp(): void
     {
+        self::backupLocale();
+
         parent::setUp();
 
         static::bootKernel();
@@ -57,6 +64,8 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         parent::tearDown();
+
+        self::restoreLocale();
 
         $this->cleanupPHPUnit();
     }
