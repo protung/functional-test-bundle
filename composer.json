@@ -18,7 +18,7 @@
     "ext-json": "*",
     "azjezz/psl": "^2.3.1",
     "coduo/php-matcher": "^6.0.7",
-    "dama/doctrine-test-bundle": "^7.0.0",
+    "dama/doctrine-test-bundle": "^6.7.5 || ^7.0.0",
     "doctrine/data-fixtures": "^1.6.3",
     "doctrine/doctrine-fixtures-bundle": "^3.4.2",
     "doctrine/orm": "^2.13",
