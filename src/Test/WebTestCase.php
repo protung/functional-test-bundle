@@ -128,7 +128,7 @@ abstract class WebTestCase extends KernelTestCase
     protected function getRequestUploadPdfFile(string $originalName = 'fake_pdf.pdf'): UploadedFile
     {
         return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/fake_pdf.pdf',
+            DummyFile::Pdf->path(),
             $originalName,
             null,
             null,
@@ -142,7 +142,7 @@ abstract class WebTestCase extends KernelTestCase
     protected function getRequestUploadTextFile(string $originalName = 'fake_text.txt'): UploadedFile
     {
         return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/fake_text.txt',
+            DummyFile::Text->path(),
             $originalName,
             null,
             null,
@@ -166,11 +166,11 @@ abstract class WebTestCase extends KernelTestCase
             throw new InvalidArgumentException(sprintf('Unknown image type %s', $imageType));
         }
 
-        $originalName ??= 'fake_image';
+        $originalName ??= 'dummy_image';
         $originalName  .= '.' . $imageType;
 
         if ($imageSize === null) {
-            $filePath = __DIR__ . '/Fixtures/Resources/fake_image.' . $imageType;
+            $filePath = DummyFile::from('dummy_image.' . $imageType)->path();
         } else {
             if (! extension_loaded('imagick')) {
                 throw new RuntimeException('Imagick extension is required to resize the image.');
@@ -200,10 +200,10 @@ abstract class WebTestCase extends KernelTestCase
      */
     protected function getRequestUploadAudioFile(bool $withTags, string $originalName = 'fake_audio.mp3'): UploadedFile
     {
-        $fileName = $withTags ? 'fake_audio_tags.mp3' : 'fake_audio_notags.mp3';
+        $dummyFile = $withTags ? DummyFile::AudioMp3 : DummyFile::AudioMp3NoTags;
 
         return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/' . $fileName,
+            $dummyFile->path(),
             $originalName,
             null,
             null,
@@ -219,7 +219,7 @@ abstract class WebTestCase extends KernelTestCase
     protected function getRequestUploadVideoFile(string $originalName = 'fake_video.mpeg'): UploadedFile
     {
         return new UploadedFile(
-            __DIR__ . '/Fixtures/Resources/fake_video.mpeg',
+            DummyFile::VideoMpeg->path(),
             $originalName,
             null,
             null,
