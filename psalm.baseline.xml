@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
+<files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
   <file src="src/Command/TestStubCreateCommand.php">
     <RedundantCast>
-      <code>(bool) $input-&gt;getOption('custom-loader')</code>
+      <code><![CDATA[(bool) $input->getOption('custom-loader')]]></code>
     </RedundantCast>
   </file>
   <file src="src/Constraint/JsonResponseContentMatches.php">
     <InternalClass>
       <code>Json::canonicalize($actual)</code>
-      <code>Json::canonicalize($this-&gt;expectedContent)</code>
+      <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
       <code>Json::prettify($actual)</code>
-      <code>Json::prettify($this-&gt;expectedContent)</code>
-      <code>Json::prettify($this-&gt;expectedContent)</code>
-      <code>Json::prettify(Psl\Type\string()-&gt;coerce($other-&gt;getContent()))</code>
+      <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
+      <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
+      <code><![CDATA[Json::prettify(Psl\Type\string()->coerce($other->getContent()))]]></code>
     </InternalClass>
     <InternalMethod>
       <code>Json::canonicalize($actual)</code>
-      <code>Json::canonicalize($this-&gt;expectedContent)</code>
+      <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
       <code>Json::prettify($actual)</code>
-      <code>Json::prettify($this-&gt;expectedContent)</code>
-      <code>Json::prettify($this-&gt;expectedContent)</code>
-      <code>Json::prettify(Psl\Type\string()-&gt;coerce($other-&gt;getContent()))</code>
+      <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
+      <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
+      <code><![CDATA[Json::prettify(Psl\Type\string()->coerce($other->getContent()))]]></code>
     </InternalMethod>
   </file>
   <file src="src/DependencyInjection/Configuration.php">
@@ -58,11 +58,11 @@
       <code>getName</code>
     </InternalMethod>
     <InvalidDocblock>
-      <code>(non-empty-string&amp;literal-string)|class-string&lt;TService&gt;</code>
+      <code><![CDATA[(non-empty-string&literal-string)|class-string<TService>]]></code>
     </InvalidDocblock>
     <InvalidReturnStatement>
       <code>$service</code>
-      <code>Type\instance_of($id)-&gt;coerce($service)</code>
+      <code><![CDATA[Type\instance_of($id)->coerce($service)]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
       <code>TService</code>
@@ -76,15 +76,13 @@
       <code>getComparisonFailure</code>
     </InternalMethod>
   </file>
-  <file src="src/Test/Symfony/Validator/ValidatorTestCase.php">
-    <TooManyTemplateParams>
-      <code>ValidatorTestCase</code>
-    </TooManyTemplateParams>
-  </file>
-  <file src="src/Test/bootstrap.php">
-    <ArgumentTypeCoercion>
-      <code>$entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
-    </ArgumentTypeCoercion>
+  <file src="src/Test/Symfony/Form/FormTypeTestCase.php">
+    <InternalMethod>
+      <code>getComparisonFailure</code>
+    </InternalMethod>
+    <InvalidReturnType>
+      <code><![CDATA[Generator<FormTypeInterface>]]></code>
+    </InvalidReturnType>
   </file>
   <file src="src/Test/Twig/TemplateTestCase.php">
     <InternalMethod>
