@@ -76,6 +76,16 @@
       <code>getComparisonFailure</code>
     </InternalMethod>
   </file>
+  <file src="src/Test/Symfony/Validator/ValidatorTestCase.php">
+    <TooManyTemplateParams>
+      <code>ValidatorTestCase</code>
+    </TooManyTemplateParams>
+  </file>
+  <file src="src/Test/bootstrap.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$entityManager->getMetadataFactory()->getAllMetadata()]]></code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/Test/Symfony/Form/FormTypeTestCase.php">
     <InternalMethod>
       <code>getComparisonFailure</code>
