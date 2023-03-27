@@ -54,7 +54,7 @@
     "vimeo/psalm": "^5.8"
   },
   "conflict": {
-    "nikic/php-parser": "<4.13.2",
+    "coduo/php-matcher": "6.0.12",
     "twig/twig": "<3.0.0"
   },
   "suggest": {
