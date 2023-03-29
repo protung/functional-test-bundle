@@ -35,7 +35,7 @@ trait AbstractClass
             '',
             false,
             false,
-            false,
+            true,
             $mockedMethods,
         );
 
