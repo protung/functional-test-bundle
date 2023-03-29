@@ -35,4 +35,19 @@ enum DummyFile: string
     {
         return File\read($this->path());
     }
+
+    public function mimeType(): string
+    {
+        return match ($this) {
+            self::AudioMp3, self::AudioMp3NoTags => 'audio/mpeg',
+            self::ImageBmp => 'image/x-ms-bmp',
+            self::ImageGif => 'image/gif',
+            self::ImageJpg => 'image/jpeg',
+            self::ImagePng => 'image/png',
+            self::ImageSvg => 'image/svg+xml',
+            self::Pdf => 'application/pdf',
+            self::Text => 'text/plain',
+            self::VideoMpeg => 'video/mpeg',
+        };
+    }
 }
