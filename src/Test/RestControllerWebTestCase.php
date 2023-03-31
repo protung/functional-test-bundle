@@ -9,7 +9,7 @@ use Psl\File;
 use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
-use Speicher210\FunctionalTestBundle\Constraint\JsonResponseContentMatches;
+use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -44,7 +44,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         string $expectedContent,
         string $message = '',
     ): void {
-        static::assertThat($response, new JsonResponseContentMatches($expectedContent), $message);
+        static::assertThat($response->getContent(), new JsonContentMatches($expectedContent), $message);
     }
 
     protected function setUp(): void

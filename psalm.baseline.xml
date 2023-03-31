@@ -5,31 +5,31 @@
       <code><![CDATA[(bool) $input->getOption('custom-loader')]]></code>
     </RedundantCast>
   </file>
-  <file src="src/Constraint/JsonResponseContentMatches.php">
+  <file src="src/Constraint/JsonContentMatches.php">
     <InternalClass>
-      <code>Json::canonicalize($actual)</code>
+      <code>Json::canonicalize($other)</code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
-      <code>Json::prettify($actual)</code>
+      <code>Json::prettify($other)</code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
-      <code><![CDATA[Json::prettify(Psl\Type\string()->coerce($other->getContent()))]]></code>
+      <code><![CDATA[Json::prettify($other)]]></code>
     </InternalClass>
     <InternalMethod>
-      <code>Json::canonicalize($actual)</code>
+      <code>Json::canonicalize($other)</code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
-      <code>Json::prettify($actual)</code>
+      <code>Json::prettify($other)</code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
-      <code><![CDATA[Json::prettify(Psl\Type\string()->coerce($other->getContent()))]]></code>
+      <code><![CDATA[Json::prettify($other)]]></code>
     </InternalMethod>
   </file>
   <file src="src/DependencyInjection/Configuration.php">
     <PossiblyNullReference>
       <code>end</code>
     </PossiblyNullReference>
-    <PossiblyUndefinedMethod>
+    <UndefinedInterfaceMethod>
       <code>end</code>
-    </PossiblyUndefinedMethod>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="src/SnapshotUpdater/Driver/Json.php">
     <MissingClosureParamType>
