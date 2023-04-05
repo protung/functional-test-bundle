@@ -157,6 +157,21 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $this->getObjectManager()->clear();
     }
 
+    protected function getDefaultDatabaseConnection(): Connection
+    {
+        return $this->getContainerService(Connection::class);
+    }
+
+    protected function restartDatabaseSequences(): void
+    {
+        $connection = $this->getDefaultDatabaseConnection();
+
+        $schemaManager = $connection->getSchemaManager();
+        foreach ($schemaManager->listSequences() as $sequence) {
+            $schemaManager->dropAndCreateSequence($sequence);
+        }
+    }
+
     /**
      * Prepare the text fixtures and the expected content file.
      */

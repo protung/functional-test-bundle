@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
+<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="src/Command/TestStubCreateCommand.php">
     <RedundantCast>
       <code><![CDATA[(bool) $input->getOption('custom-loader')]]></code>
@@ -10,17 +10,17 @@
       <code>Json::canonicalize($other)</code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
       <code>Json::prettify($other)</code>
+      <code>Json::prettify($other)</code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
-      <code><![CDATA[Json::prettify($other)]]></code>
     </InternalClass>
     <InternalMethod>
       <code>Json::canonicalize($other)</code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
       <code>Json::prettify($other)</code>
+      <code>Json::prettify($other)</code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
-      <code><![CDATA[Json::prettify($other)]]></code>
     </InternalMethod>
   </file>
   <file src="src/DependencyInjection/Configuration.php">
@@ -48,6 +48,10 @@
     </DeprecatedMethod>
   </file>
   <file src="src/Test/KernelTestCase.php">
+    <DeprecatedMethod>
+      <code>dropAndCreateSequence</code>
+      <code>getSchemaManager</code>
+    </DeprecatedMethod>
     <DocblockTypeContradiction>
       <code>static::$kernel === null</code>
     </DocblockTypeContradiction>
