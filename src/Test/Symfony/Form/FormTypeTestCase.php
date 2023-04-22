@@ -110,9 +110,9 @@ abstract class FormTypeTestCase extends KernelTestCase
     /**
      * @param array<mixed> $submittedData
      */
-    protected function assertFormSubmitOnGet(array $submittedData, mixed $expected): void
+    protected function assertFormSubmitOnGet(array $submittedData, mixed $expected, mixed $initialData = null): void
     {
-        $form = $this->createAndSubmitTestedForm($submittedData, Request::METHOD_GET);
+        $form = $this->createAndSubmitTestedForm($submittedData, Request::METHOD_GET, $initialData);
         $this->assertSubmittedFormMatchesData($form, $expected);
     }
 
@@ -120,9 +120,9 @@ abstract class FormTypeTestCase extends KernelTestCase
      * @param array<mixed>        $submittedData
      * @param array<UploadedFile> $submittedFilesData
      */
-    protected function assertFormSubmitOnPost(array $submittedData, mixed $expected, array $submittedFilesData = []): void
+    protected function assertFormSubmitOnPost(array $submittedData, mixed $expected, mixed $initialData = null, array $submittedFilesData = []): void
     {
-        $form = $this->createAndSubmitTestedForm($submittedData, Request::METHOD_POST, null, $submittedFilesData);
+        $form = $this->createAndSubmitTestedForm($submittedData, Request::METHOD_POST, $initialData, $submittedFilesData);
         $this->assertSubmittedFormMatchesData($form, $expected);
     }
 
@@ -137,19 +137,21 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed> $submittedData
+     * @param array<mixed>        $submittedData
+     * @param array<UploadedFile> $submittedFilesData
      */
-    protected function assertFormSubmitOnPostWithInvalidData(array $submittedData, mixed $initialData = null): void
+    protected function assertFormSubmitOnPostWithInvalidData(array $submittedData, mixed $initialData = null, array $submittedFilesData = []): void
     {
-        $this->assertFormSubmitWithInvalidData($submittedData, Request::METHOD_POST, $initialData);
+        $this->assertFormSubmitWithInvalidData($submittedData, Request::METHOD_POST, $initialData, $submittedFilesData);
     }
 
     /**
-     * @param array<mixed> $submittedData
+     * @param array<mixed>        $submittedData
+     * @param array<UploadedFile> $submittedFilesData
      */
-    protected function assertFormSubmitOnPatchWithInvalidData(array $submittedData, mixed $initialData): void
+    protected function assertFormSubmitOnPatchWithInvalidData(array $submittedData, mixed $initialData, array $submittedFilesData = []): void
     {
-        $this->assertFormSubmitWithInvalidData($submittedData, Request::METHOD_PATCH, $initialData);
+        $this->assertFormSubmitWithInvalidData($submittedData, Request::METHOD_PATCH, $initialData, $submittedFilesData);
     }
 
     /**
@@ -161,12 +163,13 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>      $submittedData
-     * @param Request::METHOD_* $method
+     * @param array<mixed>        $submittedData
+     * @param Request::METHOD_*   $method
+     * @param array<UploadedFile> $submittedFilesData
      */
-    private function assertFormSubmitWithInvalidData(array $submittedData, string $method, mixed $initialData): void
+    private function assertFormSubmitWithInvalidData(array $submittedData, string $method, mixed $initialData = null, array $submittedFilesData = []): void
     {
-        $form = $this->createAndSubmitTestedForm($submittedData, $method, $initialData);
+        $form = $this->createAndSubmitTestedForm($submittedData, $method, $initialData, $submittedFilesData);
 
         self::assertTrue($form->isSubmitted(), 'Form has to be submitted');
         self::assertTrue($form->isSynchronized(), 'Form data is not synchronized.');
