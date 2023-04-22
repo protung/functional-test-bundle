@@ -6,6 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use Psl\File;
 use SplFileInfo;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 enum DummyFile: string
 {
@@ -35,6 +36,11 @@ enum DummyFile: string
     public function splFileInfo(): SplFileInfo
     {
         return new SplFileInfo($this->path());
+    }
+
+    public function uploadedFile(): UploadedFile
+    {
+        return new UploadedFile($this->path(), $this->value, test: true);
     }
 
     public function content(): string
