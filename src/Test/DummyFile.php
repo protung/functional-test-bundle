@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test;
 
 use Psl\File;
+use SplFileInfo;
 
 enum DummyFile: string
 {
@@ -29,6 +30,11 @@ enum DummyFile: string
     public function path(): string
     {
         return __DIR__ . '/Fixtures/Resources/' . $this->value;
+    }
+
+    public function splFileInfo(): SplFileInfo
+    {
+        return new SplFileInfo($this->path());
     }
 
     public function content(): string
