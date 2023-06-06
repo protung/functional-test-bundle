@@ -36,7 +36,7 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function failureDescription($other): string
     {
