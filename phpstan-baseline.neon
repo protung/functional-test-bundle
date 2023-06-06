@@ -11,19 +11,14 @@ parameters:
 			path: src/SnapshotUpdater/Driver/Json.php
 
 		-
-			message: "#^Call to function Psl\\\\Filesystem\\\\exists\\(\\) with non\\-empty\\-string will always evaluate to true\\.$#"
-			count: 1
-			path: src/Test/KernelTestCase.php
-
-		-
 			message: "#^Method Speicher210\\\\FunctionalTestBundle\\\\Test\\\\KernelTestCase\\:\\:getContainerService\\(\\) should return TService of object but returns object\\.$#"
-			count: 2
+			count: 1
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: "#^Call to function Psl\\\\Filesystem\\\\exists\\(\\) with non\\-empty\\-string will always evaluate to true\\.$#"
+			message: "#^Method Speicher210\\\\FunctionalTestBundle\\\\Test\\\\KernelTestCase\\:\\:getContainerService\\(\\) should return TService of object but returns object\\|null\\.$#"
 			count: 1
-			path: src/Test/RestControllerWebTestCase.php
+			path: src/Test/KernelTestCase.php
 
 		-
 			message: "#^PHPDoc tag @extends contains generic type Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase\\<Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\> but class Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase is not generic\\.$#"

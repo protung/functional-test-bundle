@@ -38,7 +38,7 @@ final class ImageSimilarity extends Constraint
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function failureDescription($other): string
     {

@@ -14,7 +14,6 @@ use Doctrine\Persistence\ConnectionRegistry;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Psl\Filesystem;
-use Psl\Str;
 use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
@@ -123,10 +122,6 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             $service = static::getContainer()->get('test.' . $id);
         } else {
             $service = static::getContainer()->get($id);
-        }
-
-        if ($service === null) {
-            throw new RuntimeException(Str\format('Service "%s" does not exist in the container.', $id));
         }
 
         if (class_exists($id, false) || interface_exists($id, false)) {
