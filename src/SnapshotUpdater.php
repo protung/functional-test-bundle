@@ -37,6 +37,18 @@ final class SnapshotUpdater
     /**
      * @param non-empty-string $snapshotFile
      */
+    public static function updateXML(ComparisonFailure $comparisonFailure, string $snapshotFile): void
+    {
+        self::updateSnapshotFile(
+            $comparisonFailure,
+            $snapshotFile,
+            DriverConfigurator::getXmlDriver(),
+        );
+    }
+
+    /**
+     * @param non-empty-string $snapshotFile
+     */
     private static function updateSnapshotFile(ComparisonFailure $comparisonFailure, string $snapshotFile, SnapshotUpdater\Driver $driver): void
     {
         $data = $driver->serialize($comparisonFailure);

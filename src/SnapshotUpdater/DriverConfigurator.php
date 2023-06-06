@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\SnapshotUpdater;
 
+use Psl\Str;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
-use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Json;
-use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Text;
-
-use function sprintf;
 
 final class DriverConfigurator
 {
-    private static Json|null $jsonDriver = null;
+    private static Driver\Json|null $jsonDriver = null;
 
-    private static Text|null $textDriver = null;
+    private static Driver\Text|null $textDriver = null;
+
+    private static Driver\Xml|null $xmlDriver = null;
 
     private static bool $outputUpdaterEnabled = false;
 
@@ -27,19 +26,20 @@ final class DriverConfigurator
         array $fields,
         array $matcherPatterns,
     ): void {
-        self::$jsonDriver = new Json(
+        self::$jsonDriver = new Driver\Json(
             CoduoMatcherFactory::getMatcher(),
             $fields,
             $matcherPatterns,
         );
-        self::$textDriver = new Text();
+        self::$textDriver = new Driver\Text();
+        self::$xmlDriver  = new Driver\Xml();
     }
 
-    public static function getJsonDriver(): Json
+    public static function getJsonDriver(): Driver\Json
     {
         if (self::$outputUpdaterEnabled === false) {
             throw new RuntimeException(
-                sprintf(
+                Str\format(
                     'Updater is not enabled. You should call %s::enableOutputUpdater first to enable it.',
                     self::class,
                 ),
@@ -48,7 +48,7 @@ final class DriverConfigurator
 
         if (self::$jsonDriver === null) {
             throw new RuntimeException(
-                sprintf(
+                Str\format(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
                     self::class,
                 ),
@@ -58,11 +58,11 @@ final class DriverConfigurator
         return self::$jsonDriver;
     }
 
-    public static function getTextDriver(): Text
+    public static function getTextDriver(): Driver\Text
     {
         if (self::$outputUpdaterEnabled === false) {
             throw new RuntimeException(
-                sprintf(
+                Str\format(
                     'Updater is not enabled. You should call %s::enableOutputUpdater first to enable it.',
                     self::class,
                 ),
@@ -71,7 +71,7 @@ final class DriverConfigurator
 
         if (self::$textDriver === null) {
             throw new RuntimeException(
-                sprintf(
+                Str\format(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
                     self::class,
                 ),
@@ -81,6 +81,29 @@ final class DriverConfigurator
         return self::$textDriver;
     }
 
+    public static function getXmlDriver(): Driver\Xml
+    {
+        if (self::$outputUpdaterEnabled === false) {
+            throw new RuntimeException(
+                Str\format(
+                    'Updater is not enabled. You should call %s::enableOutputUpdater first to enable it.',
+                    self::class,
+                ),
+            );
+        }
+
+        if (self::$xmlDriver === null) {
+            throw new RuntimeException(
+                Str\format(
+                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    self::class,
+                ),
+            );
+        }
+
+        return self::$xmlDriver;
+    }
+
     public static function isOutputUpdaterEnabled(): bool
     {
         return self::$outputUpdaterEnabled;
@@ -88,9 +111,9 @@ final class DriverConfigurator
 
     public static function enableOutputUpdater(): void
     {
-        if (self::$jsonDriver === null) {
+        if (self::$jsonDriver === null || self::$textDriver === null || self::$xmlDriver === null) {
             throw new RuntimeException(
-                sprintf(
+                Str\format(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
                     self::class,
                 ),
