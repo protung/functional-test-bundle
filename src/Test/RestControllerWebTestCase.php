@@ -111,13 +111,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
         $query = Type\string()->coerce(parse_url($path, PHP_URL_QUERY) ?? '');
         parse_str($query, $queryParamsFromPath);
 
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            Request::METHOD_GET,
-            array_replace_recursive($queryParamsFromPath, $queryParams),
-            [],
-            [],
-            $server,
+            parameters: array_replace_recursive($queryParamsFromPath, $queryParams),
+            server: $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -139,13 +136,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $files = [],
         array $server = [],
     ): KernelBrowser {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            Request::METHOD_POST,
-            $content,
-            [],
-            $files,
-            $server,
+            method: Request::METHOD_POST,
+            parameters: $content,
+            files: $files,
+            server: $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -167,13 +163,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $files = [],
         array $server = [],
     ): KernelBrowser {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            Request::METHOD_PATCH,
-            $content,
-            [],
-            $files,
-            $server,
+            method: Request::METHOD_PATCH,
+            parameters: $content,
+            files: $files,
+            server: $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -195,13 +190,12 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $files = [],
         array $server = [],
     ): KernelBrowser {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            Request::METHOD_PUT,
-            $content,
-            [],
-            $files,
-            $server,
+            method: Request::METHOD_PUT,
+            parameters: $content,
+            files: $files,
+            server: $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -219,13 +213,10 @@ abstract class RestControllerWebTestCase extends WebTestCase
         int $expectedStatusCode = Response::HTTP_NO_CONTENT,
         array $server = [],
     ): KernelBrowser {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            Request::METHOD_DELETE,
-            [],
-            [],
-            [],
-            $server,
+            method: Request::METHOD_DELETE,
+            server: $server,
         );
 
         return $this->assertRestRequest($request, $expectedStatusCode);
@@ -377,13 +368,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $content = [],
         array $server = [],
     ): void {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            $method,
-            $content,
-            [],
-            [],
-            $server,
+            method: $method,
+            parameters: $content,
+            server: $server,
         );
 
         $client = $this->makeJsonRequest($request);
@@ -404,24 +393,21 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * Assert that a request to an URL returns 401 if the user is not authenticated.
      *
-     * @param string       $url    The URL to call.
+     * @param string       $path   The URL to call.
      * @param string       $method The HTTP verb.
      * @param array<mixed> $server The server parameters.
      */
     protected function assertRestRequestReturns401IfUserIsNotAuthenticated(
-        string $url,
+        string $path,
         string $method,
         array $server = [],
     ): void {
         static::$authentication = self::AUTHENTICATION_NONE;
 
-        $request = Request::create(
-            $url,
-            $method,
-            [],
-            [],
-            [],
-            $server,
+        $request = $this->prepareRequest(
+            $path,
+            method: $method,
+            server: $server,
         );
 
         $client = $this->makeJsonRequest($request);
@@ -453,13 +439,11 @@ abstract class RestControllerWebTestCase extends WebTestCase
         array $content = [],
         array $server = [],
     ): void {
-        $request = Request::create(
+        $request = $this->prepareRequest(
             $path,
-            $method,
-            $content,
-            [],
-            [],
-            $server,
+            method: $method,
+            parameters: $content,
+            server: $server,
         );
 
         $client = $this->makeJsonRequest($request);

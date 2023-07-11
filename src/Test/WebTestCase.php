@@ -18,6 +18,7 @@ use Speicher210\FunctionalTestBundle\VfsStreamSetup;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory;
@@ -53,6 +54,24 @@ abstract class WebTestCase extends KernelTestCase
         $client->setServerParameters($server);
 
         return $client;
+    }
+
+    /**
+     * @param array<mixed> $parameters
+     * @param array<mixed> $cookies
+     * @param array<mixed> $files
+     * @param array<mixed> $server
+     */
+    protected function prepareRequest(string $path, string $method = Request::METHOD_GET, array $parameters = [], array $cookies = [], array $files = [], array $server = []): Request
+    {
+        return Request::create(
+            $path,
+            $method,
+            $parameters,
+            $cookies,
+            $files,
+            $server,
+        );
     }
 
     /**
