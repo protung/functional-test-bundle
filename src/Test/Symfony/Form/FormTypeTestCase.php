@@ -9,7 +9,6 @@ use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psl\Type;
 use Psl\Vec;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
@@ -83,7 +82,7 @@ abstract class FormTypeTestCase extends KernelTestCase
      */
     protected function getExtensions(): Generator
     {
-        $validatorFactory = Type\instance_of(ContainerConstraintValidatorFactory::class)->coerce($this->getContainerService('validator.validator_factory'));
+        $validatorFactory = $this->getContainerService(ContainerConstraintValidatorFactory::class, 'validator.validator_factory');
 
         yield new ValidatorExtension(
             Validation::createValidatorBuilder()
