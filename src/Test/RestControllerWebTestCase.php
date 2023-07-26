@@ -265,7 +265,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function makeRequest(Request $request): KernelBrowser
     {
-        $client = static::createClient();
+        $client = $this->getClient();
 
         $client->request(
             $request->getMethod(),
@@ -281,7 +281,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function makeJsonRequest(Request $request): KernelBrowser
     {
-        $client = static::createClient();
+        $client = $this->getClient();
 
         $server                 = $request->server->all();
         $server['CONTENT_TYPE'] = 'application/json';
