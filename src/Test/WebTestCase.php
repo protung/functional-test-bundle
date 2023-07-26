@@ -56,6 +56,11 @@ abstract class WebTestCase extends KernelTestCase
         return $client;
     }
 
+    protected function getClient(): KernelBrowser
+    {
+        return self::createClient();
+    }
+
     /**
      * @param array<mixed> $parameters
      * @param array<mixed> $cookies
