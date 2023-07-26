@@ -81,10 +81,8 @@ abstract class WebTestCase extends KernelTestCase
      */
     public function prepareSession(KernelBrowser $client, array $sessionAttributes): void
     {
-        /** @var MockFileSessionStorageFactory $sessionStorageFactory */
-        $sessionStorageFactory = $this->getContainerService('session.storage.factory.mock_file');
-        /** @var MockFileSessionStorage $sessionStorage */
-        $sessionStorage = $sessionStorageFactory->createStorage(null);
+        $sessionStorageFactory = $this->getContainerService(MockFileSessionStorageFactory::class, 'session.storage.factory.mock_file');
+        $sessionStorage        = Type\instance_of(MockFileSessionStorage::class)->coerce($sessionStorageFactory->createStorage(null));
         $sessionStorage->start();
         $sessionStorage->setSessionData(['_sf2_attributes' => $sessionAttributes]);
         $sessionStorage->save();

@@ -21,8 +21,6 @@ use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-use function class_exists;
-use function interface_exists;
 use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
@@ -109,28 +107,29 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     }
 
     /**
-     * @param non-empty-string|class-string<TService> $id
-     * @phpstan-param (non-empty-string&literal-string)|class-string<TService> $id
+     * @param class-string<TService> $class
+     * @param non-empty-string|null  $id
      *
      * @return TService
      *
      * @template TService of object
      */
-    protected function getContainerService(string $id): object
+    protected function getContainerService(string $class, string|null $id = null): object
     {
+        $id ??= $class;
+
         if (static::getContainer()->has('test.' . $id)) {
             $service = static::getContainer()->get('test.' . $id);
         } else {
             $service = static::getContainer()->get($id);
         }
 
-        if (class_exists($id, false) || interface_exists($id, false)) {
-            return Type\instance_of($id)->coerce($service);
-        }
-
-        return $service;
+        return Type\instance_of($class)->coerce($service);
     }
 
+    /**
+     * @param non-empty-string $id
+     */
     protected function mockContainerService(string $id, object $service): void
     {
         if (static::getContainer()->has('test.' . $id)) {
