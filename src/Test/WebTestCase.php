@@ -58,7 +58,7 @@ abstract class WebTestCase extends KernelTestCase
 
     protected function getClient(): KernelBrowser
     {
-        return self::createClient();
+        return static::createClient();
     }
 
     /**
