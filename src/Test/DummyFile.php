@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test;
 
+use Psl\Encoding\Base64;
 use Psl\File;
 use SplFileInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -46,6 +47,11 @@ enum DummyFile: string
     public function content(): string
     {
         return File\read($this->path());
+    }
+
+    public function base64Content(): string
+    {
+        return Base64\encode($this->content());
     }
 
     public function mimeType(): string
