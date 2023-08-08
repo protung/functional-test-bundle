@@ -14,11 +14,12 @@ enum DummyFile: string
     case AudioMp3       = 'dummy_audio_tags.mp3';
     case AudioMp3NoTags = 'dummy_audio_notags.mp3';
 
-    case ImageBmp = 'dummy_image.bmp';
-    case ImageGif = 'dummy_image.gif';
-    case ImageJpg = 'dummy_image.jpg';
-    case ImagePng = 'dummy_image.png';
-    case ImageSvg = 'dummy_image.svg';
+    case ImageBmp    = 'dummy_image.bmp';
+    case ImageGif    = 'dummy_image.gif';
+    case ImageJpg    = 'dummy_image.jpg';
+    case ImagePng    = 'dummy_image.png';
+    case ImageSvg    = 'dummy_image.svg';
+    case ImageSvgXSS = 'dummy_image_xss.svg';
 
     case Pdf = 'dummy_pdf.pdf';
 
@@ -62,7 +63,7 @@ enum DummyFile: string
             self::ImageGif => 'image/gif',
             self::ImageJpg => 'image/jpeg',
             self::ImagePng => 'image/png',
-            self::ImageSvg => 'image/svg+xml',
+            self::ImageSvg, self::ImageSvgXSS => 'image/svg+xml',
             self::Pdf => 'application/pdf',
             self::Text => 'text/plain',
             self::VideoMpeg => 'video/mpeg',
