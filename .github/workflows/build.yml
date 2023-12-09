@@ -16,10 +16,11 @@ jobs:
         php-versions:
           - 8.1
           - 8.2
+          - 8.3
     name: PHP ${{ matrix.php-versions }} checks with ${{ matrix.dependencies }} dependencies
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

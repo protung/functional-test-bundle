@@ -21,6 +21,7 @@ use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use function class_exists;
 use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
@@ -202,7 +203,12 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             return;
         }
 
-        $fixtureLoader = new SymfonyFixturesLoader(static::getContainer());
+        if (class_exists(ContainerAwareLoader::class)) {
+            $fixtureLoader = new SymfonyFixturesLoader(static::getContainer());
+        } else {
+            $fixtureLoader = new SymfonyFixturesLoader();
+        }
+
         foreach ($classNames as $className) {
             $fixture = new $className();
             $fixtureLoader->addFixture($fixture);

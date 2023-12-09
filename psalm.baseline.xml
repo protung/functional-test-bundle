@@ -68,6 +68,12 @@
       <code>$service</code>
       <code><![CDATA[Type\instance_of($id)->coerce($service)]]></code>
     </InvalidReturnStatement>
+    <TooManyArguments>
+      <code>new SymfonyFixturesLoader(static::getContainer())</code>
+    </TooManyArguments>
+    <TooFewArguments>
+      <code>new SymfonyFixturesLoader()</code>
+    </TooFewArguments>
     <InvalidReturnType>
       <code>TService</code>
     </InvalidReturnType>

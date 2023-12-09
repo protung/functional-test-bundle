@@ -24,3 +24,13 @@ parameters:
 			message: "#^PHPDoc tag @extends contains generic type Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase\\<Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\> but class Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase is not generic\\.$#"
 			count: 1
 			path: src/Test/Symfony/Validator/ValidatorTestCase.php
+
+		-
+			message: "#^Class Doctrine\\\\Bundle\\\\FixturesBundle\\\\Loader\\\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\\.$#"
+			count: 1
+			path: src/Test/KernelTestCase.php
+
+		-
+			message: "#^Class Doctrine\\\\Bundle\\\\FixturesBundle\\\\Loader\\\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\\.$#"
+			count: 1
+			path: src/Test/KernelTestCase.php
