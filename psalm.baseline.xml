@@ -48,6 +48,9 @@
     </DeprecatedMethod>
   </file>
   <file src="src/Test/KernelTestCase.php">
+    <DeprecatedClass>
+      <code>ContainerAwareLoader::class</code>
+    </DeprecatedClass>
     <DeprecatedMethod>
       <code>dropAndCreateSequence</code>
       <code>getSchemaManager</code>

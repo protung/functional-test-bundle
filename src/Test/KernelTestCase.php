@@ -18,6 +18,7 @@ use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
+use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
