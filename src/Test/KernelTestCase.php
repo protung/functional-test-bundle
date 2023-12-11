@@ -50,6 +50,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
         static::bootKernel();
 
+        $this->mockServices();
         $this->loadTestFixtures();
     }
 
@@ -127,6 +128,21 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         return Type\instance_of($class)->coerce($service);
+    }
+
+    private function mockServices(): void
+    {
+        foreach ($this->servicesToMock() as $id => $service) {
+            $this->mockContainerService($id, $service);
+        }
+    }
+
+    /**
+     * @return iterable<non-empty-string,object>
+     */
+    protected function servicesToMock(): iterable
+    {
+        return [];
     }
 
     /**
