@@ -5,9 +5,12 @@ parameters:
         - tests
     polluteScopeWithLoopInitialAssignments: true
     reportUnmatchedIgnoredErrors: false
+    featureToggles: # PHPStan bleeding edge features
+        notAnalysedTrait: false
 
 includes:
     - phpstan-baseline.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
