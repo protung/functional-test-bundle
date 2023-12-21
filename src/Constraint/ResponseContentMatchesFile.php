@@ -35,10 +35,7 @@ final class ResponseContentMatchesFile extends ResponseContentConstraint
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         if ($other instanceof Response) {
             return sprintf('response content matches content of file "%s"', $this->expectedFile);

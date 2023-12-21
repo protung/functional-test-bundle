@@ -15,7 +15,7 @@ use function urldecode;
 final class RestControllerWebTestCaseTest extends TestCase
 {
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public static function dataProviderTestAssertRestGetPathWithCustomQueryParams(): array
     {
@@ -61,7 +61,7 @@ final class RestControllerWebTestCaseTest extends TestCase
     }
 
     /**
-     * @param mixed[] $queryParams
+     * @param array<mixed> $queryParams
      *
      * @dataProvider dataProviderTestAssertRestGetPathWithCustomQueryParams
      */
@@ -71,14 +71,14 @@ final class RestControllerWebTestCaseTest extends TestCase
         string $expectedPathInfo,
         string|null $expectedQueryString,
     ): void {
-        $testClass = new class () extends RestControllerWebTestCase
+        $testClass = new class ('test') extends RestControllerWebTestCase
         {
             /**
-             * @param mixed[] $queryParams
+             * @param array<mixed> $queryParams
              */
             public function testAssertRestGetPath(string $path, array $queryParams = []): KernelBrowser
             {
-                return parent::assertRestGetPath($path, $queryParams);
+                return $this->assertRestGetPath($path, $queryParams);
             }
 
             protected function assertRestRequest(
@@ -92,7 +92,6 @@ final class RestControllerWebTestCaseTest extends TestCase
             }
         };
 
-        /** @var KernelBrowser $client */
         $client = $testClass->testAssertRestGetPath($path, $queryParams);
         self::assertSame($expectedPathInfo, $client->getRequest()->getPathInfo());
         $requestQueryString = $client->getRequest()->getQueryString();

@@ -34,8 +34,3 @@ parameters:
 			message: "#^Class Doctrine\\\\Bundle\\\\FixturesBundle\\\\Loader\\\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\\.$#"
 			count: 1
 			path: src/Test/KernelTestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$classes of method Doctrine\\\\ORM\\\\Tools\\\\SchemaTool\\:\\:createSchema\\(\\) expects list\\<Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadata\\>, array\\<Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadata\\> given\\.$#"
-			count: 1
-			path: src/Test/bootstrap.php

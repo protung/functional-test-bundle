@@ -178,9 +178,10 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     {
         $connection = $this->getDefaultDatabaseConnection();
 
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $connection->createSchemaManager();
         foreach ($schemaManager->listSequences() as $sequence) {
-            $schemaManager->dropAndCreateSequence($sequence);
+            $schemaManager->dropSequence($sequence->getName());
+            $schemaManager->createSequence($sequence);
         }
     }
 
@@ -208,7 +209,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function getFixturesFileForTest(): string
     {
-        return $this->getTestDirectory() . '/Fixtures/' . $this->getName(false) . '.php';
+        return $this->getTestDirectory() . '/Fixtures/' . $this->name() . '.php';
     }
 
     /**
@@ -251,13 +252,13 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
     private function getTestNameForExpectedFiles(): string
     {
-        return $this->getName(false) . ($this->dataName() !== '' ? '-' . $this->dataName() : '');
+        return $this->name() . ($this->dataName() !== '' ? '-' . $this->dataName() : '');
     }
 
     /**
      * Get the expected response content file.
      *
-     * @param non-empty-string $type The file type (txt, yml, etc).
+     * @param non-empty-string $type The file type (txt, yaml, etc.).
      *
      * @return non-empty-string
      */

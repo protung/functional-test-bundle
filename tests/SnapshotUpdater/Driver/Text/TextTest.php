@@ -38,11 +38,10 @@ final class TextTest extends TestCase
      */
     public function testSerialize(string|Stringable|int $comparisonFailureActual, string $expected): void
     {
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($comparisonFailureActual);
+        $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');
 
         $driver = new TextDriver();
-        $actual = $driver->serialize($comparisonFailureMock);
+        $actual = $driver->serialize($comparisonFailure);
 
         self::assertSame($expected, $actual);
     }
@@ -60,12 +59,11 @@ final class TextTest extends TestCase
      */
     public function testSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable(mixed $comparisonFailureActual): void
     {
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($comparisonFailureActual);
+        $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');
 
         $driver = new TextDriver();
 
         $this->expectException(ActualNotSerializable::class);
-        $driver->serialize($comparisonFailureMock);
+        $driver->serialize($comparisonFailure);
     }
 }

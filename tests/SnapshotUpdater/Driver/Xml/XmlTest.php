@@ -19,11 +19,10 @@ final class XmlTest extends TestCase
         $actualComparisonFailure = new DOMDocument();
         $actualComparisonFailure->load(__DIR__ . '/testSerialize/comparisonFailureActual.xml');
 
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($actualComparisonFailure);
+        $comparisonFailure = new ComparisonFailure(null, $actualComparisonFailure, '', '');
 
         $driver = new XmlDriver();
-        $actual = $driver->serialize($comparisonFailureMock);
+        $actual = $driver->serialize($comparisonFailure);
 
         self::assertStringEqualsFile(__DIR__ . '/testSerialize/expected.xml', $actual);
     }
@@ -42,12 +41,11 @@ final class XmlTest extends TestCase
      */
     public function testSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable(mixed $comparisonFailureActual): void
     {
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($comparisonFailureActual);
+        $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');
 
         $driver = new XmlDriver();
 
         $this->expectException(ActualNotSerializable::class);
-        $driver->serialize($comparisonFailureMock);
+        $driver->serialize($comparisonFailure);
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.18.0@b113f3ed0259fd6e212d87c3df80eec95a6abf19">
   <file src="src/Command/TestStubCreateCommand.php">
     <RedundantCast>
       <code><![CDATA[(bool) $input->getOption('custom-loader')]]></code>
@@ -61,25 +61,15 @@
     <InternalMethod>
       <code>dataName</code>
       <code>dataName</code>
-      <code>getName</code>
-      <code>getName</code>
+      <code>name</code>
+      <code>name</code>
     </InternalMethod>
-    <InvalidDocblock>
-      <code><![CDATA[(non-empty-string&literal-string)|class-string<TService>]]></code>
-    </InvalidDocblock>
-    <InvalidReturnStatement>
-      <code>$service</code>
-      <code><![CDATA[Type\instance_of($id)->coerce($service)]]></code>
-    </InvalidReturnStatement>
     <TooManyArguments>
       <code>new SymfonyFixturesLoader(static::getContainer())</code>
     </TooManyArguments>
     <TooFewArguments>
       <code>new SymfonyFixturesLoader()</code>
     </TooFewArguments>
-    <InvalidReturnType>
-      <code>TService</code>
-    </InvalidReturnType>
     <UnresolvableInclude>
       <code>require $fixturesFile</code>
     </UnresolvableInclude>
@@ -88,16 +78,6 @@
     <InternalMethod>
       <code>getComparisonFailure</code>
     </InternalMethod>
-  </file>
-  <file src="src/Test/Symfony/Validator/ValidatorTestCase.php">
-    <TooManyTemplateParams>
-      <code>ValidatorTestCase</code>
-    </TooManyTemplateParams>
-  </file>
-  <file src="src/Test/bootstrap.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$entityManager->getMetadataFactory()->getAllMetadata()]]></code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/Test/Symfony/Form/FormTypeTestCase.php">
     <InternalMethod>
@@ -114,7 +94,7 @@
   </file>
   <file src="src/Test/WebTestCase.php">
     <InternalMethod>
-      <code>getName</code>
+      <code>name</code>
     </InternalMethod>
   </file>
 </files>
