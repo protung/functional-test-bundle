@@ -37,10 +37,7 @@ final class ImageSimilarity extends Constraint
         return $result[1] <= $this->similarityDelta;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         return 'images are similar';
     }

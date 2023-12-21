@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use Psl\Str;
 use Psl\Type;
 use SebastianBergmann\Comparator\ComparisonFailure;
+use SebastianBergmann\Exporter\Exporter;
 use Symfony\Component\HttpFoundation\Response;
-
-use function sprintf;
 
 final class ResponseHeaderSame extends Constraint
 {
@@ -39,12 +39,14 @@ final class ResponseHeaderSame extends Constraint
             return null;
         }
 
+        $valueExporter = new Exporter();
+
         $actualValue       = Type\instance_of(Response::class)->coerce($other)->headers->get($this->headerName);
         $comparisonFailure = new ComparisonFailure(
             $this->expectedValue,
             $actualValue,
-            $this->exporter()->export($this->expectedValue),
-            $this->exporter()->export($actualValue),
+            $valueExporter->export($this->expectedValue),
+            $valueExporter->export($actualValue),
         );
 
         $this->fail($other, $description, $comparisonFailure);
@@ -52,7 +54,7 @@ final class ResponseHeaderSame extends Constraint
 
     public function toString(): string
     {
-        return sprintf('has header "%s" with value "%s"', $this->headerName, $this->expectedValue);
+        return Str\format('has header "%s" with value "%s"', $this->headerName, $this->expectedValue);
     }
 
     /**
@@ -67,10 +69,7 @@ final class ResponseHeaderSame extends Constraint
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
         if ($other instanceof Response) {
             return 'the response ' . $this->toString();

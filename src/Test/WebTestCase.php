@@ -207,7 +207,7 @@ abstract class WebTestCase extends KernelTestCase
             $image = new Imagick();
             $image->newImage($imageSize['width'], $imageSize['height'], new ImagickPixel('#ffffff'));
             $image->setImageFormat($imageType);
-            $filePath = tempnam(sys_get_temp_dir(), $this->getName(false)) . '.' . $imageType;
+            $filePath = tempnam(sys_get_temp_dir(), $this->name()) . '.' . $imageType;
             file_put_contents($filePath, $image->getImageBlob());
         }
 

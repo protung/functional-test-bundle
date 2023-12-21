@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Extension;
 
-use PHPUnit\Runner\AfterLastTestHook;
-use PHPUnit\Runner\BeforeFirstTestHook;
+use PHPUnit\Event\TestRunner\Finished as TestRunnerFinishedEvent;
+use PHPUnit\Event\TestRunner\FinishedSubscriber as TestRunnerFinishedSubscriber;
+use PHPUnit\Event\TestRunner\Started as TestRunnerStartedEvent;
+use PHPUnit\Event\TestRunner\StartedSubscriber as TestRunnerStartedSubscriber;
+use PHPUnit\Runner\Extension\Extension;
+use PHPUnit\Runner\Extension\Facade;
+use PHPUnit\Runner\Extension\ParameterCollection;
+use PHPUnit\TextUI\Configuration\Configuration;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Json;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 
-/**
- * PHPUnit test extension that updates the rest requests expected output files.
- */
-final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstTestHook, AfterLastTestHook
+final class RestRequestFailTestExpectedOutputFileUpdater implements Extension
 {
     /**
      * Fields that will always be updated with a fixed value.
@@ -40,14 +43,33 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements BeforeFirstT
         $this->matcherPatterns = $matcherPatterns;
     }
 
-    public function executeBeforeFirstTest(): void
+    public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
-        DriverConfigurator::createDrivers($this->fields, $this->matcherPatterns);
-        DriverConfigurator::enableOutputUpdater();
-    }
+        $facade->registerSubscriber(
+            new class ($this->fields, $this->matcherPatterns) implements TestRunnerStartedSubscriber {
+                /**
+                 * @param array<string,string> $fields          The fields to update in the expected output.
+                 * @param list<string>         $matcherPatterns
+                 */
+                public function __construct(private array $fields, private array $matcherPatterns)
+                {
+                }
 
-    public function executeAfterLastTest(): void
-    {
-        DriverConfigurator::disableOutputUpdater();
+                public function notify(TestRunnerStartedEvent $event): void
+                {
+                    DriverConfigurator::createDrivers($this->fields, $this->matcherPatterns);
+                    DriverConfigurator::enableOutputUpdater();
+                }
+            },
+        );
+
+        $facade->registerSubscriber(
+            new class () implements TestRunnerFinishedSubscriber {
+                public function notify(TestRunnerFinishedEvent $event): void
+                {
+                    DriverConfigurator::disableOutputUpdater();
+                }
+            },
+        );
     }
 }

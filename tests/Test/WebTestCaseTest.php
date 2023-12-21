@@ -11,7 +11,7 @@ final class WebTestCaseTest extends TestCase
 {
     public function testGetCurrentExpectedResponseContentFile(): void
     {
-        $testClass = new class () extends WebTestCase
+        $testClass = new class ('test') extends WebTestCase
         {
             /**
              * @param non-empty-string $type
@@ -20,11 +20,11 @@ final class WebTestCaseTest extends TestCase
              */
             public function testGetExpectedResponseContentFile(string $type): string
             {
-                return parent::getExpectedResponseContentFile($type);
+                return $this->getExpectedResponseContentFile($type);
             }
         };
 
-        self::assertStringEndsWith('/Expected/-1.type', $testClass->getCurrentExpectedResponseContentFile('type'));
+        self::assertStringEndsWith('/Expected/test-1.type', $testClass->getCurrentExpectedResponseContentFile('type'));
 
         $testClass->setName('testName');
         self::assertStringEndsWith(

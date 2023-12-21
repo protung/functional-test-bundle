@@ -17,9 +17,7 @@ final class JsonTest extends TestCase
 {
     public function testSerializeThrowsExceptionIfActualIsNotValidJson(): void
     {
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getExpected')->willReturn(null);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn('{invalid json}');
+        $comparisonFailureMock = new ComparisonFailure(null, '{invalid json}', '', '{invalid json}');
 
         $driver = new JsonDriver(CoduoMatcherFactory::getMatcher());
 
@@ -52,19 +50,20 @@ final class JsonTest extends TestCase
     public function testSerialize(string $scenario): void
     {
         try {
-            $comparisonFailureExpectedMock = Json\decode($this->getTestFile($scenario, 'comparisonFailureExpected'), false);
+            $expectedAsString          = $this->getTestFile($scenario, 'comparisonFailureExpected');
+            $comparisonFailureExpected = Json\decode($expectedAsString, false);
         } catch (Json\Exception\DecodeException) {
-            $comparisonFailureExpectedMock = null;
+            $expectedAsString          = '';
+            $comparisonFailureExpected = null;
         }
 
-        $comparisonFailureActualMock = Json\decode($this->getTestFile($scenario, 'comparisonFailureActual'), false);
+        $actualAsString              = $this->getTestFile($scenario, 'comparisonFailureActual');
+        $comparisonFailureActualMock = Json\decode($actualAsString, false);
 
-        $comparisonFailureMock = $this->createMock(ComparisonFailure::class);
-        $comparisonFailureMock->expects(self::once())->method('getExpected')->willReturn($comparisonFailureExpectedMock);
-        $comparisonFailureMock->expects(self::once())->method('getActual')->willReturn($comparisonFailureActualMock);
+        $comparisonFailure = new ComparisonFailure($comparisonFailureExpected, $comparisonFailureActualMock, $expectedAsString, $actualAsString);
 
         $driver = new JsonDriver(CoduoMatcherFactory::getMatcher());
-        $actual = $driver->serialize($comparisonFailureMock);
+        $actual = $driver->serialize($comparisonFailure);
 
         self::assertSame($this->getTestFile($scenario, 'expected'), $actual);
     }

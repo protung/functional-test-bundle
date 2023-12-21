@@ -46,10 +46,7 @@ final class JsonContentMatches extends ResponseContentConstraint
         return parent::failureDescription($other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function fail(mixed $other, $description, ComparisonFailure|null $comparisonFailure = null): void
+    protected function fail(mixed $other, string $description, ComparisonFailure|null $comparisonFailure = null): never
     {
         if (is_string($other) && $comparisonFailure === null) {
             [$error] = Json::canonicalize($other);
@@ -69,7 +66,6 @@ final class JsonContentMatches extends ResponseContentConstraint
                 Psl\Json\decode($other, false),
                 Json::prettify($this->expectedContent),
                 Json::prettify($other),
-                false,
                 'Failed asserting that two json values are equal.',
             );
         }
