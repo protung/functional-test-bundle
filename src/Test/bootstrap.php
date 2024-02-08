@@ -16,13 +16,9 @@ $kernel->boot();
 /** @var EntityManagerInterface $entityManager */
 $entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
 
-$entityManager->beginTransaction();
-
 $schemaTool = new SchemaTool($entityManager);
 $schemaTool->dropDatabase();
 
 $schemaTool->createSchema(
     $entityManager->getMetadataFactory()->getAllMetadata(),
 );
-
-$entityManager->commit();
