@@ -29,6 +29,11 @@ abstract class TypeTestCase extends KernelTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
+        // This is needed to ensure that configured types are always loaded into the registry.
+        $this->getDefaultDatabaseConnection();
+
         $this->platform = $this->createMock(AbstractPlatform::class);
         $this->type     = Type::getType(Dict\flip(Type::getTypesMap())[static::classUnderTest()]);
     }
