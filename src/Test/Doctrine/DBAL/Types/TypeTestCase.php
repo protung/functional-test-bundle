@@ -8,13 +8,15 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psl\Dict;
+use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
 
-abstract class TypeTestCase extends TestCase
+/**
+ * We extend from KernelTestCase because we want the type to be available based on doctrine package configuration.
+ */
+abstract class TypeTestCase extends KernelTestCase
 {
-    /** @var AbstractPlatform&MockObject */
-    protected AbstractPlatform|MockObject $platform;
+    protected AbstractPlatform&MockObject $platform;
 
     protected Type $type;
 
