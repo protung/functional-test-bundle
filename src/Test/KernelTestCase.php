@@ -13,10 +13,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ConnectionRegistry;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use PHPUnit\Framework\ExpectationFailedException;
+use Psl\File;
 use Psl\Filesystem;
+use Psl\Json;
 use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
+use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
 use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
@@ -293,5 +299,38 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $fileName   = Type\non_empty_string()->coerce($reflection->getFileName());
 
         return Filesystem\get_directory($fileName);
+    }
+
+    /**
+     * @param array<mixed> $actual
+     */
+    protected function assertArrayMatchesExpectedJson(array $actual): void
+    {
+        $expectedFile = $this->getExpectedContentFile('json');
+
+        try {
+            $expectedFileContent = File\read($expectedFile);
+        } catch (File\Exception\NotFoundException $exception) {
+            if (! DriverConfigurator::isOutputUpdaterEnabled()) {
+                throw $exception;
+            }
+
+            $expectedFileContent = '{}';
+            File\write($expectedFile, $expectedFileContent);
+        }
+
+        try {
+            static::assertThat(Json\encode($actual), new JsonContentMatches($expectedFileContent));
+        } catch (ExpectationFailedException $e) {
+            $comparisonFailure = $e->getComparisonFailure();
+            if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                SnapshotUpdater::updateJson(
+                    $comparisonFailure,
+                    $expectedFile,
+                );
+            }
+
+            throw $e;
+        }
     }
 }
