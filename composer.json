@@ -48,6 +48,7 @@
     "spatie/pdf-to-image": "^2.2.0",
     "spatie/pdf-to-text": "^1.52.1",
     "squizlabs/php_codesniffer": "^3.8.1",
+    "symfony/clock": "^6.4.3 || ^7.0.3",
     "symfony/console": "^6.4.1 || ^7.0.3",
     "symfony/form": "^6.4.1 || ^7.0.3",
     "symfony/security-core": "^6.4.0 || ^7.0.3",
