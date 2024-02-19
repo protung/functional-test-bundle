@@ -9,6 +9,7 @@ use ImagickPixel;
 use InvalidArgumentException;
 use org\bovigo\vfs\content\LargeFileContent;
 use org\bovigo\vfs\vfsStream;
+use Psl\Str;
 use Psl\Type;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
@@ -29,6 +30,8 @@ use function in_array;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
+
+use const PHP_EOL;
 
 abstract class WebTestCase extends KernelTestCase
 {
@@ -120,6 +123,18 @@ abstract class WebTestCase extends KernelTestCase
         string $message = '',
     ): void {
         static::assertThat($response, new ResponseHeaderSame($headerName, $expectedValue), $message);
+    }
+
+    protected static function assertResponseRedirectsToUrl(Response $response, string $expectedRedirectUrl): void
+    {
+        self::assertTrue(
+            $response->isRedirect($expectedRedirectUrl),
+            Str\format(
+                'Expected redirect to "%s".' . PHP_EOL . 'Actual redirect url: "%s".',
+                $expectedRedirectUrl,
+                $response->headers->get('Location') ?? '',
+            ),
+        );
     }
 
     public static function assertResponseContentMatchesFile(
