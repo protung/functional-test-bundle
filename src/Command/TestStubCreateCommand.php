@@ -204,10 +204,12 @@ class TestStubCreateCommand extends Command
         $content[] = 'namespace ' . $namespace . ';';
         $content[] = null;
         $content[] = 'use Generator;';
+        $content[] = 'use Override;';
         $content[] = 'use ' . $this->fixtureLoaderExtendClass . ';';
         $content[] = null;
         $content[] = 'final class ' . $name . ' extends ' . end($loaderParentAlias);
         $content[] = '{';
+        $content[] = '    #[Override]';
         $content[] = '    protected function doLoad(): Generator';
         $content[] = '    {';
         $content[] = '    }';
