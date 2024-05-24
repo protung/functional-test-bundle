@@ -9,6 +9,7 @@ use Psl;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\Exception\ActualNotSerializable;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Exception\ExpectedNotSerializable;
 use stdClass;
 use Throwable;
 
@@ -82,7 +83,17 @@ final class Json implements Driver
         // Always encode and decode in order to convert everything into an array.
         $expected = $originalExpected = $comparisonFailure->getExpected();
         if ($expected !== null) {
-            $expected = Psl\Json\decode(Psl\Json\encode($expected, false, $this->jsonEncodeOptions), true);
+            try {
+                $expected = Psl\Type\dict(Psl\Type\array_key(), Psl\Type\mixed())->coerce(
+                    Psl\Json\decode(
+                        Psl\Json\encode($expected, false, $this->jsonEncodeOptions),
+                        true,
+                    ),
+                );
+            } catch (Psl\Json\Exception\EncodeException | Psl\Json\Exception\DecodeException | Psl\Type\Exception\CoercionException $e) {
+                throw new ExpectedNotSerializable(previous: $e);
+            }
+
             $expected = $this->parseExpectedData($expected, [], $originalExpected);
         } else {
             $expected = [];

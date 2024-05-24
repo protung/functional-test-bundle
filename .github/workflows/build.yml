@@ -42,7 +42,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-${{ hashFiles('**/composer.json **/composer.lock') }}
@@ -51,7 +51,7 @@ jobs:
       # Remove optional dependencies incompatible with Symfony 7
       - name: Remove symfony/messenger
         if: ${{ matrix.symfony == '7.*' }}
-        run: composer remove --dev --no-update nesbot/carbon spatie/pdf-to-text
+        run: composer remove --dev --no-update nesbot/carbon
 
       - name: Install dependencies
         uses: ramsey/composer-install@v2

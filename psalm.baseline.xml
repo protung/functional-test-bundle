@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.21.1@8c473e2437be8b6a8fd8f630f0f11a16b114c494">
+<files psalm-version="5.24.0@462c80e31c34e58cc4f750c656be3927e80e550e">
   <file src="src/Command/TestStubCreateCommand.php">
     <RedundantCast>
       <code><![CDATA[(bool) $input->getOption('custom-loader')]]></code>
@@ -7,18 +7,18 @@
   </file>
   <file src="src/Constraint/JsonContentMatches.php">
     <InternalClass>
-      <code>Json::canonicalize($other)</code>
+      <code><![CDATA[Json::canonicalize($other)]]></code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
-      <code>Json::prettify($other)</code>
-      <code>Json::prettify($other)</code>
+      <code><![CDATA[Json::prettify($other)]]></code>
+      <code><![CDATA[Json::prettify($other)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
     </InternalClass>
     <InternalMethod>
-      <code>Json::canonicalize($other)</code>
+      <code><![CDATA[Json::canonicalize($other)]]></code>
       <code><![CDATA[Json::canonicalize($this->expectedContent)]]></code>
-      <code>Json::prettify($other)</code>
-      <code>Json::prettify($other)</code>
+      <code><![CDATA[Json::prettify($other)]]></code>
+      <code><![CDATA[Json::prettify($other)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
       <code><![CDATA[Json::prettify($this->expectedContent)]]></code>
     </InternalMethod>
@@ -28,23 +28,23 @@
       <code>end</code>
     </PossiblyNullReference>
     <UndefinedInterfaceMethod>
-      <code>end</code>
+      <code><![CDATA[end]]></code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="src/SnapshotUpdater/Driver/Json.php">
     <MissingClosureParamType>
-      <code>$key</code>
-      <code>$value</code>
+      <code><![CDATA[$key]]></code>
+      <code><![CDATA[$value]]></code>
     </MissingClosureParamType>
   </file>
   <file src="src/Test/Command/CommandTestCase.php">
     <InternalMethod>
-      <code>getComparisonFailure</code>
+      <code><![CDATA[getComparisonFailure]]></code>
     </InternalMethod>
   </file>
   <file src="src/Test/Doctrine/DBAL/Types/TypeTestCase.php">
     <DeprecatedMethod>
-      <code>getName</code>
+      <code><![CDATA[getName]]></code>
     </DeprecatedMethod>
   </file>
   <file src="src/Test/KernelTestCase.php">
@@ -59,30 +59,31 @@
       <code>static::$kernel === null</code>
     </DocblockTypeContradiction>
     <InternalMethod>
-      <code>dataName</code>
-      <code>dataName</code>
-      <code>getComparisonFailure</code>
-      <code>name</code>
-      <code>name</code>
+      <code><![CDATA[dataName]]></code>
+      <code><![CDATA[dataName]]></code>
+      <code><![CDATA[getComparisonFailure]]></code>
+      <code><![CDATA[name]]></code>
+      <code><![CDATA[name]]></code>
     </InternalMethod>
     <TooManyArguments>
-      <code>new SymfonyFixturesLoader(static::getContainer())</code>
+      <code><![CDATA[new SymfonyFixturesLoader(static::getContainer())]]></code>
     </TooManyArguments>
     <TooFewArguments>
       <code>new SymfonyFixturesLoader()</code>
     </TooFewArguments>
     <UnresolvableInclude>
-      <code>require $fixturesFile</code>
+      <code><![CDATA[require $fixturesFile]]></code>
+      <code><![CDATA[require $this->getPayloadContentFile('php')]]></code>
     </UnresolvableInclude>
   </file>
   <file src="src/Test/RestControllerWebTestCase.php">
     <InternalMethod>
-      <code>getComparisonFailure</code>
+      <code><![CDATA[getComparisonFailure]]></code>
     </InternalMethod>
   </file>
   <file src="src/Test/Symfony/Form/FormTypeTestCase.php">
     <InternalMethod>
-      <code>getComparisonFailure</code>
+      <code><![CDATA[getComparisonFailure]]></code>
     </InternalMethod>
     <InvalidReturnType>
       <code><![CDATA[Generator<FormTypeInterface>]]></code>
@@ -90,12 +91,12 @@
   </file>
   <file src="src/Test/Twig/TemplateTestCase.php">
     <InternalMethod>
-      <code>getComparisonFailure</code>
+      <code><![CDATA[getComparisonFailure]]></code>
     </InternalMethod>
   </file>
   <file src="src/Test/WebTestCase.php">
     <InternalMethod>
-      <code>name</code>
+      <code><![CDATA[name]]></code>
     </InternalMethod>
   </file>
 </files>
