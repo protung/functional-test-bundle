@@ -84,21 +84,30 @@ trait Pdf
             ->setCompressionQuality($pdfToImageConfiguration->compressionQuality)
             ->setResolution($pdfToImageConfiguration->resolution);
 
-        if (DriverConfigurator::isOutputUpdaterEnabled()) {
-            $pdf->saveAllPagesAsImages($expectedDirectory, 'page-');
-            self::fail('Expected PDF images were updated.');
-        }
-
         for ($i = 1; $i <= $pdf->getNumberOfPages(); $i++) {
             $tempActualImage = Filesystem\create_temporary_file();
             $pdf->setPage($i)->saveImage($tempActualImage);
 
-            self::assertImageSimilarity(
-                File\read($expectedDirectory . '/page-' . $i . '.jpg'),
-                File\read($tempActualImage),
-                $delta,
-                $message,
-            );
+            $expectedFile = $expectedDirectory . '/page-' . $i . '.jpg';
+
+            try {
+                self::assertImageSimilarity(
+                    File\read($expectedFile),
+                    File\read($tempActualImage),
+                    $delta,
+                    $message,
+                );
+            } catch (ExpectationFailedException $e) {
+                $comparisonFailure = $e->getComparisonFailure();
+                if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                    SnapshotUpdater::updateBinary(
+                        $comparisonFailure,
+                        $expectedFile,
+                    );
+                }
+
+                throw $e;
+            }
         }
     }
 }
