@@ -13,6 +13,18 @@ final class SnapshotUpdater
     /**
      * @param non-empty-string $snapshotFile
      */
+    public static function updateBinary(ComparisonFailure $comparisonFailure, string $snapshotFile): void
+    {
+        self::updateSnapshotFile(
+            $comparisonFailure,
+            $snapshotFile,
+            DriverConfigurator::getBinaryDriver(),
+        );
+    }
+
+    /**
+     * @param non-empty-string $snapshotFile
+     */
     public static function updateJson(ComparisonFailure $comparisonFailure, string $snapshotFile): void
     {
         self::updateSnapshotFile(

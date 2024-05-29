@@ -7,6 +7,9 @@ namespace Speicher210\FunctionalTestBundle\Constraint;
 use Imagick;
 use PHPUnit\Framework\Constraint\Constraint;
 use Psl\Type;
+use SebastianBergmann\Comparator\ComparisonFailure;
+
+use function is_string;
 
 final class ImageSimilarity extends Constraint
 {
@@ -35,6 +38,26 @@ final class ImageSimilarity extends Constraint
         $result = $expectedImagick->compareImages($actualImagick, Imagick::METRIC_MEANSQUAREERROR);
 
         return $result[1] <= $this->similarityDelta;
+    }
+
+    protected function fail(mixed $other, string $description, ComparisonFailure|null $comparisonFailure = null): never
+    {
+        parent::fail($other, $description, $comparisonFailure ?? $this->createComparisonFailure($other));
+    }
+
+    private function createComparisonFailure(mixed $other): ComparisonFailure|null
+    {
+        if (! is_string($other)) {
+            return null;
+        }
+
+        return new ComparisonFailure(
+            $this->expectedImageContent,
+            $other,
+            '', // we do not want to have a diff between the actual and expected if the failure is printed as the content is binary
+            '', // we do not want to have a diff between the actual and expected if the failure is printed as the content is binary
+            'Failed asserting that images are similar.',
+        );
     }
 
     protected function failureDescription(mixed $other): string

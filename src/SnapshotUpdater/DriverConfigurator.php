@@ -10,6 +10,8 @@ use Speicher210\FunctionalTestBundle\CoduoMatcherFactory;
 
 final class DriverConfigurator
 {
+    private static Driver\Binary|null $binaryDriver = null;
+
     private static Driver\Json|null $jsonDriver = null;
 
     private static Driver\Text|null $textDriver = null;
@@ -26,13 +28,37 @@ final class DriverConfigurator
         array $fields,
         array $matcherPatterns,
     ): void {
-        self::$jsonDriver = new Driver\Json(
+        self::$binaryDriver = new Driver\Binary();
+        self::$jsonDriver   = new Driver\Json(
             CoduoMatcherFactory::getMatcher(),
             $fields,
             $matcherPatterns,
         );
-        self::$textDriver = new Driver\Text();
-        self::$xmlDriver  = new Driver\Xml();
+        self::$textDriver   = new Driver\Text();
+        self::$xmlDriver    = new Driver\Xml();
+    }
+
+    public static function getBinaryDriver(): Driver\Binary
+    {
+        if (self::$outputUpdaterEnabled === false) {
+            throw new RuntimeException(
+                Str\format(
+                    'Updater is not enabled. You should call %s::enableOutputUpdater first to enable it.',
+                    self::class,
+                ),
+            );
+        }
+
+        if (self::$binaryDriver === null) {
+            throw new RuntimeException(
+                Str\format(
+                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    self::class,
+                ),
+            );
+        }
+
+        return self::$binaryDriver;
     }
 
     public static function getJsonDriver(): Driver\Json
@@ -111,7 +137,7 @@ final class DriverConfigurator
 
     public static function enableOutputUpdater(): void
     {
-        if (self::$jsonDriver === null || self::$textDriver === null || self::$xmlDriver === null) {
+        if (self::$binaryDriver === null || self::$jsonDriver === null || self::$textDriver === null || self::$xmlDriver === null) {
             throw new RuntimeException(
                 Str\format(
                     'Updater is not created. You should call %s::createOutputUpdater first to create it.',
