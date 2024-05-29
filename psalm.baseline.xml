@@ -89,6 +89,11 @@
       <code><![CDATA[Generator<FormTypeInterface>]]></code>
     </InvalidReturnType>
   </file>
+  <file src="src/Test/Twig/IntegrationTestCase.php">
+    <InternalMethod>
+      <code><![CDATA[parent::__construct($name)]]></code>
+    </InternalMethod>
+  </file>
   <file src="src/Test/Twig/TemplateTestCase.php">
     <InternalMethod>
       <code><![CDATA[getComparisonFailure]]></code>
