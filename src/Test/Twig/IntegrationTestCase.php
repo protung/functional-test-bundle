@@ -31,8 +31,7 @@ abstract class IntegrationTestCase extends \Twig\Test\IntegrationTestCase
 
     /**
      * This is a workaround to fix PHPUnit 10 deprecations until Twig adds support for it.
-     *
-     * @see: https://github.com/twigphp/Twig/pull/3813
+     * See https://github.com/twigphp/Twig/pull/3813
      *
      * @return iterable<mixed>
      */
