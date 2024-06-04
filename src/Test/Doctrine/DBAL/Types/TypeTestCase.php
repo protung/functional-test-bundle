@@ -118,9 +118,4 @@ abstract class TypeTestCase extends KernelTestCase
 
         self::assertEquals($expected, $actual);
     }
-
-    public function testGetName(): void
-    {
-        self::assertSame(static::getTypeName(), $this->type->getName());
-    }
 }
