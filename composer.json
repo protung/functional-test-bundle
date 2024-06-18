@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+    "php": "~8.2.0 || ~8.3.0",
     "ext-dom": "*",
     "ext-json": "*",
     "azjezz/psl": "^2.5.0",
@@ -35,18 +35,18 @@
     "ext-imagick": "*",
     "ext-intl": "*",
     "doctrine/coding-standard": "^12.0.0",
-    "ergebnis/composer-normalize": "^2.42.0",
+    "ergebnis/composer-normalize": "^2.43.0",
     "mikey179/vfsstream": "^1.6.11",
     "moneyphp/money": "^4.4.0",
-    "nesbot/carbon": "^2.72.3",
+    "nesbot/carbon": "^3.5.0",
     "php-standard-library/psalm-plugin": "^2.3.0",
-    "phpstan/phpstan": "^1.11.1",
+    "phpstan/phpstan": "^1.11.5",
     "phpstan/phpstan-phpunit": "^1.4.0",
     "phpstan/phpstan-strict-rules": "^1.6.0",
-    "phpstan/phpstan-symfony": "^1.4.0",
-    "psalm/plugin-phpunit": "^0.18.4",
-    "psalm/plugin-symfony": "^5.1.0",
-    "spatie/pdf-to-image": "^2.3.0",
+    "phpstan/phpstan-symfony": "^1.4.4",
+    "psalm/plugin-phpunit": "^0.19.0",
+    "psalm/plugin-symfony": "^5.2.2",
+    "spatie/pdf-to-image": "^3.0.0",
     "spatie/pdf-to-text": "^1.52.1",
     "squizlabs/php_codesniffer": "^3.10.1",
     "symfony/clock": "^6.4 || ^7.0",
@@ -58,6 +58,7 @@
     "vimeo/psalm": "^5.24.0"
   },
   "conflict": {
+    "spatie/pdf-to-image": "<3.0.0",
     "twig/twig": "<3.0.0"
   },
   "suggest": {

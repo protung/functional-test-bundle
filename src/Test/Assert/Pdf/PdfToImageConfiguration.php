@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Test\Assert\Pdf;
 
+use Spatie\PdfToImage\Enums\OutputFormat;
+
 final class PdfToImageConfiguration
 {
-    private const DEFAULT_OUTPUT_FORMAT       = OutputFormat::jpg;
+    private const DEFAULT_OUTPUT_FORMAT       = OutputFormat::Jpg;
     private const DEFAULT_RESOLUTION          = 144;
     private const DEFAULT_COMPRESSION_QUALITY = 50;
 
