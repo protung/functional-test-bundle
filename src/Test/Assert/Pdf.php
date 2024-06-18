@@ -80,13 +80,14 @@ trait Pdf
         $pdfToImageConfiguration ??= Pdf\PdfToImageConfiguration::default();
         $pdf                       = new PdfToImage($actualFile);
         $pdf
-            ->setOutputFormat($pdfToImageConfiguration->outputFormat->value)
-            ->setCompressionQuality($pdfToImageConfiguration->compressionQuality)
-            ->setResolution($pdfToImageConfiguration->resolution);
+            ->format($pdfToImageConfiguration->outputFormat)
+            ->quality($pdfToImageConfiguration->compressionQuality)
+            ->resolution($pdfToImageConfiguration->resolution);
 
-        for ($i = 1; $i <= $pdf->getNumberOfPages(); $i++) {
-            $tempActualImage = Filesystem\create_temporary_file();
-            $pdf->setPage($i)->saveImage($tempActualImage);
+        for ($i = 1; $i <= $pdf->pageCount(); $i++) {
+            // PDF to image will put the file extension when saving to file, so we do the same.
+            $tempActualImage = Filesystem\create_temporary_file() . '.' . $pdfToImageConfiguration->outputFormat->value;
+            $pdf->selectPage($i)->save($tempActualImage);
 
             $expectedFile = $expectedDirectory . '/page-' . $i . '.jpg';
 
