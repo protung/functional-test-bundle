@@ -177,6 +177,11 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return $doctrine->getManager();
     }
 
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return Type\instance_of(EntityManagerInterface::class)->coerce($this->getObjectManager());
+    }
+
     protected function clearObjectManager(): void
     {
         $this->getObjectManager()->clear();
