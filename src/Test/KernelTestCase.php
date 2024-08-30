@@ -28,6 +28,7 @@ use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use function assert;
 use function class_exists;
 use function str_starts_with;
 
@@ -198,7 +199,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     {
         $entity = $this->findEntity($entityClass, $entityId);
 
-        self::assertNotNull($entity);
+        assert($entity instanceof $entityClass);
 
         return $entity;
     }
