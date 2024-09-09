@@ -65,6 +65,6 @@ final class SnapshotUpdater
     {
         $data = $driver->serialize($comparisonFailure);
 
-        File\write($snapshotFile, $data, File\WriteMode::TRUNCATE);
+        File\write($snapshotFile, $data, File\WriteMode::from('wb')); // @todo azjezz/psl:3 only, replace with enum
     }
 }
