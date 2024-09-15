@@ -24,7 +24,7 @@ use function ucfirst;
 use const PHP_EOL;
 
 /**
- * Command to create necessary files and directories for a REST functional test.
+ * Command to create necessary files and directories for a functional test.
  */
 class TestStubCreateCommand extends Command
 {
@@ -45,7 +45,7 @@ class TestStubCreateCommand extends Command
     {
         $this
             ->setName('sp210:test:stub:create')
-            ->setDescription('Create necessary files and directories for a REST functional test.')
+            ->setDescription('Create necessary files and directories for a functional test.')
             ->addArgument(
                 'path',
                 InputArgument::REQUIRED,
@@ -60,13 +60,13 @@ class TestStubCreateCommand extends Command
                 'number-of-expected',
                 InputArgument::OPTIONAL,
                 'The number of expected files to generate.',
-                '1',
+                '0',
             )
             ->addOption(
-                'custom-loader',
-                'l',
+                'no-loader',
+                null,
                 InputOption::VALUE_NONE,
-                'Flag if a custom loader class for the test should be created.',
+                'Flag if a fixtures loader class for the test should be skipped.',
             );
     }
 
@@ -75,8 +75,6 @@ class TestStubCreateCommand extends Command
         $directory = $this->getTestDirectoryPath(Psl\Type\non_empty_string()->coerce($input->getArgument('path')));
         $namespace = $this->getNamespace($directory);
         $name      = Psl\Type\string()->coerce($input->getArgument('name'));
-
-        $customLoader = (bool) $input->getOption('custom-loader');
 
         $fileSystem = new Filesystem();
 
@@ -103,19 +101,8 @@ class TestStubCreateCommand extends Command
             }
         }
 
-        $fixturesFilename = $directory . '/Fixtures/' . $name . '.php';
-        if ($fileSystem->exists($fixturesFilename)) {
-            $output->writeln(
-                sprintf('Fixtures file <info>%s</info> already exists.', $fixturesFilename),
-            );
-        } else {
-            $fileSystem->dumpFile($fixturesFilename, $this->getFixturesContent($namespace, $name, $customLoader));
-            $output->writeln(
-                sprintf('Added Fixtures file: <info>%s</info>', $fixturesFilename),
-            );
-        }
-
-        if (! $customLoader) {
+        $noCustomLoader = (bool) $input->getOption('no-loader');
+        if ($noCustomLoader) {
             return 0;
         }
 
@@ -133,6 +120,10 @@ class TestStubCreateCommand extends Command
                 sprintf('Added Fixtures Loader file: <info>%s</info>', $fixturesLoaderFilename),
             );
         }
+
+        $output->writeln(
+            sprintf('Add the following attribute to your test: <info>#[WithFixture(Fixtures\Loaders\%s::class)]</info>', ucfirst($name)),
+        );
 
         return 0;
     }
@@ -169,27 +160,6 @@ class TestStubCreateCommand extends Command
         }
 
         return Psl\Type\string()->coerce(Psl\Filesystem\canonicalize($path));
-    }
-
-    private function getFixturesContent(string $namespace, string $name, bool $customLoader): string
-    {
-        $content   = [];
-        $content[] = '<?php';
-        $content[] = null;
-        $content[] = 'declare(strict_types=1);';
-        $content[] = null;
-
-        if ($customLoader) {
-            $content[] = 'use ' . $namespace . '\\' . ucfirst($name) . ';';
-            $content[] = null;
-            $content[] = 'return [' . ucfirst($name) . '::class];';
-            $content[] = null;
-        } else {
-            $content[] = 'return [];';
-            $content[] = null;
-        }
-
-        return implode(PHP_EOL, $content);
     }
 
     private function getFixturesLoaderContent(string $namespace, string $name): string
