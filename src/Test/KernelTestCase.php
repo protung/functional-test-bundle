@@ -20,6 +20,7 @@ use Psl\Json;
 use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
+use Speicher210\FunctionalTestBundle\Attribute\WithFixture;
 use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
@@ -239,6 +240,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     {
         $this->loadFixtures(
             ...$this->getAlwaysLoadingFixtures(),
+            ...$this->getFixturesFromTestAttributes(),
         );
 
         $fixturesFile = $this->getFixturesFileForTest();
@@ -249,6 +251,26 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $this->loadFixtures(
             ...require $fixturesFile,
         );
+    }
+
+    /**
+     * @return iterable<int, class-string<FixtureInterface>>
+     */
+    private function getFixturesFromTestAttributes(): iterable
+    {
+        $reflection = new ReflectionObject($this);
+
+        $classAttributes = $reflection->getAttributes(WithFixture::class);
+
+        $currentTestMethodReflection = $reflection->getMethod($this->name());
+        $currentTestAttributes       = $currentTestMethodReflection->getAttributes(WithFixture::class);
+
+        foreach ([...$classAttributes, ...$currentTestAttributes] as $attribute) {
+            /** @var WithFixture $attributeInstance */
+            $attributeInstance = $attribute->newInstance();
+
+            yield $attributeInstance->fixture;
+        }
     }
 
     /**
