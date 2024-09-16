@@ -17,10 +17,12 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Psl\File;
 use Psl\Filesystem;
 use Psl\Json;
+use Psl\Str;
 use Psl\Type;
 use ReflectionObject;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Attribute\WithFixture;
+use Speicher210\FunctionalTestBundle\Attribute\WithFixtureForTest;
 use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
@@ -260,14 +262,34 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     {
         $reflection = new ReflectionObject($this);
 
-        $classAttributes = $reflection->getAttributes(WithFixture::class);
+        $testName = $this->name();
 
-        $currentTestMethodReflection = $reflection->getMethod($this->name());
+        $classAttributes = [
+            ...$reflection->getAttributes(WithFixture::class),
+            ...$reflection->getAttributes(WithFixtureForTest::class),
+        ];
+
+        $currentTestMethodReflection = $reflection->getMethod($testName);
         $currentTestAttributes       = $currentTestMethodReflection->getAttributes(WithFixture::class);
 
         foreach ([...$classAttributes, ...$currentTestAttributes] as $attribute) {
-            /** @var WithFixture $attributeInstance */
+            /** @var WithFixture|WithFixtureForTest $attributeInstance */
             $attributeInstance = $attribute->newInstance();
+
+            if ($attributeInstance instanceof WithFixtureForTest) {
+                assert(
+                    $reflection->hasMethod($attributeInstance->testName),
+                    Str\format(
+                        'Test method "%s" configured in attribute WithFixtureForTest does not exist in the test "%s".',
+                        $attributeInstance->testName,
+                        static::class,
+                    ),
+                );
+
+                if ($attributeInstance->testName !== $testName) {
+                    continue;
+                }
+            }
 
             yield $attributeInstance->fixture;
         }
