@@ -22,7 +22,7 @@ trait Pdf
     public static function assertPdfTextEqualsFile(string $expectedFile, string $actualPdfContent, string $message = ''): void
     {
         $tempFile = Filesystem\create_temporary_file();
-        File\write($tempFile, $actualPdfContent, File\WriteMode::Truncate);
+        File\write($tempFile, $actualPdfContent, File\WriteMode::from('wb')); // @todo azjezz/psl:3 only, replace with enum
 
         $actual = PdfToText::getText($tempFile, null, ['layout']);
 
