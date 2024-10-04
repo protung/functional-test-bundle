@@ -56,11 +56,12 @@ class TestStubCreateCommand extends Command
                 InputArgument::REQUIRED,
                 'The name of the test.',
             )
-            ->addArgument(
-                'number-of-expected',
+            ->addOption(
+                'expected',
+                null,
                 InputArgument::OPTIONAL,
                 'The number of expected files to generate.',
-                '0',
+                0,
             )
             ->addOption(
                 'no-loader',
@@ -86,7 +87,7 @@ class TestStubCreateCommand extends Command
             return 1;
         }
 
-        $numberOfExpected = Psl\Type\int()->coerce($input->getArgument('number-of-expected'));
+        $numberOfExpected = Psl\Type\int()->coerce($input->getOption('expected'));
         for ($i = 1; $i <= $numberOfExpected; $i++) {
             $expectedFilename = $directory . '/Expected/' . $name . '-' . $i . '.json';
             if ($fileSystem->exists($expectedFilename)) {
