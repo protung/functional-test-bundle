@@ -64,6 +64,13 @@ class TestStubCreateCommand extends Command
                 0,
             )
             ->addOption(
+                'payloads',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'The number of payload files to generate.',
+                0,
+            )
+            ->addOption(
                 'no-loader',
                 null,
                 InputOption::VALUE_NONE,
@@ -97,7 +104,33 @@ class TestStubCreateCommand extends Command
             } else {
                 $fileSystem->dumpFile($expectedFilename, '{}');
                 $output->writeln(
-                    sprintf('Added Expected file: <info>%s</info>', $expectedFilename),
+                    sprintf('Added expected file: <info>%s</info>', $expectedFilename),
+                );
+            }
+        }
+
+        $numberOfPayloads = Psl\Type\int()->coerce($input->getOption('payloads'));
+        for ($j = 1; $j <= $numberOfPayloads; $j++) {
+            $payloadFilename = $directory . '/Fixtures/data/' . $name . '-' . $j . '.php';
+            if ($fileSystem->exists($payloadFilename)) {
+                $output->writeln(
+                    sprintf('Payload file <info>%s</info> already exists.', $payloadFilename),
+                );
+            } else {
+                $fileSystem->dumpFile(
+                    $payloadFilename,
+                    <<<'PHP'
+                    <?php
+                    
+                    declare(strict_types=1);
+                    
+                    return [
+                        '' => '',
+                    ];
+                    PHP,
+                );
+                $output->writeln(
+                    sprintf('Added payload file: <info>%s</info>', $payloadFilename),
                 );
             }
         }
