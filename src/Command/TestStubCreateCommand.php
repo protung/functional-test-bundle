@@ -23,9 +23,6 @@ use function ucfirst;
 
 use const PHP_EOL;
 
-/**
- * Command to create necessary files and directories for a functional test.
- */
 class TestStubCreateCommand extends Command
 {
     /** @var class-string */

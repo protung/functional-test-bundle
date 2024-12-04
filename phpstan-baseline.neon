@@ -1,36 +1,57 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Unable to resolve the template type T in call to function Psl\\\\Regex\\\\first_match$#"
+			identifier: trait.unused
+		-
+			message: '#^Parameter \#1 \$string of function Psl\\Str\\trim expects string, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Command/TestStubCreateCommand.php
 
 		-
-			message: "#^Variable property access on object\\.$#"
+			message: '#^Unable to resolve the template type T in call to function Psl\\Regex\\first_match$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Command/TestStubCreateCommand.php
+
+		-
+			message: '#^Variable property access on object\.$#'
+			identifier: property.dynamicName
 			count: 3
 			path: src/SnapshotUpdater/Driver/Json.php
 
 		-
-			message: "#^Method Speicher210\\\\FunctionalTestBundle\\\\Test\\\\KernelTestCase\\:\\:getContainerService\\(\\) should return TService of object but returns object\\.$#"
+			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
 			count: 1
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: "#^Method Speicher210\\\\FunctionalTestBundle\\\\Test\\\\KernelTestCase\\:\\:getContainerService\\(\\) should return TService of object but returns object\\|null\\.$#"
+			message: '#^Method Speicher210\\FunctionalTestBundle\\Test\\KernelTestCase\:\:getPayloadFromPhpFile\(\) should return array\<mixed\> but returns mixed\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: "#^PHPDoc tag @extends contains generic type Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase\\<Symfony\\\\Component\\\\Validator\\\\ConstraintValidatorInterface\\> but class Symfony\\\\Component\\\\Validator\\\\Test\\\\ConstraintValidatorTestCase is not generic\\.$#"
-			count: 1
-			path: src/Test/Symfony/Validator/ValidatorTestCase.php
-
-		-
-			message: "#^Class Doctrine\\\\Bundle\\\\FixturesBundle\\\\Loader\\\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\\.$#"
+			message: '#^Only iterables can be unpacked, mixed given in argument \#1\.$#'
+			identifier: argument.unpackNonIterable
 			count: 1
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: "#^Class Doctrine\\\\Bundle\\\\FixturesBundle\\\\Loader\\\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\\.$#"
+			message: '#^Parameter \#1 \.\.\.\$classNames of method Speicher210\\FunctionalTestBundle\\Test\\KernelTestCase\:\:loadFixtures\(\) expects class\-string\<Doctrine\\Common\\DataFixtures\\FixtureInterface\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Test/KernelTestCase.php
+
+		-
+			message: '#^Method Speicher210\\FunctionalTestBundle\\Test\\Twig\\IntegrationTestCase\:\:dataProviderTestIntegration\(\) should return iterable but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Test/Twig/IntegrationTestCase.php
+
+		-
+			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: src/Test/KernelTestCase.php

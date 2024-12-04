@@ -14,21 +14,21 @@
     }
   ],
   "require": {
-    "php": "~8.2.0 || ~8.3.0",
+    "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
     "ext-dom": "*",
     "ext-json": "*",
     "azjezz/psl": "^2.9.1 || ^3.0.0",
     "coduo/php-matcher": "^6.0.14",
     "dama/doctrine-test-bundle": "^7.3.0 || ^8.0.1",
-    "doctrine/data-fixtures": "^1.7.0",
+    "doctrine/data-fixtures": "^1.7.0 || ^2.0.0",
     "doctrine/dbal": "^3.8.4 || ^4.0.2",
     "doctrine/doctrine-fixtures-bundle": "^3.5.1",
     "doctrine/orm": "^2.19.5 || ^3.2.0",
     "phpunit/phpunit": "^10.5",
-    "symfony/browser-kit": "^6.4 || ^7.0",
-    "symfony/css-selector": "^6.4 || ^7.0",
-    "symfony/dependency-injection": "^6.4 || ^7.0",
-    "symfony/framework-bundle": "^6.4 || ^7.0",
+    "symfony/browser-kit": "^6.4 || ^7.1",
+    "symfony/css-selector": "^6.4 || ^7.1",
+    "symfony/dependency-injection": "^6.4 || ^7.1",
+    "symfony/framework-bundle": "^6.4 || ^7.1",
     "symfony/polyfill-php83": "^1.29"
   },
   "require-dev": {
@@ -39,23 +39,20 @@
     "mikey179/vfsstream": "^1.6.12",
     "moneyphp/money": "^4.5.0",
     "nesbot/carbon": "^3.8.0",
-    "php-standard-library/psalm-plugin": "^2.3.0",
-    "phpstan/phpstan": "^1.12.5",
-    "phpstan/phpstan-phpunit": "^1.4.0",
-    "phpstan/phpstan-strict-rules": "^1.6.1",
-    "phpstan/phpstan-symfony": "^1.4.10",
-    "psalm/plugin-phpunit": "^0.19.0",
-    "psalm/plugin-symfony": "^5.2.5",
+    "php-standard-library/phpstan-extension": "^2.0",
+    "phpstan/phpstan": "^2.0.3",
+    "phpstan/phpstan-phpunit": "^2.0.1",
+    "phpstan/phpstan-strict-rules": "^2.0.0",
+    "phpstan/phpstan-symfony": "^2.0.0",
     "spatie/pdf-to-image": "^3.0.0",
     "spatie/pdf-to-text": "^1.53.0",
-    "squizlabs/php_codesniffer": "^3.10.3",
-    "symfony/clock": "^6.4 || ^7.0",
-    "symfony/console": "^6.4 || ^7.0",
-    "symfony/form": "^6.4 || ^7.0",
-    "symfony/security-core": "^6.4 || ^7.0",
-    "symfony/validator": "^6.4 || ^7.0",
-    "twig/twig": "^3.14.0",
-    "vimeo/psalm": "^5.26.1"
+    "squizlabs/php_codesniffer": "^3.11.1",
+    "symfony/clock": "^6.4 || ^7.1",
+    "symfony/console": "^6.4 || ^7.1",
+    "symfony/form": "^6.4 || ^7.1",
+    "symfony/security-core": "^6.4 || ^7.1",
+    "symfony/validator": "^6.4 || ^7.1",
+    "twig/twig": "^3.14.0"
   },
   "conflict": {
     "spatie/pdf-to-image": "<3.0.0",
@@ -93,20 +90,13 @@
   },
   "scripts": {
     "analyse": [
-      "@analyse-phpstan",
-      "@analyse-psalm"
+      "@analyse-phpstan"
     ],
     "analyse-phpstan": [
       "phpstan analyse --memory-limit=256M"
     ],
     "analyse-phpstan-update": [
       "phpstan analyse  --memory-limit=256M --generate-baseline"
-    ],
-    "analyse-psalm": [
-      "psalm --no-cache --show-info=false"
-    ],
-    "analyse-psalm-update": [
-      "psalm --no-cache --set-baseline=psalm.baseline.xml"
     ],
     "check": [
       "composer validate",

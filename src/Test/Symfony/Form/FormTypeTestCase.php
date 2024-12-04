@@ -41,14 +41,12 @@ abstract class FormTypeTestCase extends KernelTestCase
     /** @var array<string, mixed> */
     protected static array $formTypeOptions = [];
 
-    /** @var MockObject&Request */
-    protected MockObject|Request $currentRequestMock;
+    protected MockObject&Request $currentRequestMock;
 
-    /** @var MockObject&RequestStack */
-    protected MockObject|RequestStack $requestStackMock;
+    protected MockObject&RequestStack $requestStackMock;
 
     /**
-     * @return class-string<FormTypeInterface>
+     * @return class-string<FormTypeInterface<mixed>>
      */
     abstract protected static function formTypeUnderTest(): string;
 
@@ -70,7 +68,7 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @return Generator<FormTypeExtensionInterface>
+     * @return Generator<FormTypeExtensionInterface<mixed>>
      */
     protected function getTypeExtensions(): Generator
     {
@@ -94,13 +92,16 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @return Generator<FormTypeInterface>
+     * @return Generator<FormTypeInterface<mixed>>
      */
     protected function getTypes(): Generator
     {
         yield from [];
     }
 
+    /**
+     * @return FormInterface<mixed>
+     */
     protected function createFormType(mixed $initialData = null): FormInterface
     {
         return $this->factory->create(static::formTypeUnderTest(), $initialData, self::$formTypeOptions);
@@ -196,6 +197,8 @@ abstract class FormTypeTestCase extends KernelTestCase
      * @param array<mixed>        $submittedRequestData
      * @param Request::METHOD_*   $method
      * @param array<UploadedFile> $submittedFilesData
+     *
+     * @return FormInterface<mixed>
      */
     protected function createAndSubmitTestedForm(
         array $submittedRequestData,
@@ -215,6 +218,9 @@ abstract class FormTypeTestCase extends KernelTestCase
         return $form;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     protected function assertSubmittedFormMatchesData(FormInterface $form, mixed $expected): void
     {
         self::assertSubmittedFormIsValid($form);
@@ -225,6 +231,9 @@ abstract class FormTypeTestCase extends KernelTestCase
         self::assertThat($form->getData(), $expected);
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     protected static function assertSubmittedFormIsValid(FormInterface $form): void
     {
         self::assertTrue($form->isSubmitted(), 'Form has to be submitted');
