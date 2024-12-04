@@ -5,8 +5,6 @@ parameters:
         - tests
     polluteScopeWithLoopInitialAssignments: true
     reportUnmatchedIgnoredErrors: false
-    featureToggles: # PHPStan bleeding edge features
-        notAnalysedTrait: false
 
 includes:
     - phpstan-baseline.neon

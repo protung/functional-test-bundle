@@ -71,7 +71,7 @@ final class RestControllerWebTestCaseTest extends TestCase
         string $expectedPathInfo,
         string|null $expectedQueryString,
     ): void {
-        $testClass = new class ('test') extends RestControllerWebTestCase
+        $testClass = new class ('testAssertRestGetPath') extends RestControllerWebTestCase
         {
             /**
              * @param array<mixed> $queryParams

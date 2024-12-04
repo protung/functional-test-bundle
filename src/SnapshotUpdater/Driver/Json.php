@@ -114,7 +114,7 @@ final class Json implements Driver
         try {
             array_walk_recursive(
                 $actual,
-                function (&$value, $key): void {
+                function (mixed &$value, string|int $key): void {
                     if (! array_key_exists($key, $this->fields)) {
                         return;
                     }
