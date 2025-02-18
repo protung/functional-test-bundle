@@ -8,12 +8,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 abstract class IntegrationTestCase extends \Twig\Test\IntegrationTestCase
 {
-    /** @param non-empty-string $name */
-    final public function __construct(string $name)
-    {
-        parent::__construct($name);
-    }
-
     /**
      * We want to completely disable this test as we will not want to support any legacy twig extensions.
      */

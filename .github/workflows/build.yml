@@ -5,24 +5,31 @@ on:
     branches: [ main, 2.x ]
   pull_request:
     branches: [ main, 2.x ]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
-  build:
+  check:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     env:
       SYMFONY_REQUIRE: ${{ matrix.symfony }}
     strategy:
       fail-fast: false
       matrix:
-        php:
+        php-version:
           - 8.2
           - 8.3
           - 8.4
-        symfony:
+        symfony-version:
           - 6.4.*
           - 7.*
         dependencies: [lowest, highest]
-    name: 'PHP ${{ matrix.php }} + Symfony ${{ matrix.symfony }} + ${{ matrix.dependencies }} dependencies'
+    name: 'PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }} + ${{ matrix.dependencies }} dependencies'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,25 +37,24 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: ${{ matrix.php-version }}
           coverage: pcov
           tools: flex
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: "symfony/flex is required to install the correct symfony version"
+        if: ${{ matrix.symfony-version }}
+        run: |
+          composer global config --no-plugins allow-plugins.symfony/flex true
+          composer global require symfony/flex
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-${{ hashFiles('**/composer.json **/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-
+      - name: "Configure Symfony version for symfony/flex"
+        if: ${{ matrix.symfony-version }}
+        run: composer config extra.symfony.require "${{ matrix.symfony-version }}.*"
 
-      - name: Install dependencies
-        uses: ramsey/composer-install@v3
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v3"
         with:
-          dependency-versions: ${{ matrix.dependencies }}
+          dependency-versions: "${{ matrix.dependencies }}"
           composer-options: --prefer-dist
 
       - name: Run checks
