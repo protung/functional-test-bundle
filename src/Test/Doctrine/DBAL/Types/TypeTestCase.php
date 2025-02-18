@@ -7,6 +7,7 @@ namespace Speicher210\FunctionalTestBundle\Test\Doctrine\DBAL\Types;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psl\Dict;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
@@ -77,9 +78,7 @@ abstract class TypeTestCase extends KernelTestCase
      */
     abstract public static function dataProviderTestConvertsToPHPValueValidValues(): iterable;
 
-    /**
-     * @dataProvider dataProviderConvertsToDatabaseInvalidValues
-     */
+    #[DataProvider('dataProviderConvertsToDatabaseInvalidValues')]
     public function testConvertsToDatabaseValueThrowsExceptionOnInvalidValue(mixed $value, string $expectedMessage): void
     {
         $this->expectException(ConversionException::class);
@@ -88,9 +87,7 @@ abstract class TypeTestCase extends KernelTestCase
         $this->type->convertToDatabaseValue($value, $this->platform);
     }
 
-    /**
-     * @dataProvider dataProviderConvertsToPHPInvalidValues
-     */
+    #[DataProvider('dataProviderConvertsToPHPInvalidValues')]
     public function testConvertsToPHPValueThrowsExceptionOnInvalidValue(mixed $value, string $expectedMessage): void
     {
         $this->expectException(ConversionException::class);
@@ -99,9 +96,7 @@ abstract class TypeTestCase extends KernelTestCase
         $this->type->convertToPHPValue($value, $this->platform);
     }
 
-    /**
-     * @dataProvider dataProviderTestConvertsToDatabaseValueValidValues
-     */
+    #[DataProvider('dataProviderTestConvertsToDatabaseValueValidValues')]
     public function testConvertsToDatabaseValue(mixed $value, mixed $expected): void
     {
         $actual = $this->type->convertToDatabaseValue($value, $this->platform);
@@ -109,9 +104,7 @@ abstract class TypeTestCase extends KernelTestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @dataProvider dataProviderTestConvertsToPHPValueValidValues
-     */
+    #[DataProvider('dataProviderTestConvertsToPHPValueValidValues')]
     public function testConvertsToPHPValue(mixed $value, mixed $expected): void
     {
         $actual = $this->type->convertToPHPValue($value, $this->platform);
