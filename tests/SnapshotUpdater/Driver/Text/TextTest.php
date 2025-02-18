@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Tests\SnapshotUpdater\Driver\Text;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Text as TextDriver;
@@ -33,9 +34,7 @@ final class TextTest extends TestCase
         yield 'int' => [123, '123'];
     }
 
-    /**
-     * @dataProvider dataProviderTestSerialize
-     */
+    #[DataProvider('dataProviderTestSerialize')]
     public function testSerialize(string|Stringable|int $comparisonFailureActual, string $expected): void
     {
         $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');
@@ -54,9 +53,7 @@ final class TextTest extends TestCase
         yield 'array' => [['string']];
     }
 
-    /**
-     * @dataProvider dataProviderTestSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable
-     */
+    #[DataProvider('dataProviderTestSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable')]
     public function testSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable(mixed $comparisonFailureActual): void
     {
         $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Tests\Constraint;
 
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 
@@ -24,9 +25,7 @@ final class JsonContentMatchesTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderTestEvaluateTheSameJsonContent
-     */
+    #[DataProvider('dataProviderTestEvaluateTheSameJsonContent')]
     public function testEvaluateReturnsNullForTheSameJsonContent(string $expected, string $content): void
     {
         $constraint = new JsonContentMatches($expected);

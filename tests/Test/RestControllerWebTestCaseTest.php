@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Speicher210\FunctionalTestBundle\Tests\Test;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Speicher210\FunctionalTestBundle\Test\RestControllerWebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -62,9 +63,8 @@ final class RestControllerWebTestCaseTest extends TestCase
 
     /**
      * @param array<mixed> $queryParams
-     *
-     * @dataProvider dataProviderTestAssertRestGetPathWithCustomQueryParams
      */
+    #[DataProvider('dataProviderTestAssertRestGetPathWithCustomQueryParams')]
     public function testAssertRestGetPathWithCustomQueryParams(
         string $path,
         array $queryParams,

@@ -6,6 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Tests\SnapshotUpdater\Driver\Xml;
 
 use DOMDocument;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Xml as XmlDriver;
@@ -36,9 +37,7 @@ final class XmlTest extends TestCase
         yield 'array' => [['string']];
     }
 
-    /**
-     * @dataProvider dataProviderTestSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable
-     */
+    #[DataProvider('dataProviderTestSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable')]
     public function testSerializeThrowsExceptionIfComparisonFailureActualIsNotSerializable(mixed $comparisonFailureActual): void
     {
         $comparisonFailure = new ComparisonFailure(null, $comparisonFailureActual, '', '');

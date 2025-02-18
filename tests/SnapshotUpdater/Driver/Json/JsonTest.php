@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Tests\SnapshotUpdater\Driver\Json;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psl\File;
 use Psl\Json;
@@ -44,9 +45,7 @@ final class JsonTest extends TestCase
         yield ['testUpdatesObjectWithArrayToObjectWithEmptyArray'];
     }
 
-    /**
-     * @dataProvider dataProviderTestSerialize
-     */
+    #[DataProvider('dataProviderTestSerialize')]
     public function testSerialize(string $scenario): void
     {
         try {
