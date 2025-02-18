@@ -21,8 +21,8 @@ parameters:
 			path: src/SnapshotUpdater/Driver/Json.php
 
 		-
-			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
+			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: src/Test/KernelTestCase.php
 
@@ -45,8 +45,8 @@ parameters:
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: '#^Method Speicher210\\FunctionalTestBundle\\Test\\Twig\\IntegrationTestCase\:\:dataProviderTestIntegration\(\) should return iterable but returns mixed\.$#'
-			identifier: return.type
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Test/Twig/IntegrationTestCase.php
 
@@ -55,3 +55,15 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: src/Test/KernelTestCase.php
+
+		-
+			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: src/Test/KernelTestCase.php
+
+		-
+			message: '#^Parameter \#1 \$classes of method Doctrine\\ORM\\Tools\\SchemaTool\:\:createSchema\(\) expects list\<Doctrine\\ORM\\Mapping\\ClassMetadata\>, array\<Doctrine\\ORM\\Mapping\\ClassMetadata\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Test/bootstrap.php
