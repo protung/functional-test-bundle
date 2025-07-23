@@ -378,6 +378,14 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             return $payloadFile;
         }
 
+        $testName = $this->getTestNameForDataFiles(false);
+
+        if (isset($this->payloadContentFiles[$testName])) {
+            $this->payloadContentFiles[$testName]++;
+        } else {
+            $this->payloadContentFiles[$testName] = 1;
+        }
+
         return $this->getCurrentPayloadContentFile($type, false);
     }
 
