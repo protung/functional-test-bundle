@@ -365,12 +365,12 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function getPayloadContentFile(string $type): string
     {
-        $testName = $this->getTestNameForDataFiles(true);
+        $testNameWithDataName = $this->getTestNameForDataFiles(true);
 
-        if (isset($this->payloadContentFiles[$testName])) {
-            $this->payloadContentFiles[$testName]++;
+        if (isset($this->payloadContentFiles[$testNameWithDataName])) {
+            $this->payloadContentFiles[$testNameWithDataName]++;
         } else {
-            $this->payloadContentFiles[$testName] = 1;
+            $this->payloadContentFiles[$testNameWithDataName] = 1;
         }
 
         $payloadFile = $this->getCurrentPayloadContentFile($type, true);
@@ -378,12 +378,22 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
             return $payloadFile;
         }
 
-        $testName = $this->getTestNameForDataFiles(false);
+        $testNameWithoutDataName = $this->getTestNameForDataFiles(false);
 
-        if (isset($this->payloadContentFiles[$testName])) {
-            $this->payloadContentFiles[$testName]++;
+        if ($testNameWithDataName === $testNameWithoutDataName) {
+            throw new RuntimeException(
+                Str\format(
+                    'Could not find payload content file for test: %s. Looked for file %s',
+                    $testNameWithDataName,
+                    $payloadFile,
+                ),
+            );
+        }
+
+        if (isset($this->payloadContentFiles[$testNameWithoutDataName])) {
+            $this->payloadContentFiles[$testNameWithoutDataName]++;
         } else {
-            $this->payloadContentFiles[$testName] = 1;
+            $this->payloadContentFiles[$testNameWithoutDataName] = 1;
         }
 
         return $this->getCurrentPayloadContentFile($type, false);
