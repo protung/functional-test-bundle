@@ -40,7 +40,7 @@
     "moneyphp/money": "^4.7.1",
     "nesbot/carbon": "^3.10.3",
     "php-standard-library/phpstan-extension": "^2.0.1",
-    "phpstan/phpstan": "^2.1.12",
+    "phpstan/phpstan": "<=2.1.12",
     "phpstan/phpstan-phpunit": "^2.0.6",
     "phpstan/phpstan-strict-rules": "^2.0.6",
     "phpstan/phpstan-symfony": "^2.0.4",
@@ -55,7 +55,6 @@
     "twig/twig": "^3.21.1"
   },
   "conflict": {
-    "phpstan/phpstan": ">2.1.12",
     "spatie/pdf-to-image": "<3.0.0",
     "twig/twig": "<3.0.0"
   },
