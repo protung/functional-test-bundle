@@ -267,17 +267,24 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
         $testName = $this->name();
 
-        $classAttributes = [
-            ...$this->getFixturesFromTraits($reflection),
-            ...$reflection->getAttributes(WithFixture::class),
-            ...$reflection->getAttributes(WithFixtureForTest::class),
-        ];
-
         $currentTestMethodReflection = $reflection->getMethod($testName);
         $currentTestAttributes       = $currentTestMethodReflection->getAttributes(WithFixture::class);
 
-        foreach ([...$classAttributes, ...$currentTestAttributes] as $attribute) {
-            /** @var WithFixture|WithFixtureForTest $attributeInstance */
+        yield from $this->loadFixturesFromAttributes($currentTestAttributes);
+    }
+
+    /**
+     * @param iterable<ReflectionAttribute<WithFixture|WithFixtureForTest>> $attributes
+     *
+     * @return iterable<int, class-string<FixtureInterface>>
+     */
+    private function loadFixturesFromAttributes(iterable $attributes): iterable
+    {
+        $reflection = new ReflectionObject($this);
+
+        $testName = $this->name();
+
+        foreach ($attributes as $attribute) {
             $attributeInstance = $attribute->newInstance();
 
             if ($attributeInstance instanceof WithFixtureForTest) {
@@ -302,11 +309,15 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
     /**
      * @param ReflectionObject|ReflectionClass<object> $reflection
      *
-     * @return list<ReflectionAttribute<WithFixture>>
+     * @return iterable<ReflectionAttribute<WithFixture>>
      */
-    private function getFixturesFromTraits(ReflectionObject|ReflectionClass $reflection): array
+    private function getFixturesFromTraits(ReflectionObject|ReflectionClass $reflection): iterable
     {
-        return Vec\flat_map(
+        if ($reflection->getParentClass() !== false) {
+            yield from $this->getFixturesFromTraits($reflection->getParentClass());
+        }
+
+        yield from Vec\flat_map(
             $reflection->getTraits(),
             fn (ReflectionClass $class) => [
                 ...$class->getAttributes(WithFixture::class),
@@ -358,7 +369,15 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function getAlwaysLoadingFixtures(): iterable
     {
-        return [];
+        $reflection = new ReflectionObject($this);
+
+        $classAttributes = [
+            ...$this->getFixturesFromTraits($reflection),
+            ...$reflection->getAttributes(WithFixture::class),
+            ...$reflection->getAttributes(WithFixtureForTest::class),
+        ];
+
+        yield from $this->loadFixturesFromAttributes($classAttributes);
     }
 
     private function getTestNameForDataFiles(bool $withDataName): string
