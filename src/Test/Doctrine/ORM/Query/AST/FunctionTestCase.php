@@ -11,6 +11,10 @@ use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use PHPUnit\Framework\TestCase;
 
+use function method_exists;
+
+use const PHP_VERSION_ID;
+
 abstract class FunctionTestCase extends TestCase
 {
     /**
@@ -24,6 +28,10 @@ abstract class FunctionTestCase extends TestCase
         $configuration->setProxyDir(__DIR__ . '/Fixtures/Proxies');
         $configuration->setProxyNamespace(__NAMESPACE__ . '\Proxy');
         $configuration->setAutoGenerateProxyClasses(true);
+        if (PHP_VERSION_ID >= 80400 && method_exists($configuration, 'enableNativeLazyObjects')) {
+            $configuration->enableNativeLazyObjects(true);
+        }
+
         $configuration->setMetadataDriverImpl(new AttributeDriver([__DIR__ . '/Fixtures']));
         foreach ($this->registeredStringFunctions() as $name => $class) {
             $configuration->addCustomStringFunction($name, $class);

@@ -2,6 +2,31 @@ parameters:
 	ignoreErrors:
 		-
 			identifier: trait.unused
+
+		-
+			message: '#^Call to method scalarNode\(\) on an unknown class Symfony\\Component\\Config\\Definition\\Builder\\NodeBuilder\<Symfony\\Component\\Config\\Definition\\Builder\\ArrayNodeDefinition\>\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Cannot call method defaultValue\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Cannot call method end\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: '#^Method Speicher210\\FunctionalTestBundle\\DependencyInjection\\Configuration\:\:getConfigTreeBuilder\(\) return type with generic class Symfony\\Component\\Config\\Definition\\Builder\\TreeBuilder does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
 		-
 			message: '#^Parameter \#1 \$string of function Psl\\Str\\trim expects string, mixed given\.$#'
 			identifier: argument.type
@@ -67,3 +92,9 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Test/bootstrap.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Doctrine\\ORM\\Configuration and ''enableNativeLazyObj…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Test/Doctrine/ORM/Query/AST/FunctionTestCase.php
