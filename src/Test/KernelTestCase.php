@@ -19,6 +19,9 @@ use Psl\Filesystem;
 use Psl\Json;
 use Psl\Str;
 use Psl\Type;
+use Psl\Vec;
+use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionObject;
 use RuntimeException;
 use Speicher210\FunctionalTestBundle\Attribute\WithFixture;
@@ -265,6 +268,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         $testName = $this->name();
 
         $classAttributes = [
+            ...$this->getFixturesFromTraits($reflection),
             ...$reflection->getAttributes(WithFixture::class),
             ...$reflection->getAttributes(WithFixtureForTest::class),
         ];
@@ -293,6 +297,22 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
 
             yield $attributeInstance->fixture;
         }
+    }
+
+    /**
+     * @param ReflectionObject|ReflectionClass<object> $reflection
+     *
+     * @return list<ReflectionAttribute<WithFixture>>
+     */
+    private function getFixturesFromTraits(ReflectionObject|ReflectionClass $reflection): array
+    {
+        return Vec\flat_map(
+            $reflection->getTraits(),
+            fn (ReflectionClass $class) => [
+                ...$class->getAttributes(WithFixture::class),
+                ...$this->getFixturesFromTraits($class),
+            ],
+        );
     }
 
     /**
