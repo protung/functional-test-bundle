@@ -14,9 +14,9 @@ final class ResponseHeaderSameTest extends TestCase
 {
     public function testEvaluateReturnsNullForTheSameHeader(): void
     {
-        $response      = $this->createMock(Response::class);
+        $response      = self::createStub(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
-        $headerBagMock->expects(self::once())->method('get')->with('header-name')->willReturn('some_value');
+        $headerBagMock->expects($this->once())->method('get')->with('header-name')->willReturn('some_value');
         $response->headers = $headerBagMock;
 
         $constraint = new ResponseHeaderSame('header-name', 'some_value');
@@ -26,9 +26,9 @@ final class ResponseHeaderSameTest extends TestCase
 
     public function testEvaluateThrowsExceptionForDifferentHeader(): void
     {
-        $response      = $this->createMock(Response::class);
+        $response      = self::createStub(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
-        $headerBagMock->expects(self::exactly(2))->method('get')->with('header-name')->willReturn('some_value');
+        $headerBagMock->expects($this->exactly(2))->method('get')->with('header-name')->willReturn('some_value');
         $response->headers = $headerBagMock;
 
         $constraint = new ResponseHeaderSame('header-name', 'some_value1');
@@ -43,9 +43,9 @@ final class ResponseHeaderSameTest extends TestCase
 
     public function testEvaluateReturnsTrueForTheSameHeaderWithReturnResultSetToTrue(): void
     {
-        $response      = $this->createMock(Response::class);
+        $response      = self::createStub(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
-        $headerBagMock->expects(self::once())->method('get')->with('header-name')->willReturn('some_value');
+        $headerBagMock->expects($this->once())->method('get')->with('header-name')->willReturn('some_value');
         $response->headers = $headerBagMock;
 
         $constraint = new ResponseHeaderSame('header-name', 'some_value');
@@ -55,9 +55,9 @@ final class ResponseHeaderSameTest extends TestCase
 
     public function testEvaluateReturnsFalseForDifferentHeaderWithReturnResultSetToTrue(): void
     {
-        $response      = $this->createMock(Response::class);
+        $response      = self::createStub(Response::class);
         $headerBagMock = $this->createMock(ResponseHeaderBag::class);
-        $headerBagMock->expects(self::once())->method('get')->with('header-name')->willReturn('some_value');
+        $headerBagMock->expects($this->once())->method('get')->with('header-name')->willReturn('some_value');
         $response->headers = $headerBagMock;
 
         $constraint = new ResponseHeaderSame('header-name', 'some_value1');

@@ -32,7 +32,7 @@ use const PHP_URL_QUERY;
  */
 abstract class RestControllerWebTestCase extends WebTestCase
 {
-    public const AUTHENTICATION_NONE = null;
+    public const null AUTHENTICATION_NONE = null;
 
     /**
      * The authenticated user for the test.

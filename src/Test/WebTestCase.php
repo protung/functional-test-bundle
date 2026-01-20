@@ -35,12 +35,12 @@ use const PHP_EOL;
 
 abstract class WebTestCase extends KernelTestCase
 {
-    protected const IMAGE_TYPE_BMP = 'bmp';
-    protected const IMAGE_TYPE_GIF = 'gif';
-    protected const IMAGE_TYPE_JPG = 'jpg';
-    protected const IMAGE_TYPE_PNG = 'png';
-    protected const IMAGE_TYPE_SVG = 'svg';
-    private const   IMAGE_TYPES    = [
+    protected const string IMAGE_TYPE_BMP = 'bmp';
+    protected const string IMAGE_TYPE_GIF = 'gif';
+    protected const string IMAGE_TYPE_JPG = 'jpg';
+    protected const string IMAGE_TYPE_PNG = 'png';
+    protected const string IMAGE_TYPE_SVG = 'svg';
+    private const array   IMAGE_TYPES     = [
         self::IMAGE_TYPE_BMP,
         self::IMAGE_TYPE_GIF,
         self::IMAGE_TYPE_JPG,

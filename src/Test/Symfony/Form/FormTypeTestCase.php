@@ -108,7 +108,7 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed> $submittedData
+     * @param array<string, mixed> $submittedData
      */
     protected function assertFormSubmitOnGet(array $submittedData, mixed $expected, mixed $initialData = null): void
     {
@@ -117,8 +117,8 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>        $submittedData
-     * @param array<UploadedFile> $submittedFilesData
+     * @param array<string, mixed> $submittedData
+     * @param array<UploadedFile>  $submittedFilesData
      */
     protected function assertFormSubmitOnPost(array $submittedData, mixed $expected, mixed $initialData = null, array $submittedFilesData = []): void
     {
@@ -127,8 +127,8 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<UploadedFile> $submittedFilesData
-     * @param array<mixed>        $submittedData
+     * @param array<string, mixed> $submittedData
+     * @param array<UploadedFile>  $submittedFilesData
      */
     protected function assertFormSubmitOnPatch(array $submittedData, mixed $initialData, mixed $expected, array $submittedFilesData = []): void
     {
@@ -137,8 +137,8 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>        $submittedData
-     * @param array<UploadedFile> $submittedFilesData
+     * @param array<string, mixed> $submittedData
+     * @param array<UploadedFile>  $submittedFilesData
      */
     protected function assertFormSubmitOnPostWithInvalidData(array $submittedData, mixed $initialData = null, array $submittedFilesData = []): void
     {
@@ -146,8 +146,8 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>        $submittedData
-     * @param array<UploadedFile> $submittedFilesData
+     * @param array<string, mixed> $submittedData
+     * @param array<UploadedFile>  $submittedFilesData
      */
     protected function assertFormSubmitOnPatchWithInvalidData(array $submittedData, mixed $initialData, array $submittedFilesData = []): void
     {
@@ -155,7 +155,7 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed> $submittedData
+     * @param array<string, mixed> $submittedData
      */
     protected function assertFormSubmitOnGetWithInvalidData(array $submittedData): void
     {
@@ -163,9 +163,9 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>        $submittedData
-     * @param Request::METHOD_*   $method
-     * @param array<UploadedFile> $submittedFilesData
+     * @param array<string, mixed> $submittedData
+     * @param Request::METHOD_*    $method
+     * @param array<UploadedFile>  $submittedFilesData
      */
     private function assertFormSubmitWithInvalidData(array $submittedData, string $method, mixed $initialData = null, array $submittedFilesData = []): void
     {
@@ -194,9 +194,9 @@ abstract class FormTypeTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<mixed>        $submittedRequestData
-     * @param Request::METHOD_*   $method
-     * @param array<UploadedFile> $submittedFilesData
+     * @param array<string, mixed> $submittedRequestData
+     * @param Request::METHOD_*    $method
+     * @param array<UploadedFile>  $submittedFilesData
      *
      * @return FormInterface<mixed>
      */

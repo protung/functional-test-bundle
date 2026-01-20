@@ -6,20 +6,20 @@ namespace Speicher210\FunctionalTestBundle\Test\Assert\Pdf;
 
 use Spatie\PdfToImage\Enums\OutputFormat;
 
-final class PdfToImageConfiguration
+final readonly class PdfToImageConfiguration
 {
-    private const DEFAULT_OUTPUT_FORMAT       = OutputFormat::Jpg;
-    private const DEFAULT_RESOLUTION          = 144;
-    private const DEFAULT_COMPRESSION_QUALITY = 50;
+    private const OutputFormat DEFAULT_OUTPUT_FORMAT = OutputFormat::Jpg;
+    private const int DEFAULT_RESOLUTION             = 144;
+    private const int DEFAULT_COMPRESSION_QUALITY    = 50;
 
     /**
      * @param positive-int $resolution
      * @param int<1,100>   $compressionQuality
      */
     private function __construct(
-        public readonly OutputFormat $outputFormat,
-        public readonly int $resolution,
-        public readonly int $compressionQuality,
+        public OutputFormat $outputFormat,
+        public int $resolution,
+        public int $compressionQuality,
     ) {
     }
 
