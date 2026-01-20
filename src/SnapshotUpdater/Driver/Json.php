@@ -28,7 +28,7 @@ use const JSON_UNESCAPED_SLASHES;
 
 final class Json implements Driver
 {
-    public const DEFAULT_MATCHER_PATTERNS = [
+    public const array DEFAULT_MATCHER_PATTERNS = [
         '@string@',
         '@integer@',
         '@number@',

@@ -21,13 +21,12 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - 8.2
-          - 8.3
           - 8.4
           - 8.5
         symfony-version:
           - 6.4.*
           - 7.4.*
+          - 8.0.*
         dependencies: [lowest, highest]
     name: 'PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }} + ${{ matrix.dependencies }} dependencies'
 

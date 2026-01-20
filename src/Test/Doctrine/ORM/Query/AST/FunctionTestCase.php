@@ -13,8 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 use function method_exists;
 
-use const PHP_VERSION_ID;
-
 abstract class FunctionTestCase extends TestCase
 {
     /**
@@ -28,7 +26,7 @@ abstract class FunctionTestCase extends TestCase
         $configuration->setProxyDir(__DIR__ . '/Fixtures/Proxies');
         $configuration->setProxyNamespace(__NAMESPACE__ . '\Proxy');
         $configuration->setAutoGenerateProxyClasses(true);
-        if (PHP_VERSION_ID >= 80400 && method_exists($configuration, 'enableNativeLazyObjects')) {
+        if (method_exists($configuration, 'enableNativeLazyObjects')) {
             $configuration->enableNativeLazyObjects(true);
         }
 
