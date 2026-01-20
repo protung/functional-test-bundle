@@ -17,8 +17,8 @@ final class Speicher210FunctionalTestExtension extends ConfigurableExtension
      */
     public function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new Loader\PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.php');
 
         $container
             ->getDefinition(TestStubCreateCommand::class)
