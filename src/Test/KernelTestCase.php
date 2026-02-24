@@ -36,6 +36,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 use function assert;
 use function class_exists;
+use function file_exists;
 use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
@@ -249,7 +250,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         );
 
         $fixturesFile = $this->getFixturesFileForTest();
-        if (! Filesystem\exists($fixturesFile)) {
+        if (! file_exists($fixturesFile)) {
             return;
         }
 
@@ -413,7 +414,7 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         $payloadFile = $this->getCurrentPayloadContentFile($type, true);
-        if (Filesystem\exists($payloadFile)) {
+        if (file_exists($payloadFile)) {
             return $payloadFile;
         }
 

@@ -31,7 +31,7 @@ abstract class IntegrationTestCase extends \Twig\Test\IntegrationTestCase
      */
     public static function dataProviderTestIntegration(): iterable
     {
-        return (new static('test'))->getTests('test');
+        return (new static('test'))->getTests('test'); // @phpstan-ignore-line
     }
 
     #[DataProvider('dataProviderTestIntegration')]
