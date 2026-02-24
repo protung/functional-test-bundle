@@ -39,7 +39,7 @@
     "moneyphp/money": "^4.8.0",
     "nesbot/carbon": "^3.11.0",
     "php-standard-library/phpstan-extension": "^2.0.2",
-    "phpstan/phpstan": "<=2.1.12",
+    "phpstan/phpstan": "^2.1.12",
     "phpstan/phpstan-phpunit": "^2.0.6",
     "phpstan/phpstan-strict-rules": "^2.0.6",
     "phpstan/phpstan-symfony": "^2.0.4",

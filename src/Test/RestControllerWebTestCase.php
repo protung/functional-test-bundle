@@ -6,7 +6,6 @@ namespace Speicher210\FunctionalTestBundle\Test;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Psl\File;
-use Psl\Filesystem;
 use Psl\Json;
 use Psl\Type;
 use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
@@ -19,6 +18,7 @@ use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use function array_replace_recursive;
+use function file_exists;
 use function parse_str;
 use function parse_url;
 
@@ -233,7 +233,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
         $expected = null;
         if ($expectedStatusCode !== Response::HTTP_NO_CONTENT) {
             $expectedFile = $this->getExpectedResponseContentFile('json');
-            if (Filesystem\exists($expectedFile)) {
+            if (file_exists($expectedFile)) {
                 $expected = $this->prettifyJson(File\read($expectedFile));
             }
         }

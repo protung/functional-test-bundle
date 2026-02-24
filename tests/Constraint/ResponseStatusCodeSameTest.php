@@ -14,7 +14,7 @@ final class ResponseStatusCodeSameTest extends TestCase
     public function testEvaluateReturnsNullForTheSameStatusCode(): void
     {
         $response = $this->createMock(Response::class);
-        $response->expects(self::once())->method('getStatusCode')->willReturn(200);
+        $response->expects($this->once())->method('getStatusCode')->willReturn(200);
 
         $constraint = new ResponseStatusCodeSame(200);
 
@@ -24,7 +24,7 @@ final class ResponseStatusCodeSameTest extends TestCase
     public function testEvaluateThrowsExceptionForDifferentStatusCode(): void
     {
         $response = $this->createMock(Response::class);
-        $response->expects(self::exactly(2))->method('getStatusCode')->willReturn(201);
+        $response->expects($this->exactly(2))->method('getStatusCode')->willReturn(201);
 
         $constraint = new ResponseStatusCodeSame(200);
 
