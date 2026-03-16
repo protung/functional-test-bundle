@@ -27,6 +27,8 @@ enum DummyFile: string
 
     case VideoMpeg = 'dummy_video.mpeg';
 
+    case Xlsx = 'dummy_excel.xlsx';
+
     /**
      * @return non-empty-string
      */
@@ -67,6 +69,7 @@ enum DummyFile: string
             self::Pdf => 'application/pdf',
             self::Text => 'text/plain',
             self::VideoMpeg => 'video/mpeg',
+            self::Xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         };
     }
 }
