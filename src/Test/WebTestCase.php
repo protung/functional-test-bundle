@@ -152,7 +152,7 @@ abstract class WebTestCase extends KernelTestCase
     protected function getRequestUploadLargeFile(int $bytes, string $originalName = 'large_file.txt'): UploadedFile
     {
         $root      = VfsStreamSetup::getRoot();
-        $largeFile = vfsStream::newFile('large.txt')
+        $largeFile = vfsStream::newFile($originalName)
             ->withContent(new LargeFileContent($bytes))
             ->at($root);
 
