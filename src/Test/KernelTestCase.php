@@ -223,6 +223,18 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         return $this->getObjectManager()->find($entityClass, $entityId);
     }
 
+    /**
+     * @param class-string<TEntity> $entityClass
+     *
+     * @return iterable<TEntity>
+     *
+     * @template TEntity of object
+     */
+    protected function findAllEntities(string $entityClass): iterable
+    {
+        return $this->getObjectManager()->getRepository($entityClass)->findAll();
+    }
+
     protected function getDefaultDatabaseConnection(): Connection
     {
         return $this->getContainerService(Connection::class);
