@@ -52,7 +52,7 @@ jobs:
         run: composer config extra.symfony.require "${{ matrix.symfony-version }}.*"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v4
         with:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: --prefer-dist
