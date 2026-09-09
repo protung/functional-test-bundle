@@ -100,6 +100,12 @@ parameters:
 			path: src/Test/KernelTestCase.php
 
 		-
+			rawMessage: 'Parameter #1 $reflection of method Speicher210\FunctionalTestBundle\Test\KernelTestCase::getFixturesFromTraits() expects ReflectionClass<object>, ReflectionObject<$this(Speicher210\FunctionalTestBundle\Test\KernelTestCase)> given.'
+			identifier: argument.type
+			count: 1
+			path: src/Test/KernelTestCase.php
+
+		-
 			message: '#^Parameter \#1 \$classes of method Doctrine\\ORM\\Tools\\SchemaTool\:\:createSchema\(\) expects list\<Doctrine\\ORM\\Mapping\\ClassMetadata\>, array\<Doctrine\\ORM\\Mapping\\ClassMetadata\> given\.$#'
 			identifier: argument.type
 			count: 1

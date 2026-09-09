@@ -20,6 +20,7 @@ enum DummyFile: string
     case ImagePng    = 'dummy_image.png';
     case ImageSvg    = 'dummy_image.svg';
     case ImageSvgXSS = 'dummy_image_xss.svg';
+    case ImageWebp   = 'dummy_image.webp';
 
     case Pdf = 'dummy_pdf.pdf';
 
@@ -70,6 +71,7 @@ enum DummyFile: string
             self::Text => 'text/plain',
             self::VideoMpeg => 'video/mpeg',
             self::Xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            self::ImageWebp => 'image/webp',
         };
     }
 }
