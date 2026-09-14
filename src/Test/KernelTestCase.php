@@ -30,6 +30,7 @@ use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\Intl\LocaleSensitiveTestCase;
+use Speicher210\FunctionalTestBundle\Test\Loader\LoaderAsService;
 use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -37,6 +38,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use function assert;
 use function class_exists;
 use function file_exists;
+use function is_subclass_of;
 use function str_starts_with;
 
 abstract class KernelTestCase extends SymfonyKernelTestCase
@@ -363,7 +365,12 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
         }
 
         foreach ($classNames as $className) {
-            $fixture = new $className();
+            if (is_subclass_of($className, LoaderAsService::class, true)) {
+                $fixture = $this->getContainerService(FixtureInterface::class, $className);
+            } else {
+                $fixture = new $className();
+            }
+
             $fixtureLoader->addFixture($fixture);
         }
 
