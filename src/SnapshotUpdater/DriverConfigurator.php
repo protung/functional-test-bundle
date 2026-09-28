@@ -52,7 +52,7 @@ final class DriverConfigurator
         if (self::$binaryDriver === null) {
             throw new RuntimeException(
                 Str\format(
-                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    'Updater is not created. You should call %s::createDrivers first to create it.',
                     self::class,
                 ),
             );
@@ -75,7 +75,7 @@ final class DriverConfigurator
         if (self::$jsonDriver === null) {
             throw new RuntimeException(
                 Str\format(
-                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    'Updater is not created. You should call %s::createDrivers first to create it.',
                     self::class,
                 ),
             );
@@ -98,7 +98,7 @@ final class DriverConfigurator
         if (self::$textDriver === null) {
             throw new RuntimeException(
                 Str\format(
-                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    'Updater is not created. You should call %s::createDrivers first to create it.',
                     self::class,
                 ),
             );
@@ -121,7 +121,7 @@ final class DriverConfigurator
         if (self::$xmlDriver === null) {
             throw new RuntimeException(
                 Str\format(
-                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    'Updater is not created. You should call %s::createDrivers first to create it.',
                     self::class,
                 ),
             );
@@ -140,7 +140,7 @@ final class DriverConfigurator
         if (self::$binaryDriver === null || self::$jsonDriver === null || self::$textDriver === null || self::$xmlDriver === null) {
             throw new RuntimeException(
                 Str\format(
-                    'Updater is not created. You should call %s::createOutputUpdater first to create it.',
+                    'Updater is not created. You should call %s::createDrivers first to create it.',
                     self::class,
                 ),
             );
