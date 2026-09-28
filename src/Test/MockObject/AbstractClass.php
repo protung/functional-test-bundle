@@ -6,18 +6,24 @@ namespace Speicher210\FunctionalTestBundle\Test\MockObject;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psl\Str;
+use Psl\Vec;
+use ReflectionClass;
+use ReflectionMethod;
 use ReflectionProperty;
 
 use function get_parent_class;
 use function property_exists;
 
+/** @phpstan-require-extends TestCase */
 trait AbstractClass
 {
     /**
      * Returns a mock object for the specified abstract class with all abstract methods of the class mocked.
      * Concrete methods are not mocked by default.
      * To mock concrete methods, use the $mockedMethods parameter.
+     * The original constructor is not called.
      *
      * @param class-string<RealInstanceType> $originalClassName
      * @param list<non-empty-string>         $mockedMethods
@@ -29,14 +35,17 @@ trait AbstractClass
      */
     protected function createMockForAbstractClass(string $originalClassName, array $mockedMethods = [], array $mockedProperties = []): MockObject
     {
-        $object = $this->getMockForAbstractClass(
+        $abstractMethods = Vec\map(
+            Vec\filter(
+                (new ReflectionClass($originalClassName))->getMethods(),
+                static fn (ReflectionMethod $method): bool => $method->isAbstract(),
+            ),
+            static fn (ReflectionMethod $method): string => $method->getName(),
+        );
+
+        $object = $this->createPartialMock(
             $originalClassName,
-            [],
-            '',
-            false,
-            false,
-            true,
-            $mockedMethods,
+            Vec\unique([...$abstractMethods, ...$mockedMethods]),
         );
 
         foreach ($mockedProperties as $mockedPropertyName => $mockedPropertyValue) {
@@ -71,19 +80,4 @@ trait AbstractClass
             ),
         );
     }
-
-    /**
-     * Returns a mock object for the specified abstract class with all abstract
-     * methods of the class mocked. Concrete methods are not mocked by default.
-     * To mock concrete methods, use the 7th parameter ($mockedMethods).
-     *
-     * @param array<mixed>                   $arguments         Constructor arguments
-     * @param class-string<RealInstanceType> $originalClassName
-     * @param list<non-empty-string>         $mockedMethods
-     *
-     * @return MockObject&RealInstanceType
-     *
-     * @psalm-template RealInstanceType of object
-     */
-    abstract protected function getMockForAbstractClass(string $originalClassName, array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, array $mockedMethods = [], bool $cloneArguments = false): MockObject;
 }
