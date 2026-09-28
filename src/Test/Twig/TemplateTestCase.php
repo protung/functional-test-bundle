@@ -6,6 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Test\Twig;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Psl\Str;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
@@ -65,8 +66,9 @@ abstract class TemplateTestCase extends KernelTestCase
         } catch (ExpectationFailedException $e) {
             $comparisonFailure = $e->getComparisonFailure();
             if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+                // The XML assertion compares DOM documents, so the expected file is updated with the rendered HTML instead.
                 SnapshotUpdater::updateText(
-                    $comparisonFailure,
+                    new ComparisonFailure($comparisonFailure->getExpected(), $actual, $comparisonFailure->getExpectedAsString(), $actual),
                     $expectedFile,
                 );
             }
