@@ -37,7 +37,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
     /**
      * The authenticated user for the test.
      */
-    protected static UserInterface|null $authentication;
+    protected static UserInterface|null $authentication = self::AUTHENTICATION_NONE;
 
     public static function assertJsonResponseContent(
         Response $response,
