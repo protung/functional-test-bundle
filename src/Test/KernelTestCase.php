@@ -104,11 +104,16 @@ abstract class KernelTestCase extends SymfonyKernelTestCase
                 continue;
             }
 
+            if ($property->isReadOnly() || $property->isVirtual()) {
+                continue;
+            }
+
             if ($property->getType() !== null && ! $property->getType()->allowsNull()) {
                 continue;
             }
 
-            $property->setValue($this, null);
+            // Bypass property hooks, the value is only reset to free memory.
+            $property->setRawValue($this, null);
         }
     }
 
