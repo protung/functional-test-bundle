@@ -9,7 +9,9 @@ use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Runtime\PropertyHook;
 use Psl\Vec;
+use ReflectionProperty;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
@@ -207,8 +209,17 @@ abstract class FormTypeTestCase extends KernelTestCase
         array $submittedFilesData = [],
     ): FormInterface {
         $this->currentRequestMock->method('getMethod')->willReturn($method);
-        $this->currentRequestMock->request = new InputBag($submittedRequestData);
-        $this->currentRequestMock->files   = new FileBag($submittedFilesData);
+
+        $requestBag = new InputBag($submittedRequestData);
+        $filesBag   = new FileBag($submittedFilesData);
+        // Since Symfony 8.1 the request bags are hooked properties, so the mock ignores assignments to them.
+        if ((new ReflectionProperty(Request::class, 'request'))->hasHooks()) {
+            $this->currentRequestMock->method(PropertyHook::get('request'))->willReturn($requestBag);
+            $this->currentRequestMock->method(PropertyHook::get('files'))->willReturn($filesBag);
+        } else {
+            $this->currentRequestMock->request = $requestBag;
+            $this->currentRequestMock->files   = $filesBag;
+        }
 
         $this->requestStackMock->method('getCurrentRequest')->willReturn($this->currentRequestMock);
 
