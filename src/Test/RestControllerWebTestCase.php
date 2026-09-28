@@ -389,7 +389,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected403Response(): string
     {
-        return File\read(__DIR__ . '/Expected/403.json');
+        return File\read(__DIR__ . '/RestControllerWebTestCase/403.json');
     }
 
     /**
@@ -424,7 +424,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected401Response(): string
     {
-        return File\read(__DIR__ . '/Expected/401.json');
+        return File\read(__DIR__ . '/RestControllerWebTestCase/401.json');
     }
 
     /**
@@ -460,7 +460,7 @@ abstract class RestControllerWebTestCase extends WebTestCase
 
     protected function getExpected404Response(): string
     {
-        return File\read(__DIR__ . '/Expected/404.json');
+        return File\read(__DIR__ . '/RestControllerWebTestCase/404.json');
     }
 
     protected function getExpectedErrorResponseContentType(): string
