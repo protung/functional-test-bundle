@@ -56,7 +56,7 @@ class TestStubCreateCommand extends Command
             ->addOption(
                 'expected',
                 null,
-                InputArgument::OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'The number of expected files to generate.',
                 0,
             )
