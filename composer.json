@@ -79,26 +79,5 @@
       "ergebnis/composer-normalize": true
     },
     "sort-packages": true
-  },
-  "scripts": {
-    "analyse": [
-      "@analyse-phpstan"
-    ],
-    "analyse-phpstan": [
-      "phpstan analyse --memory-limit=256M"
-    ],
-    "analyse-phpstan-update": [
-      "phpstan analyse --memory-limit=256M --generate-baseline"
-    ],
-    "check": [
-      "composer validate",
-      "composer normalize --dry-run",
-      "@cs-check",
-      "@analyse",
-      "@test"
-    ],
-    "cs-check": "phpcs -p",
-    "cs-fix": "phpcbf -p",
-    "test": "phpunit"
   }
 }

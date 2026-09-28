@@ -58,18 +58,6 @@ parameters:
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 1
-			path: src/Test/Twig/IntegrationTestCase.php
-
-		-
-			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Test/KernelTestCase.php
-
-		-
 			message: '#^Class Doctrine\\Bundle\\FixturesBundle\\Loader\\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters\.$#'
 			identifier: new.noConstructor
 			count: 1
@@ -80,12 +68,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Test/KernelTestCase.php
-
-		-
-			message: '#^Parameter \#1 \$classes of method Doctrine\\ORM\\Tools\\SchemaTool\:\:createSchema\(\) expects list\<Doctrine\\ORM\\Mapping\\ClassMetadata\>, array\<Doctrine\\ORM\\Mapping\\ClassMetadata\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Test/bootstrap.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Doctrine\\ORM\\Configuration and ''enableNativeLazyObj…'' will always evaluate to false\.$#'

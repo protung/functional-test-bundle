@@ -6,3 +6,4 @@
 /phpstan.neon export-ignore
 /phpstan-baseline.neon export-ignore
 /phpunit.xml.dist export-ignore
+/justfile export-ignore

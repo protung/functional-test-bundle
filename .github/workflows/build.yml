@@ -52,5 +52,8 @@ jobs:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: --prefer-dist
 
+      - name: Setup just
+        uses: extractions/setup-just@v4
+
       - name: Run checks
-        run: composer check
+        run: just check
