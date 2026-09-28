@@ -6,6 +6,7 @@ namespace Speicher210\FunctionalTestBundle\Command;
 
 use Psl;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,10 @@ use function ucfirst;
 
 use const PHP_EOL;
 
+#[AsCommand(
+    name: 'sp210:test:stub:create',
+    description: 'Create necessary files and directories for a functional test.',
+)]
 class TestStubCreateCommand extends Command
 {
     /** @var class-string */
@@ -41,8 +46,6 @@ class TestStubCreateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('sp210:test:stub:create')
-            ->setDescription('Create necessary files and directories for a functional test.')
             ->addArgument(
                 'path',
                 InputArgument::REQUIRED,
