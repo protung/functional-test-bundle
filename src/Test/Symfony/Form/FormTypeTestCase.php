@@ -210,15 +210,13 @@ abstract class FormTypeTestCase extends KernelTestCase
     ): FormInterface {
         $this->currentRequestMock->method('getMethod')->willReturn($method);
 
-        $requestBag = new InputBag($submittedRequestData);
-        $filesBag   = new FileBag($submittedFilesData);
         // Since Symfony 8.1 the request bags are hooked properties, so the mock ignores assignments to them.
         if ((new ReflectionProperty(Request::class, 'request'))->hasHooks()) {
-            $this->currentRequestMock->method(PropertyHook::get('request'))->willReturn($requestBag);
-            $this->currentRequestMock->method(PropertyHook::get('files'))->willReturn($filesBag);
+            $this->currentRequestMock->method(PropertyHook::get('request'))->willReturn(new InputBag($submittedRequestData));
+            $this->currentRequestMock->method(PropertyHook::get('files'))->willReturn(new FileBag($submittedFilesData));
         } else {
-            $this->currentRequestMock->request = $requestBag;
-            $this->currentRequestMock->files   = $filesBag;
+            $this->currentRequestMock->request = new InputBag($submittedRequestData);
+            $this->currentRequestMock->files   = new FileBag($submittedFilesData);
         }
 
         $this->requestStackMock->method('getCurrentRequest')->willReturn($this->currentRequestMock);
