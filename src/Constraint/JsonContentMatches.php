@@ -12,11 +12,8 @@ use function is_string;
 
 final class JsonContentMatches extends ResponseContentConstraint
 {
-    private string $expectedContent;
-
-    public function __construct(string $expectedContent)
+    public function __construct(private readonly string $expectedContent)
     {
-        $this->expectedContent = $expectedContent;
     }
 
     public function toString(): string

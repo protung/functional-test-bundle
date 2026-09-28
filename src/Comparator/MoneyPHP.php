@@ -24,7 +24,7 @@ use function assert;
  */
 final class MoneyPHP extends Comparator
 {
-    private IntlMoneyFormatter $formatter;
+    private readonly IntlMoneyFormatter $formatter;
 
     public function __construct()
     {

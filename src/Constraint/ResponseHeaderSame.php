@@ -13,14 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseHeaderSame extends Constraint
 {
-    private string $headerName;
-
-    private string $expectedValue;
-
-    public function __construct(string $headerName, string $expectedValue)
+    public function __construct(private readonly string $headerName, private readonly string $expectedValue)
     {
-        $this->headerName    = $headerName;
-        $this->expectedValue = $expectedValue;
     }
 
     public function evaluate(mixed $other, string $description = '', bool $returnResult = false): bool|null

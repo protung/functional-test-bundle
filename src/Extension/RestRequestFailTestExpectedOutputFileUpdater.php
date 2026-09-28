@@ -18,29 +18,13 @@ use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 final class RestRequestFailTestExpectedOutputFileUpdater implements Extension
 {
     /**
-     * Fields that will always be updated with a fixed value.
-     *
-     * Ex: ['createdAt' => '@string@.isDateTime()']
-     *
-     * @var array<string,string>
+     * @param array<string,string> $fields          Fields that will always be updated with a fixed value in the expected output. Ex: ['createdAt' => '@string@.isDateTime()']
+     * @param list<string>         $matcherPatterns Patterns that should be kept when updating.
      */
-    private array $fields;
-
-    /**
-     * Array of patterns that should be kept when updating.
-     *
-     * @var list<string>
-     */
-    private array $matcherPatterns;
-
-    /**
-     * @param array<string,string> $fields          The fields to update in the expected output.
-     * @param list<string>         $matcherPatterns
-     */
-    public function __construct(array $fields = [], array $matcherPatterns = Json::DEFAULT_MATCHER_PATTERNS)
-    {
-        $this->fields          = $fields;
-        $this->matcherPatterns = $matcherPatterns;
+    public function __construct(
+        private readonly array $fields = [],
+        private readonly array $matcherPatterns = Json::DEFAULT_MATCHER_PATTERNS,
+    ) {
     }
 
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
@@ -51,7 +35,7 @@ final class RestRequestFailTestExpectedOutputFileUpdater implements Extension
                  * @param array<string,string> $fields          The fields to update in the expected output.
                  * @param list<string>         $matcherPatterns
                  */
-                public function __construct(private array $fields, private array $matcherPatterns)
+                public function __construct(private readonly array $fields, private readonly array $matcherPatterns)
                 {
                 }
 

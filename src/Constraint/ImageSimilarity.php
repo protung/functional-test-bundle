@@ -13,14 +13,8 @@ use function is_string;
 
 final class ImageSimilarity extends Constraint
 {
-    private string $expectedImageContent;
-
-    private float $similarityDelta;
-
-    public function __construct(string $expectedImageContent, float $similarityDelta)
+    public function __construct(private readonly string $expectedImageContent, private readonly float $similarityDelta)
     {
-        $this->expectedImageContent = $expectedImageContent;
-        $this->similarityDelta      = $similarityDelta;
     }
 
     public function toString(): string

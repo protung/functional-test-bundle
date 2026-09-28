@@ -12,14 +12,14 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
  * This is meant to be used when the test is in the parent, but the fixtures are controlled from the child class.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-final class WithFixtureForTest
+final readonly class WithFixtureForTest
 {
     /**
      * @param class-string<FixtureInterface> $fixture
      */
     public function __construct(
-        public readonly string $fixture,
-        public readonly string $testName,
+        public string $fixture,
+        public string $testName,
     ) {
     }
 }

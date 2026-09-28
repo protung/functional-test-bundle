@@ -11,11 +11,8 @@ use function sprintf;
 
 final class ResponseContentMatchesFile extends ResponseContentConstraint
 {
-    private string $expectedFile;
-
-    public function __construct(string $expectedFile)
+    public function __construct(private readonly string $expectedFile)
     {
-        $this->expectedFile = $expectedFile;
     }
 
     public function toString(): string

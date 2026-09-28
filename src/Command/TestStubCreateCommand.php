@@ -30,16 +30,11 @@ use const PHP_EOL;
 )]
 class TestStubCreateCommand extends Command
 {
-    /** @var class-string */
-    private string $fixtureLoaderExtendClass;
-
     /**
      * @param class-string $fixtureLoaderExtendClass
      */
-    public function __construct(string $fixtureLoaderExtendClass)
+    public function __construct(private readonly string $fixtureLoaderExtendClass)
     {
-        $this->fixtureLoaderExtendClass = $fixtureLoaderExtendClass;
-
         parent::__construct();
     }
 

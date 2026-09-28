@@ -43,39 +43,15 @@ final class Json implements Driver
     ];
 
     /**
-     * Fields that will always be updated with a fixed value.
-     *
-     * Ex: ['createdAt' => '@string@.isDateTime()']
-     *
-     * @var array<string,string>
-     */
-    private array $fields;
-
-    /**
-     * Array of patterns that should be kept when updating.
-     *
-     * @var array<string>
-     */
-    private array $matcherPatterns;
-
-    private int $jsonEncodeOptions;
-
-    private Matcher $matcher;
-
-    /**
-     * @param array<string,string> $fields          The fields to update in the expected output.
-     * @param list<string>         $matcherPatterns
+     * @param array<string,string> $fields          Fields that will always be updated with a fixed value in the expected output. Ex: ['createdAt' => '@string@.isDateTime()']
+     * @param list<string>         $matcherPatterns Patterns that should be kept when updating.
      */
     public function __construct(
-        Matcher $matcher,
-        array $fields = [],
-        array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS,
-        int $jsonEncodeOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION,
+        private readonly Matcher $matcher,
+        private readonly array $fields = [],
+        private readonly array $matcherPatterns = self::DEFAULT_MATCHER_PATTERNS,
+        private readonly int $jsonEncodeOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION,
     ) {
-        $this->fields            = $fields;
-        $this->matcherPatterns   = $matcherPatterns;
-        $this->matcher           = $matcher;
-        $this->jsonEncodeOptions = $jsonEncodeOptions;
     }
 
     public function serialize(ComparisonFailure $comparisonFailure): string

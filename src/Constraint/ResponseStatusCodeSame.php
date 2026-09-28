@@ -11,11 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseStatusCodeSame extends Constraint
 {
-    private int $statusCode;
-
-    public function __construct(int $statusCode)
+    public function __construct(private readonly int $statusCode)
     {
-        $this->statusCode = $statusCode;
     }
 
     public function toString(): string
