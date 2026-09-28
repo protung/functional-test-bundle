@@ -76,15 +76,9 @@
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "ergebnis/composer-normalize": true,
-      "ocramius/package-versions": true
+      "ergebnis/composer-normalize": true
     },
     "sort-packages": true
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "2.0-dev"
-    }
   },
   "scripts": {
     "analyse": [

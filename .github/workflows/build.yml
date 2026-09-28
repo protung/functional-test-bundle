@@ -15,6 +15,8 @@ jobs:
   check:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    env:
+      SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -43,9 +45,6 @@ jobs:
         run: |
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require symfony/flex
-
-      - name: "Configure Symfony version for symfony/flex"
-        run: composer config extra.symfony.require "${{ matrix.symfony-version }}"
 
       - name: "Install dependencies with Composer"
         uses: ramsey/composer-install@v4
