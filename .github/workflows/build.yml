@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ main, 2.x ]
+    branches: [ 2.x, 3.x ]
   pull_request:
-    branches: [ main, 2.x ]
+    branches: [ 2.x, 3.x ]
     types:
       - opened
       - synchronize
@@ -15,8 +15,6 @@ jobs:
   check:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    env:
-      SYMFONY_REQUIRE: ${{ matrix.symfony }}
     strategy:
       fail-fast: false
       matrix:
@@ -27,6 +25,7 @@ jobs:
           - 6.4.*
           - 7.4.*
           - 8.0.*
+          - 8.1.*
         dependencies: [lowest, highest]
     name: 'PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }} + ${{ matrix.dependencies }} dependencies'
 
@@ -38,18 +37,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: pcov
-          tools: flex
+          coverage: none
 
       - name: "symfony/flex is required to install the correct symfony version"
-        if: ${{ matrix.symfony-version }}
         run: |
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require symfony/flex
 
       - name: "Configure Symfony version for symfony/flex"
-        if: ${{ matrix.symfony-version }}
-        run: composer config extra.symfony.require "${{ matrix.symfony-version }}.*"
+        run: composer config extra.symfony.require "${{ matrix.symfony-version }}"
 
       - name: "Install dependencies with Composer"
         uses: ramsey/composer-install@v4
