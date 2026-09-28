@@ -7,6 +7,7 @@ namespace Speicher210\FunctionalTestBundle\Test\Doctrine\DBAL\Types;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psl\Dict;
@@ -39,18 +40,21 @@ abstract class TypeTestCase extends KernelTestCase
         $this->type     = Type::getType(Dict\flip(Type::getTypesMap())[static::classUnderTest()]);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsNullToDatabaseValue(): void
     {
         $actual = $this->type->convertToDatabaseValue(null, $this->platform);
         self::assertNull($actual);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsNullToPHPValue(): void
     {
         $actual = $this->type->convertToPHPValue(null, $this->platform);
         self::assertNull($actual);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsEmptyStringToPHPValue(): void
     {
         $actual = $this->type->convertToPHPValue('', $this->platform);
@@ -79,6 +83,7 @@ abstract class TypeTestCase extends KernelTestCase
     abstract public static function dataProviderTestConvertsToPHPValueValidValues(): iterable;
 
     #[DataProvider('dataProviderConvertsToDatabaseInvalidValues')]
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsToDatabaseValueThrowsExceptionOnInvalidValue(mixed $value, string $expectedMessage): void
     {
         $this->expectException(ConversionException::class);
@@ -88,6 +93,7 @@ abstract class TypeTestCase extends KernelTestCase
     }
 
     #[DataProvider('dataProviderConvertsToPHPInvalidValues')]
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsToPHPValueThrowsExceptionOnInvalidValue(mixed $value, string $expectedMessage): void
     {
         $this->expectException(ConversionException::class);
@@ -97,6 +103,7 @@ abstract class TypeTestCase extends KernelTestCase
     }
 
     #[DataProvider('dataProviderTestConvertsToDatabaseValueValidValues')]
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsToDatabaseValue(mixed $value, mixed $expected): void
     {
         $actual = $this->type->convertToDatabaseValue($value, $this->platform);
@@ -105,6 +112,7 @@ abstract class TypeTestCase extends KernelTestCase
     }
 
     #[DataProvider('dataProviderTestConvertsToPHPValueValidValues')]
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertsToPHPValue(mixed $value, mixed $expected): void
     {
         $actual = $this->type->convertToPHPValue($value, $this->platform);
