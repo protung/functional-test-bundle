@@ -189,6 +189,72 @@ vendor/bin/phpunit --extension "Speicher210\FunctionalTestBundle\Extension\RestR
 To add a new REST snapshot, create the expected file with `{}` as content (the [stub command](#creating-test-stubs) can do this) and run the test with the extension.
 `assertArrayMatchesExpectedJson()` creates missing expected files itself while the extension is registered.
 
+#### Fixed values and matcher patterns
+
+The extension always uses the default matcher patterns (`Json::DEFAULT_MATCHER_PATTERNS`) and no fixed values.
+To change them, enable the updater yourself in the bootstrap file instead of registering the extension:
+
+```php
+// tests/bootstrap.php
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\Driver\Json;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
+
+if (getenv('UPDATE_SNAPSHOTS') === '1') {
+    DriverConfigurator::createDrivers(
+        fields: ['createdAt' => '@string@.isDateTime()'],
+        matcherPatterns: Json::DEFAULT_MATCHER_PATTERNS,
+    );
+    DriverConfigurator::enableOutputUpdater();
+}
+```
+
+```bash
+UPDATE_SNAPSHOTS=1 vendor/bin/phpunit
+```
+
+- `fields` are JSON keys whose values are always written with the given value, at any depth. This is useful for values that change on every run, like timestamps.
+- `matcherPatterns` are the patterns that are kept in the expected file as long as they still match.
+
+Don't register the extension at the same time: when the run starts, it resets the drivers to its defaults.
+
+#### Updating expected files from your own assertions
+
+`SnapshotUpdater` can update the expected file of any assertion that fails with a comparison failure.
+Catch the `ExpectationFailedException`, update the file when the updater is enabled, and rethrow the exception:
+
+```php
+use PHPUnit\Framework\ExpectationFailedException;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater;
+use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
+
+protected function assertCsvExportMatchesExpected(string $actualCsv): void
+{
+    // Next expected file of the test: Expected/<test>-<n>.csv
+    $expectedFile = $this->getExpectedContentFile('csv');
+
+    try {
+        self::assertStringEqualsFile($expectedFile, $actualCsv);
+    } catch (ExpectationFailedException $e) {
+        $comparisonFailure = $e->getComparisonFailure();
+        if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
+            SnapshotUpdater::updateText($comparisonFailure, $expectedFile);
+        }
+
+        throw $e;
+    }
+}
+```
+
+The expected file has to exist (it can be empty), otherwise the assertion fails without a comparison failure.
+Pick the method that matches the actual value in the comparison failure:
+
+| Method | Actual value in the comparison failure | Written as |
+|---|---|---|
+| `SnapshotUpdater::updateJson()` | Decoded JSON, as from the `JsonContentMatches` constraint | JSON indented with 2 spaces, keeping matcher patterns and applying fixed values |
+| `SnapshotUpdater::updateText()` | String, as from `assertStringEqualsFile()` | As is |
+| `SnapshotUpdater::updateXML()` | `DOMDocument`, as from `assertXmlStringEqualsXmlFile()` | Formatted XML |
+| `SnapshotUpdater::updateBinary()` | Binary string, as from the `ImageSimilarity` constraint | As is |
+
 ## Fixtures
 
 Fixtures are Doctrine fixtures. Extend `Test\Loader\AbstractLoader` and yield the entities to persist:
