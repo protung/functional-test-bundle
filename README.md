@@ -110,6 +110,7 @@ Expected files can use any [coduo/php-matcher](https://github.com/coduo/php-matc
 ```
 
 REST responses and arrays are compared as JSON, console output and form errors as text, Twig templates as HTML, and PDFs by text and page images.
+REST responses and console output without an expected file must be empty, so tests of commands that print nothing don't need one.
 
 ### Updating expected files
 

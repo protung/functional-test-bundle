@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
+use function file_exists;
+
 abstract class CommandTestCase extends KernelTestCase
 {
     /**
@@ -54,7 +56,12 @@ abstract class CommandTestCase extends KernelTestCase
         $expectedFile = $this->getExpectedContentFile('txt');
 
         try {
-            self::assertStringEqualsFile($expectedFile, $actual);
+            if (file_exists($expectedFile)) {
+                self::assertStringEqualsFile($expectedFile, $actual);
+            } else {
+                // Commands without output do not need an expected file.
+                self::assertSame('', $actual, Str\format('The command has output, but the expected file "%s" does not exist.', $expectedFile));
+            }
         } catch (ExpectationFailedException $e) {
             $comparisonFailure = $e->getComparisonFailure();
             if ($comparisonFailure !== null && DriverConfigurator::isOutputUpdaterEnabled()) {
