@@ -23,11 +23,16 @@ jobs:
         php-version:
           - 8.4
           - 8.5
+          - 8.6
         symfony-version:
           - 6.4.*
           - 7.4.*
           - 8.1.*
         dependencies: [lowest, highest]
+        include:
+          # moneyphp/money doesn't allow PHP 8.6 yet
+          - php-version: 8.6
+            composer-options: --ignore-platform-req=php+
     name: 'PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }} + ${{ matrix.dependencies }} dependencies'
 
     steps:
@@ -38,6 +43,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          extensions: imagick
           coverage: none
 
       - name: "symfony/flex is required to install the correct symfony version"
@@ -49,7 +55,7 @@ jobs:
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: "${{ matrix.dependencies }}"
-          composer-options: --prefer-dist
+          composer-options: --prefer-dist ${{ matrix.composer-options }}
 
       - name: Setup just
         uses: extractions/setup-just@v4
