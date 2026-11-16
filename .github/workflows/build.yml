@@ -23,6 +23,7 @@ jobs:
         php-version:
           - 8.4
           - 8.5
+          - 8.6
         symfony-version:
           - 6.4.*
           - 7.4.*
@@ -38,6 +39,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          extensions: imagick
           coverage: none
 
       - name: "symfony/flex is required to install the correct symfony version"

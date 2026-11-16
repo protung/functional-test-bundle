@@ -11,7 +11,7 @@ A Symfony bundle with base test cases and helpers for functional testing, focuse
 
 ## Requirements
 
-- PHP 8.4 or 8.5
+- PHP 8.4, 8.5 or 8.6
 - Symfony 6.4, 7.4 or 8.1+
 - PHPUnit 12.5.8+ or 13
 - Doctrine ORM 2.20+ or 3, DBAL 3 or 4
