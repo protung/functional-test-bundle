@@ -8,6 +8,7 @@ parameters:
 
 includes:
     - phpstan-baseline.neon
+    - phpstan-conditional.php
     - phar://phpstan.phar/conf/bleedingEdge.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
