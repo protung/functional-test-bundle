@@ -26,7 +26,6 @@ jobs:
         symfony-version:
           - 6.4.*
           - 7.4.*
-          - 8.0.*
           - 8.1.*
         dependencies: [lowest, highest]
     name: 'PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }} + ${{ matrix.dependencies }} dependencies'
