@@ -8,7 +8,6 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Psl\File;
 use Psl\Json;
 use Psl\Type;
-use Speicher210\FunctionalTestBundle\Constraint\JsonContentMatches;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater;
 use Speicher210\FunctionalTestBundle\SnapshotUpdater\DriverConfigurator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -38,14 +37,6 @@ abstract class RestControllerWebTestCase extends WebTestCase
      * The authenticated user for the test.
      */
     protected static UserInterface|null $authentication = self::AUTHENTICATION_NONE;
-
-    public static function assertJsonResponseContent(
-        Response $response,
-        string $expectedContent,
-        string $message = '',
-    ): void {
-        static::assertThat($response->getContent(), new JsonContentMatches($expectedContent), $message);
-    }
 
     protected function setUp(): void
     {

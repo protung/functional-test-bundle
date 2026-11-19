@@ -12,7 +12,6 @@ use org\bovigo\vfs\vfsStream;
 use Psl\Str;
 use Psl\Type;
 use RuntimeException;
-use Speicher210\FunctionalTestBundle\Constraint\ResponseContentMatchesFile;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseHeaderSame;
 use Speicher210\FunctionalTestBundle\Constraint\ResponseStatusCodeSame;
 use Speicher210\FunctionalTestBundle\VfsStreamSetup;
@@ -35,6 +34,8 @@ use const PHP_EOL;
 
 abstract class WebTestCase extends KernelTestCase
 {
+    use Concern\AssertsResponseSnapshots;
+
     protected const string IMAGE_TYPE_BMP = 'bmp';
     protected const string IMAGE_TYPE_GIF = 'gif';
     protected const string IMAGE_TYPE_JPG = 'jpg';
@@ -99,18 +100,6 @@ abstract class WebTestCase extends KernelTestCase
         $client->getCookieJar()->set($cookie);
     }
 
-    /**
-     * Get the expected response content file.
-     *
-     * @param non-empty-string $type The file type (txt, yml, etc).
-     *
-     * @return non-empty-string
-     */
-    protected function getExpectedResponseContentFile(string $type): string
-    {
-        return $this->getExpectedContentFile($type);
-    }
-
     public static function assertResponseStatusCode(Response $response, int $expectedCode, string $message = ''): void
     {
         static::assertThat($response, new ResponseStatusCodeSame($expectedCode), $message);
@@ -135,15 +124,6 @@ abstract class WebTestCase extends KernelTestCase
                 $response->headers->get('Location') ?? '',
             ),
         );
-    }
-
-    public static function assertResponseContentMatchesFile(
-        Response $response,
-        string $expectedFile,
-        string $message = '',
-    ): void {
-        static::assertFileExists($expectedFile);
-        static::assertThat($response, new ResponseContentMatchesFile($expectedFile), $message);
     }
 
     /**
