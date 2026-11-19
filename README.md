@@ -7,6 +7,7 @@ A Symfony bundle with base test cases and helpers for functional testing, focuse
 - Doctrine fixtures loaded per test, declared with attributes.
 - Access to and mocking of container services, including private ones.
 - Base test cases for console commands, forms, validators, Doctrine types, DQL functions and Twig templates.
+- End-to-end tests in a real browser with Playwright, with the same fixtures, mocks and expected files.
 
 ## Requirements
 
@@ -179,6 +180,7 @@ The expected file has to exist, even empty, because an assertion on a missing fi
 | `Test\Doctrine\ORM\Query\AST\FunctionTestCase` | Custom DQL functions, with an in-memory SQLite entity manager. |
 | `Test\Twig\TemplateTestCase` | Twig templates, with the rendered HTML compared to an expected file. |
 | `Test\Twig\IntegrationTestCase` | Twig's own integration tests, without the legacy tests. |
+| `Test\Playwright\E2ETestCase` | End-to-end tests in a real browser, see [End-to-end tests with Playwright](#end-to-end-tests-with-playwright). |
 
 All classes are in the `Speicher210\FunctionalTestBundle` namespace.
 
@@ -223,6 +225,58 @@ final class UserControllerTest extends RestControllerWebTestCase
 - Responses compared with an expected file must be `application/json`, or `application/problem+json` for errors. Both can be changed by overriding a method.
 - `loginAs()` and `loginAsAdmin()` authenticate the requests that follow in the test.
 - The 401, 403 and 404 assertions compare with bundled problem responses, which can be replaced as well.
+
+## End-to-end tests with Playwright
+
+`Test\Playwright\E2ETestCase` runs tests in a real browser with [playwright-php/playwright-symfony](https://github.com/playwright-php/playwright-symfony).
+It extends that package's `PlaywrightTestCase` and adds the fixtures, service mocks and expected files of `KernelTestCase`, through the `Test\Concern\FunctionalTest` trait.
+
+Install the package and a browser. The installer needs Node.js 20 or later:
+
+```bash
+composer require --dev playwright-php/playwright-symfony:^0.12
+vendor/bin/playwright-install chromium
+```
+
+Enable its bundle for the test environment in `config/bundles.php`:
+
+```php
+return [
+    // ...
+    Playwright\Symfony\PlaywrightSymfonyBundle::class => ['test' => true],
+];
+```
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\E2E;
+
+use App\Tests\Fixtures\Loader\LoadOneUser;
+use Speicher210\FunctionalTestBundle\Attribute\WithFixture;
+use Speicher210\FunctionalTestBundle\Test\Playwright\E2ETestCase;
+
+#[WithFixture(LoadOneUser::class)]
+final class UserProfileTest extends E2ETestCase
+{
+    public function testShowsUser(): void
+    {
+        $this->visit('/users/1');
+        $this->assertPageContains('John Doe');
+
+        $response = $this->getLastResponse();
+        self::assertNotNull($response);
+        static::assertResponseContentMatchesFile($response, $this->getExpectedResponseContentFile('html'));
+    }
+}
+```
+
+- The browser's requests are handled by the kernel of the test, in the same PHP process. Fixtures, mocked services and the DAMA transaction apply to them, also across several `visit()` calls.
+- Fixtures are declared like in the other test cases. Playwright's own `loadFixtures(array)` hook is final and throws an exception.
+- For the page and the response, use Playwright's assertions and helpers. The `KernelBrowser` helpers and response assertions of `WebTestCase` are not available, except `assertResponseContentMatchesFile()` and `assertJsonResponseContent()`, which take the response from `getLastResponse()`.
+- PHPUnit 12.5 and later report every test as risky ("removed exception handlers other than its own"), because `PlaywrightTestCase` removes all exception handlers in `tearDown()`.
 
 ## Fixtures
 

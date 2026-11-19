@@ -52,7 +52,7 @@ parameters:
 			path: src/Test/KernelTestCase.php
 
 		-
-			message: '#^Parameter \#1 \.\.\.\$classNames of method Speicher210\\FunctionalTestBundle\\Test\\KernelTestCase\:\:loadFixtures\(\) expects class\-string\<Doctrine\\Common\\DataFixtures\\FixtureInterface\>, mixed given\.$#'
+			message: '#^Parameter \#1 \.\.\.\$classNames of method Speicher210\\FunctionalTestBundle\\Test\\KernelTestCase\:\:loadFixtureClasses\(\) expects class\-string\<Doctrine\\Common\\DataFixtures\\FixtureInterface\>, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Test/KernelTestCase.php
@@ -68,6 +68,42 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Test/KernelTestCase.php
+
+		-
+			rawMessage: 'Class Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader constructor invoked with 0 parameters, 1 required.'
+			identifier: arguments.count
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
+
+		-
+			rawMessage: 'Class Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader does not have a constructor and must be instantiated without any parameters.'
+			identifier: new.noConstructor
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
+
+		-
+			rawMessage: 'Method Speicher210\FunctionalTestBundle\Test\Playwright\E2ETestCase::getPayloadFromPhpFile() should return array<mixed> but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
+
+		-
+			rawMessage: 'Only iterables can be unpacked, mixed given in argument #1.'
+			identifier: argument.unpackNonIterable
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
+
+		-
+			rawMessage: 'Parameter #1 ...$classNames of method Speicher210\FunctionalTestBundle\Test\Playwright\E2ETestCase::loadFixtureClasses() expects class-string<Doctrine\Common\DataFixtures\FixtureInterface>, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
+
+		-
+			rawMessage: 'Parameter #1 $reflection of method Speicher210\FunctionalTestBundle\Test\Playwright\E2ETestCase::getFixturesFromTraits() expects ReflectionClass<object>, ReflectionObject<$this(Speicher210\FunctionalTestBundle\Test\Playwright\E2ETestCase)> given.'
+			identifier: argument.type
+			count: 1
+			path: src/Test/Playwright/E2ETestCase.php
 
 		-
 			message: '#^Call to function method_exists\(\) with Doctrine\\ORM\\Configuration and ''enableNativeLazyObj…'' will always evaluate to false\.$#'

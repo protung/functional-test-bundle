@@ -49,7 +49,7 @@ trait LoadsFixtures
      */
     protected function loadTestFixtures(): void
     {
-        $this->loadFixtures(
+        $this->loadFixtureClasses(
             ...$this->getAlwaysLoadingFixtures(),
             ...$this->getFixturesFromTestAttributes(),
         );
@@ -59,7 +59,7 @@ trait LoadsFixtures
             return;
         }
 
-        $this->loadFixtures(
+        $this->loadFixtureClasses(
             ...require $fixturesFile,
         );
     }
@@ -143,7 +143,7 @@ trait LoadsFixtures
     /**
      * @param class-string<FixtureInterface> ...$classNames
      */
-    private function loadFixtures(string ...$classNames): void
+    private function loadFixtureClasses(string ...$classNames): void
     {
         if ($classNames === []) {
             return;

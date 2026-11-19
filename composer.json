@@ -43,6 +43,7 @@
     "phpstan/phpstan-phpunit": "^2.0.19",
     "phpstan/phpstan-strict-rules": "^2.0.12",
     "phpstan/phpstan-symfony": "^2.0.20",
+    "playwright-php/playwright-symfony": "^0.12.0",
     "spatie/pdf-to-image": "^3.2.0",
     "spatie/pdf-to-text": "^1.54.0",
     "symfony/clock": "^6.4 || ^7.4 || ^8.1",
@@ -59,6 +60,7 @@
   "suggest": {
     "ext-imagick": "To assert PDF files, images or create fixture images",
     "mikey179/vfsstream": "To mock uploading large files",
+    "playwright-php/playwright-symfony": "To write end-to-end tests in a real browser with E2ETestCase",
     "spatie/pdf-to-image": "To test PDF files",
     "spatie/pdf-to-text": "To test PDF files",
     "symfony/console": "To use command line tool to generate tests stubs"
