@@ -336,6 +336,7 @@ Register them as public services in the test environment, otherwise Symfony remo
 ## Other helpers
 
 - **Container services:** `KernelTestCase` gives access to services, including private ones, and can replace them with mocks, also before the fixtures are loaded.
+  Parameters are read with a Psl type that the value is coerced to, also from static methods: `self::getContainerParameter('app.host', Type\non_empty_string())`.
 - **Doctrine:** shortcuts for the entity manager, for reading entities, and for resetting database sequences.
 - **Request payloads:** large payloads can be kept in a `Fixtures/data` directory next to the test class, named like expected files.
 - **Uploaded files:** `Test\DummyFile` is an enum of bundled sample files (images, audio, video, PDF, text, XLSX), and `WebTestCase` creates uploaded files from them. Large files need `mikey179/vfsstream` and `VfsStreamSetup::initialize()` in the bootstrap file.

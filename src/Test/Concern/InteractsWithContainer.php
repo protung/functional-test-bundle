@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test\Concern;
 
 use Psl\Type;
+use Psl\Type\TypeInterface;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
- * Creates the test kernel and gives access to container services, also to replace them with mocks.
+ * Creates the test kernel and gives access to container parameters and services, also to replace services with mocks.
  *
  * @phpstan-require-extends KernelTestCase
  */
@@ -55,6 +56,19 @@ trait InteractsWithContainer
         }
 
         return Type\instance_of($class)->coerce($service);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param TypeInterface<T> $type
+     *
+     * @return T
+     *
+     * @template T
+     */
+    protected static function getContainerParameter(string $name, TypeInterface $type): mixed
+    {
+        return $type->coerce(static::getContainer()->getParameter($name));
     }
 
     private function mockServices(): void
