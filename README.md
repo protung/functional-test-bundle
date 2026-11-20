@@ -276,7 +276,8 @@ final class UserProfileTest extends E2ETestCase
 - The browser's requests are handled by the kernel of the test, in the same PHP process. Fixtures, mocked services and the DAMA transaction apply to them, also across several `visit()` calls.
 - Fixtures are declared like in the other test cases. Playwright's own `loadFixtures(array)` hook is final and throws an exception.
 - For the page and the response, use Playwright's assertions and helpers. The `KernelBrowser` helpers and response assertions of `WebTestCase` are not available, except `assertResponseContentMatchesFile()` and `assertJsonResponseContent()`, which take the response from `getLastResponse()`.
-- PHPUnit 12.5 and later report every test as risky ("removed exception handlers other than its own"), because `PlaywrightTestCase` removes all exception handlers in `tearDown()`.
+- `PlaywrightTestCase` removes all exception handlers in `tearDown()`, also the ones that were active before the test. PHPUnit then reports the test as risky ("removed exception handlers other than its own").
+  This happens when a kernel is booted outside a test, like in the bundle's bootstrap file, and `symfony/runtime` is not installed: Symfony's `ErrorHandler` then stays registered as exception handler. Install `symfony/runtime`, which Symfony Flex applications already have, to avoid it.
 
 ### JavaScript errors
 
