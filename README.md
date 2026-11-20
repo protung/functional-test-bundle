@@ -278,6 +278,25 @@ final class UserProfileTest extends E2ETestCase
 - For the page and the response, use Playwright's assertions and helpers. The `KernelBrowser` helpers and response assertions of `WebTestCase` are not available, except `assertResponseContentMatchesFile()` and `assertJsonResponseContent()`, which take the response from `getLastResponse()`.
 - PHPUnit 12.5 and later report every test as risky ("removed exception handlers other than its own"), because `PlaywrightTestCase` removes all exception handlers in `tearDown()`.
 
+### JavaScript errors
+
+`assertPageHasNoErrors()` fails the test if the page threw an uncaught JavaScript error or logged a `console.error()`.
+It checks everything since the page was opened, not only since the last navigation, and the failure lists every recorded error.
+Console warnings and other messages are ignored. It needs `playwright-php/playwright` 1.6 or later.
+
+```php
+public function testCheckout(): void
+{
+    $this->visit('/cart');
+    $this->click('button[type=submit]');
+    $this->assertPageContains('Thank you for your order');
+
+    self::assertPageHasNoErrors();
+}
+```
+
+Without an argument, it checks the current page of the test. Pass a page to check another one, for example a popup: `self::assertPageHasNoErrors($popup)`.
+
 ## Fixtures
 
 Fixtures are Doctrine fixtures. Extend `Test\Loader\AbstractLoader` and yield the entities to persist:

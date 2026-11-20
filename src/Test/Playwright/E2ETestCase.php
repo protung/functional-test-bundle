@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Speicher210\FunctionalTestBundle\Test\Playwright;
 
 use LogicException;
+use Playwright\Console\ConsoleMessage;
+use Playwright\Page\PageInterface;
+use Playwright\PageError\PageErrorInterface;
 use Playwright\Symfony\Test\PlaywrightTestCase;
+use Psl\Vec;
 use Speicher210\FunctionalTestBundle\Test\Concern\AssertsResponseSnapshots;
 use Speicher210\FunctionalTestBundle\Test\Concern\FunctionalTest;
 
@@ -40,6 +44,37 @@ abstract class E2ETestCase extends PlaywrightTestCase
         self::restoreLocale();
 
         $this->cleanupPHPUnit();
+    }
+
+    /**
+     * Asserts that the page threw no uncaught JavaScript error and logged no console error since it was opened.
+     *
+     * Without a page, the current page of the test is checked.
+     */
+    final protected static function assertPageHasNoErrors(PageInterface|null $page = null): void
+    {
+        $page ??= static::getPlaywrightClient()->getPage() ?? throw new LogicException('The test has no open page.');
+
+        // By default, Playwright only returns what happened since the last navigation.
+        $pageErrors      = $page->pageErrors(['filter' => 'all']);
+        $consoleMessages = $page->consoleMessages(['filter' => 'all']);
+
+        self::assertSame(
+            ['page errors' => [], 'console errors' => []],
+            [
+                'page errors' => Vec\map(
+                    $pageErrors,
+                    static fn (PageErrorInterface $error): string => $error->message(),
+                ),
+                'console errors' => Vec\map(
+                    Vec\filter(
+                        $consoleMessages,
+                        static fn (ConsoleMessage $message): bool => $message->type() === 'error',
+                    ),
+                    static fn (ConsoleMessage $message): string => $message->text(),
+                ),
+            ],
+        );
     }
 
     /**
