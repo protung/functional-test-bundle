@@ -297,6 +297,30 @@ public function testCheckout(): void
 
 Without an argument, it checks the current page of the test. Pass a page to check another one, for example a popup: `self::assertPageHasNoErrors($popup)`.
 
+### Live Components and Turbo
+
+A [Live Component](https://symfony.com/bundles/ux-live-component/current/index.html) re-renders through a request after a field changes.
+If the test acts during that request, its action can be lost: for example, the morph undoes a value it typed, or a click on "Save" is swallowed.
+`waitUntilNothingIsBusy()` waits until no element is marked with `aria-busy="true"`, which Live Components and Turbo set while they load:
+
+```php
+public function testUpdatesTheTotal(): void
+{
+    $page = $this->visit('/cart');
+
+    $page->locator('#cart_quantity')->fill('3');
+    $page->locator('#cart_quantity')->press('Tab');
+    self::waitUntilNothingIsBusy();
+
+    $this->click('button[type=submit]');
+    $this->assertPageContains('Total: 30.00');
+}
+```
+
+- **Blur:** a model bound with `on(change)`, like a form with `data-model="on(change)|*"`, only updates when the field loses focus, so press `Tab` first.
+- **Debounce:** a Live Component starts its request only after a debounce, so nothing is busy right after the event. The wait therefore lasts at least 200 ms. That is longer than the default 150 ms debounce of models updated on input. For a model with a longer `debounce()`, pass a longer quiet period: `self::waitUntilNothingIsBusy(quietPeriod: 600)`.
+- **Timeout:** it fails with Playwright's timeout if something stays busy, including markup that keeps `aria-busy="true"` permanently. Without an argument, it waits on the current page of the test.
+
 ## Fixtures
 
 Fixtures are Doctrine fixtures. Extend `Test\Loader\AbstractLoader` and yield the entities to persist:
