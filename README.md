@@ -375,6 +375,29 @@ Register them as public services in the test environment, otherwise Symfony remo
 | `Test\MockObject\AbstractClass` | Mocks the abstract methods of a class and keeps its concrete methods. |
 | `Test\PHPUnitHelper` | `withConsecutive()`, a replacement for PHPUnit's removed method. Included in `KernelTestCase`. |
 | `Comparator\MoneyPHP` | PHPUnit comparator for `moneyphp/money`. Register it in the bootstrap file. |
+| `Comparator\DoctrineCollection` | PHPUnit comparator for Doctrine collections. Needs PHPUnit 13.3+, see [Comparing Doctrine collections](#comparing-doctrine-collections). |
+| `Exporter\DoctrineCollectionExporter` | PHPUnit object exporter for Doctrine collections. Needs PHPUnit 13.3+, see [Comparing Doctrine collections](#comparing-doctrine-collections). |
+
+### Comparing Doctrine collections
+
+A built entity holds an `ArrayCollection` and a persisted one a `PersistentCollection`.
+`assertEquals()` fails on the class alone, and exporting the failure walks the entity manager, which can take forever.
+With PHPUnit 13.3 or later, register the comparator and the exporter in the bootstrap file:
+
+```php
+// tests/bootstrap.php
+use PHPUnit\Util\Exporter as PHPUnitExporter;
+use SebastianBergmann\Comparator\Factory as ComparatorFactory;
+use Speicher210\FunctionalTestBundle\Comparator\DoctrineCollection;
+use Speicher210\FunctionalTestBundle\Exporter\DoctrineCollectionExporter;
+
+ComparatorFactory::getInstance()->register(new DoctrineCollection());
+// PHPUnit's own registry, not the comparator factory's exporter: only it also reaches the failure messages PHPUnit writes itself.
+PHPUnitExporter::registerObjectExporter(DoctrineCollectionExporter::namingElements());
+```
+
+- **Register both:** the exporter prints every collection class the same way, so without the comparator the diff doesn't show that only the class differs.
+- **Order:** collections are compared by their values in order, and keys are ignored. A compared to-many association needs an order-by in its mapping (`#[ORM\OrderBy]`), otherwise it loads in whatever order the query plan returns.
 
 ### "No expectations were configured" notices
 

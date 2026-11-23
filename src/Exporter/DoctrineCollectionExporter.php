@@ -15,7 +15,7 @@ use SebastianBergmann\Exporter\ObjectExporter;
 use function assert;
 
 /**
- * Exporting a PersistentCollection property by property drags in the entity manager it references and never finishes;
+ * Exporting a PersistentCollection property by property drags in the entity manager it references, which can take forever;
  * only the elements are exported, under the same header whatever the collection class, so a diff shows the elements that differ.
  * Keys are left out, as the comparator ignores them: a loaded collection numbers its elements afresh.
  * An unloaded collection stays unloaded, since exporting must never query the database.
