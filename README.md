@@ -57,10 +57,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 
 require dirname(__DIR__) . '/vendor/speicher210/functional-test-bundle/src/Test/bootstrap.php';
-
-// Only needed when using WebTestCase::getRequestUploadLargeFile() (requires mikey179/vfsstream).
-Speicher210\FunctionalTestBundle\VfsStreamSetup::initialize();
 ```
+
+If you need more than the schema from the Doctrine metadata, see [Preparing the test environment](#preparing-the-test-environment).
 
 Then register the PHPUnit extensions:
 
@@ -86,6 +85,70 @@ Then register the PHPUnit extensions:
 
 - **Database:** the schema is created only once per run, so each test has to clean up its data. [dama/doctrine-test-bundle](https://github.com/dmaicher/doctrine-test-bundle) does this by running every test in a transaction.
 - **Snapshots:** the `SnapshotUpdaterExtension` writes the actual output into the expected files. It's only meant to be enabled while you update them, see [Updating expected files](#updating-expected-files).
+
+### Preparing the test environment
+
+`TestEnvironment::prepare()` boots the test kernel, runs the given steps in order and shuts the kernel down.
+The bundle's bootstrap file is the short form of `TestEnvironment::prepare(new RecreateSchemaFromDoctrineMetadata())`.
+Call `prepare()` yourself instead of including that file, for example to create database views:
+
+```php
+// tests/bootstrap.php
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\ExecuteSqlFiles;
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\RecreateSchemaFromDoctrineMetadata;
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\TestEnvironment;
+
+TestEnvironment::prepare(
+    new ExecuteSqlFiles([__DIR__ . '/views/customer_report/drop.sql']),
+    new RecreateSchemaFromDoctrineMetadata(),
+    new ExecuteSqlFiles([__DIR__ . '/views/customer_report/create.sql']),
+);
+```
+
+Or to use the migrations:
+
+```php
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\RunCommand;
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\TestEnvironment;
+
+TestEnvironment::prepare(
+    new RunCommand('doctrine:migrations:migrate'),
+);
+```
+
+| Step | Description |
+|---|---|
+| `RecreateSchemaFromDoctrineMetadata` | Drops the schema and creates it again from the Doctrine metadata, for the default or a named entity manager. |
+| `ExecuteSqlFiles` | Executes SQL files in the given order, on the default or a named connection. |
+| `RunCommand` | Runs a console command. Its output is only shown when it fails. Needs `symfony/console`. |
+| Any callable | Gets the booted kernel: `static fn (KernelInterface $kernel) => …`. |
+
+- **Failing steps:** an exception or a command that fails stops the test run.
+- **Views:** `RecreateSchemaFromDoctrineMetadata` doesn't drop views, and PostgreSQL doesn't drop tables that a view uses. Drop the views first, in reverse order if one uses another.
+- **SQL files:** put a single statement in each file. Not all database drivers accept several, or report the errors of all of them.
+- **Commands:** arguments and options are passed as an array, like `['--allow-no-migration' => true]`. Options that change the verbosity, like `-v`, have no effect.
+- **Separate processes:** PHPUnit includes the bootstrap file again for a test that runs in a separate process (`#[RunInSeparateProcess]`), so the steps run again.
+  The test before it can still hold locks on the database, and recreating the schema then waits for them forever. Run such tests with their own PHPUnit configuration and a bootstrap file without these steps.
+
+### Running tests in parallel
+
+Each worker of [ParaTest](https://github.com/paratestphp/paratest) includes the bootstrap file too, so it needs its own database:
+
+```yaml
+# config/packages/doctrine.yaml
+when@test:
+    parameters:
+        env(TEST_TOKEN): '1'
+    doctrine:
+        dbal:
+            dbname_suffix: '_%env(TEST_TOKEN)%'
+```
+
+ParaTest sets `TEST_TOKEN` to the number of the worker: with a database `app_test`, the workers use `app_test_1`, `app_test_2` and so on.
+
+- **Without ParaTest:** the default token is used, so PHPUnit uses the database of worker 1. Don't run both at the same time.
+- **Creating the databases:** they have to exist. If the database user may create databases, start with `new RunCommand('doctrine:database:create', ['--if-not-exists' => true])`.
+- **Other connections:** only Doctrine's connections get the suffix. What reads `DATABASE_URL` directly, like Symfony's `PdoSessionHandler`, still uses the database without it, so that one has to exist too.
 
 ## Expected files (snapshots)
 
@@ -364,7 +427,7 @@ Register them as public services in the test environment, otherwise Symfony remo
   Parameters are read with a Psl type that the value is coerced to, also from static methods: `self::getContainerParameter('app.host', Type\non_empty_string())`.
 - **Doctrine:** shortcuts for the entity manager, for reading entities, and for resetting database sequences.
 - **Request payloads:** large payloads can be kept in a `Fixtures/data` directory next to the test class, named like expected files.
-- **Uploaded files:** `Test\DummyFile` is an enum of bundled sample files (images, audio, video, PDF, text, XLSX), and `WebTestCase` creates uploaded files from them. Large files need `mikey179/vfsstream` and `VfsStreamSetup::initialize()` in the bootstrap file.
+- **Uploaded files:** `Test\DummyFile` is an enum of bundled sample files (images, audio, video, PDF, text, XLSX), and `WebTestCase` creates uploaded files from them. Large files need `mikey179/vfsstream`.
 
 | Trait or class | Description |
 |---|---|
