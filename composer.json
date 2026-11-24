@@ -65,7 +65,7 @@
     "playwright-php/playwright-symfony": "To write end-to-end tests in a real browser with E2ETestCase",
     "spatie/pdf-to-image": "To test PDF files",
     "spatie/pdf-to-text": "To test PDF files",
-    "symfony/console": "To use command line tool to generate tests stubs"
+    "symfony/console": "To use command line tool to generate tests stubs and to run commands in the PHPUnit bootstrap"
   },
   "autoload": {
     "psr-4": {
