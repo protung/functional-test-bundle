@@ -2,23 +2,7 @@
 
 declare(strict_types=1);
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
-use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\RecreateSchemaFromDoctrineMetadata;
+use Speicher210\FunctionalTestBundle\Test\Bootstrap\TestEnvironment;
 
-$method = new ReflectionMethod(KernelTestCase::class, 'createKernel');
-
-/** @var KernelInterface $kernel */
-$kernel = $method->invoke(null);
-$kernel->boot();
-
-/** @var EntityManagerInterface $entityManager */
-$entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-$schemaTool = new SchemaTool($entityManager);
-$schemaTool->dropDatabase();
-
-$schemaTool->createSchema(
-    $entityManager->getMetadataFactory()->getAllMetadata(),
-);
+TestEnvironment::prepare(new RecreateSchemaFromDoctrineMetadata());
